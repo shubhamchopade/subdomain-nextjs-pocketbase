@@ -19,11 +19,11 @@ export default function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  const { link, id = 1, projectId = 1, port = 3 } = req.query;
+  const { link, id = 1, projectId = 1, port = 30 } = req.query;
   console.log("repoLink: ", link);
   const portNum = port + projectId + id;
 
-  const dir = "/Users/shubhamchopade/Code/monorepo/apps";
+  const dir = "/home/shubham/Code/monorepo/apps";
 
   const gitCloneCmd = `git clone ${link} ${dir}/${id}/${projectId}`;
 

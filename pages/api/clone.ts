@@ -23,7 +23,7 @@ export default function handler(
   console.log("repoLink: ", link);
   const portNum = port + projectId + id;
 
-  const dir = "/Users/shubhamchopade/Code/monorepo/apps";
+  const dir = "/home/shubham/Code/monorepo/apps";
 
   const gitCloneCmd = `git clone ${link} ${dir}/${id}/${projectId}`;
 
@@ -32,7 +32,7 @@ export default function handler(
       log(blu("git clone parent >> ", output.stdout, output.stderr));
       executeCommand(`git clone ${link} ${dir}/${id}/${projectId}`).then(
         (childRes) => {
-          log(chalk.bgGreen("Repo cloned >> ", childRes.stderr));
+          log(chalk.bgGreen(`Repo cloned ${link} >> `, childRes.stderr));
         }
       );
     })

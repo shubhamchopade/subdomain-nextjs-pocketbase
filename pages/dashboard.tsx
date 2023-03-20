@@ -28,12 +28,14 @@ type Post = {
 const Dashboard = (
   props: InferGetServerSidePropsType<typeof getServerSideProps>
 ) => {
-  const linkInit = "https://github.com/shubhamchopade/mutualisim_frontend.git";
+  const linkInit = "";
   const [link, setLink] = React.useState(linkInit);
+  const [projectId, setProjectId] = React.useState(1);
+  const [subdomain, setSubdomain] = React.useState("test")
   const cloneRepo = async () => {
-    const link = "https://github.com/shubhamchopade/mutualisim_frontend.git";
+    // const link = "https://github.com/shubhamchopade/mutualisim_frontend.git";
     const id = `1`;
-    const projectId = `21`;
+    // const projectId = `21`;
     const res = await fetch(
       `/api/clone?link=${link}&id=${id}&projectId=${projectId}`
     );
@@ -42,7 +44,7 @@ const Dashboard = (
   };
   const installDependencies = async () => {
     const id = `1`;
-    const projectId = `21`;
+    // const projectId = `21`;
     const res = await fetch(
       `/api/install?link=${link}&id=${id}&projectId=${projectId}`
     );
@@ -51,7 +53,7 @@ const Dashboard = (
   };
   const buildDependencies = async () => {
     const id = `1`;
-    const projectId = `20`;
+    // const projectId = `20`;
     const res = await fetch(
       `/api/build?link=${link}&id=${id}&projectId=${projectId}`
     );
@@ -60,9 +62,18 @@ const Dashboard = (
   };
   const startProject = async () => {
     const id = `1`;
-    const projectId = `20`;
+    // const projectId = `20`;
     const res = await fetch(
       `/api/start?link=${link}&id=${id}&projectId=${projectId}`
+    );
+    const data = await res.json();
+    console.log(data);
+  };
+  const subd = async () => {
+    const id = `1`;
+    // const projectId = `20`;
+    const res = await fetch(
+      `/api/subdomain?link=${link}&id=${id}&projectId=${projectId}&subdomain=${subdomain}`
     );
     const data = await res.json();
     console.log(data);
@@ -80,7 +91,19 @@ const Dashboard = (
             value={link}
             onChange={(e) => setLink(e.target.value)}
           />
+          <input
+            type="text"
+            className="input input-bordered"
+            value={subdomain}
+            onChange={(e) => setSubdomain(e.target.value)}
+          />
           <div className="card-actions justify-end">
+          <input
+            type="number"
+            className="input input-bordered"
+            value={projectId}
+            onChange={(e) => setProjectId(e.target.value)}
+          />
             <button onClick={cloneRepo} className="btn btn-primary">
               CLONE
             </button>
@@ -92,6 +115,9 @@ const Dashboard = (
             </button>
             <button onClick={startProject} className="btn btn-accent">
               START
+            </button>
+            <button onClick={subd} className="btn btn-accent">
+              SUBD
             </button>
           </div>
         </div>

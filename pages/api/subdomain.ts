@@ -19,22 +19,20 @@ export default function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  const { link, id = 1, projectId = 1, port = 3 } = req.query;
+  const { link, id = 1, projectId = 1, port = 30, subdomain = "test" } = req.query;
   console.log("repoLink: ", link);
   const portNum = port + projectId + id;
 
   const dir = "/home/shubham/Code/monorepo/apps";
 
-  console.log("APP IS BUILDING >>>>>");
-  // executeCommand(`pnpm run build`)
-  executeCommand(`cd ${dir}/${id}/${projectId} && pnpm run build`)
-    .then((output) => {
-      log(chalk.bgBlue("pnpm build >> ", output.stdout, output.stderr));
-    })
-    // pnpm build failed
-    .catch((err) => {
-      log(erB("--------pnpm build failed---------"));
-    });
+  const scriptLocation = '/home/shubham/Code/nginx-config/nginxsub.sh'
+
+
+  executeCommand(
+    `sh ${scriptLocation} ${subdomain} ${portNum}`
+  ).then((output) => {
+    log(chalk.red("SUBDOMAIN ", output.stdout, output.stderr));
+  });
 
   res.status(200).json({ name: "John Doe" });
 }
