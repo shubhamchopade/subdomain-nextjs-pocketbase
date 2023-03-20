@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import React from "react";
 import UploadForm from "../components/common/UploadForm";
 import CreateProject from "../components/projects/Create";
+import ProjectsGrid from "../components/projects/ProjectsGrid";
 import { listAuthMethods } from "../components/utils/pocketbase-api-methods";
 import { useAuthState } from "../store/authState";
 import { authOptions } from "./api/auth/[...nextauth]";
@@ -29,102 +30,11 @@ type Post = {
 const Dashboard = (
   props: InferGetServerSidePropsType<typeof getServerSideProps>
 ) => {
-  const linkInit = "";
-  const [link, setLink] = React.useState(linkInit);
-  const [projectId, setProjectId] = React.useState(1);
-  const [subdomain, setSubdomain] = React.useState("test");
-  const cloneRepo = async () => {
-    // const link = "https://github.com/shubhamchopade/mutualisim_frontend.git";
-    const id = `1`;
-    // const projectId = `21`;
-    const res = await fetch(
-      `/api/clone?link=${link}&id=${id}&projectId=${projectId}`
-    );
-    const data = await res.json();
-    console.log(data);
-  };
-  const installDependencies = async () => {
-    const id = `1`;
-    // const projectId = `21`;
-    const res = await fetch(
-      `/api/install?link=${link}&id=${id}&projectId=${projectId}`
-    );
-    const data = await res.json();
-    console.log(data);
-  };
-  const buildDependencies = async () => {
-    const id = `1`;
-    // const projectId = `20`;
-    const res = await fetch(
-      `/api/build?link=${link}&id=${id}&projectId=${projectId}`
-    );
-    const data = await res.json();
-    console.log(data);
-  };
-  const startProject = async () => {
-    const id = `1`;
-    // const projectId = `20`;
-    const res = await fetch(
-      `/api/start?link=${link}&id=${id}&projectId=${projectId}`
-    );
-    const data = await res.json();
-    console.log(data);
-  };
-  const subd = async () => {
-    const id = `1`;
-    // const projectId = `20`;
-    const res = await fetch(
-      `/api/subdomain?link=${link}&id=${id}&projectId=${projectId}&subdomain=${subdomain}`
-    );
-    const data = await res.json();
-    console.log(data);
-  };
+  // console.log(props)
   return (
     <div>
-      <div className="card w-96 mx-auto bg-base-100 shadow-xl">
-        <div className="card-body">
-          <h2 className="card-title">Create Project</h2>
-          <p>Please paste your github link here</p>
-
-          <input
-            type="text"
-            className="input input-bordered"
-            value={link}
-            onChange={(e) => setLink(e.target.value)}
-          />
-          <input
-            type="text"
-            className="input input-bordered"
-            value={subdomain}
-            onChange={(e) => setSubdomain(e.target.value)}
-          />
-          <div className="card-actions justify-end">
-            <input
-              type="number"
-              className="input input-bordered"
-              value={projectId}
-              onChange={(e) => setProjectId(e.target.value)}
-            />
-            <button onClick={cloneRepo} className="btn btn-primary">
-              CLONE
-            </button>
-            <button onClick={installDependencies} className="btn btn-primary">
-              INSTALL
-            </button>
-            <button onClick={buildDependencies} className="btn btn-primary">
-              BUILD
-            </button>
-            <button onClick={startProject} className="btn btn-accent">
-              START
-            </button>
-            <button onClick={subd} className="btn btn-accent">
-              SUBD
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <CreateProject />
+      <CreateProject auth={props} />
+      <ProjectsGrid auth={props} />
     </div>
   );
 };

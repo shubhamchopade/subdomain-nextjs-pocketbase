@@ -20,7 +20,7 @@ const Navbar = () => {
     <div>
       <div className="navbar bg-base-100">
         <div className="flex-1">
-          <a className="btn btn-ghost normal-case text-xl">daisyUI</a>
+          <a className="btn btn-ghost normal-case text-xl">subds</a>
         </div>
         {session.data && (
           <Link className="flex-1 text-purple-500" href={"/dashboard"}>

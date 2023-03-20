@@ -26,7 +26,6 @@ export default function handler(
   const dir = "/home/shubham/Code/monorepo/apps";
 
   console.log("APP IS BUILDING >>>>>");
-  // executeCommand(`pnpm run build`)
   executeCommand(`cd ${dir}/${id}/${projectId} && pnpm run build`)
     .then((output) => {
       log(chalk.bgBlue("pnpm build >> ", output.stdout, output.stderr));
