@@ -19,7 +19,6 @@ import {
   listAuthMethodsResponse,
 } from "../components/utils/pocketbase-api-methods";
 import { useAuthState } from "../store/authState";
-import styles from "../styles/Home.module.css";
 import { authOptions } from "./api/auth/[...nextauth]";
 
 type User = {
@@ -104,7 +103,7 @@ const Home = (
   console.log(githubAuth);
 
   return (
-    <div className={styles.container}>
+    <div>
       {/* {data.map((d) => (
           <p key={d.id}>{d.name}</p>
         ))} */}

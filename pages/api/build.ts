@@ -50,7 +50,7 @@ const executeCommand = async (cmd) => {
     console.error(
       chalk.red.bold(`Error running command`),
       cmd,
-      chalk.bgRed(err.stderr)
+      chalk.red(err.stderr)
     );
     throw err;
   }
