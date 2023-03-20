@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { useSession } from "next-auth/react";
 import React from "react";
 import UploadForm from "../components/common/UploadForm";
+import CreateProject from "../components/projects/Create";
 import { listAuthMethods } from "../components/utils/pocketbase-api-methods";
 import { useAuthState } from "../store/authState";
 import { authOptions } from "./api/auth/[...nextauth]";
@@ -31,7 +32,7 @@ const Dashboard = (
   const linkInit = "";
   const [link, setLink] = React.useState(linkInit);
   const [projectId, setProjectId] = React.useState(1);
-  const [subdomain, setSubdomain] = React.useState("test")
+  const [subdomain, setSubdomain] = React.useState("test");
   const cloneRepo = async () => {
     // const link = "https://github.com/shubhamchopade/mutualisim_frontend.git";
     const id = `1`;
@@ -98,12 +99,12 @@ const Dashboard = (
             onChange={(e) => setSubdomain(e.target.value)}
           />
           <div className="card-actions justify-end">
-          <input
-            type="number"
-            className="input input-bordered"
-            value={projectId}
-            onChange={(e) => setProjectId(e.target.value)}
-          />
+            <input
+              type="number"
+              className="input input-bordered"
+              value={projectId}
+              onChange={(e) => setProjectId(e.target.value)}
+            />
             <button onClick={cloneRepo} className="btn btn-primary">
               CLONE
             </button>
@@ -122,6 +123,8 @@ const Dashboard = (
           </div>
         </div>
       </div>
+
+      <CreateProject />
     </div>
   );
 };
