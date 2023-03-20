@@ -47,6 +47,10 @@ export default function handler(
 
               // Build the project
               log(chalk.bgYellow("Building project..."));
+              executeCommand(`ls ${dir}/${id}/${projectId}`).then((output) => {
+                console.log(output.stdout);
+              });
+              // executeCommand(`pnpm run build`)
               executeCommand(`cd ${dir}/${id}/${projectId} && pnpm run build`)
                 .then((output) => {
                   log(
@@ -55,18 +59,21 @@ export default function handler(
 
                   // Start the project
                   log(chalk.bgYellow("Starting project on port >> ", portNum));
-                  executeCommand(
-                    `cd ${dir}/${id}/${projectId} && npm run start -- -p ${portNum}`
-                  ).then((output) => {
-                    log(
-                      chalk.bgYellow(
-                        "Project started on >> ",
-                        portNum,
-                        output.stdout,
-                        output.stderr
-                      )
-                    );
+                  executeCommand(`pwd`).then((output) => {
+                    console.log(output.stdout);
                   });
+                  executeCommand(`npm run start -- -p ${portNum}&`).then(
+                    (output) => {
+                      log(
+                        chalk.bgYellow(
+                          "Project started on >> ",
+                          portNum,
+                          output.stdout,
+                          output.stderr
+                        )
+                      );
+                    }
+                  );
                 })
                 // pnpm build failed
                 .catch((err) => {

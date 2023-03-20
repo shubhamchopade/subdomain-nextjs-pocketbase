@@ -28,15 +28,71 @@ type Post = {
 const Dashboard = (
   props: InferGetServerSidePropsType<typeof getServerSideProps>
 ) => {
+  const linkInit = "https://github.com/shubhamchopade/mutualisim_frontend.git";
+  const [link, setLink] = React.useState(linkInit);
+  const cloneRepo = async () => {
+    const link = "https://github.com/shubhamchopade/mutualisim_frontend.git";
+    const id = `1`;
+    const projectId = `21`;
+    const res = await fetch(
+      `/api/clone?link=${link}&id=${id}&projectId=${projectId}`
+    );
+    const data = await res.json();
+    console.log(data);
+  };
+  const installDependencies = async () => {
+    const id = `1`;
+    const projectId = `21`;
+    const res = await fetch(
+      `/api/install?link=${link}&id=${id}&projectId=${projectId}`
+    );
+    const data = await res.json();
+    console.log(data);
+  };
+  const buildDependencies = async () => {
+    const id = `1`;
+    const projectId = `20`;
+    const res = await fetch(
+      `/api/build?link=${link}&id=${id}&projectId=${projectId}`
+    );
+    const data = await res.json();
+    console.log(data);
+  };
+  const startProject = async () => {
+    const id = `1`;
+    const projectId = `20`;
+    const res = await fetch(
+      `/api/start?link=${link}&id=${id}&projectId=${projectId}`
+    );
+    const data = await res.json();
+    console.log(data);
+  };
   return (
     <div>
       <div className="card w-96 mx-auto bg-base-100 shadow-xl">
         <div className="card-body">
           <h2 className="card-title">Create Project</h2>
-          <p>Choose the files you want to upload?</p>
+          <p>Please paste your github link here</p>
+
+          <input
+            type="text"
+            className="input input-bordered"
+            value={link}
+            onChange={(e) => setLink(e.target.value)}
+          />
           <div className="card-actions justify-end">
-            <UploadForm />
-            <button className="btn btn-primary">upload</button>
+            <button onClick={cloneRepo} className="btn btn-primary">
+              CLONE
+            </button>
+            <button onClick={installDependencies} className="btn btn-primary">
+              INSTALL
+            </button>
+            <button onClick={buildDependencies} className="btn btn-primary">
+              BUILD
+            </button>
+            <button onClick={startProject} className="btn btn-accent">
+              START
+            </button>
           </div>
         </div>
       </div>
