@@ -45,19 +45,26 @@ const Card = (props) => {
         const data = await res.json();
         console.log(data);
     };
-    const subd = async () => {
-        const prt = createSubdomainEntry()
-        console.log("PORTTT", prt)
-        // const res = await fetch(
-        //     `/api/subdomain?link=${link}&id=${id}&projectId=${projectId}&subdomain=${subdomain}&port=${1234}`
-        // );
-        // const data = await res.json();
-        // console.log(data);
+    const killServerPort = async (port) => {
+        const res = await fetch(
+            `/api/delete?link=${link}&id=${id}&projectId=${projectId}&port=${port}`
+        );
+        const data = await res.json();
+        console.log(data);
     };
+
+    // Get port number for current project
 
     const handleDelete = () => {
         const register = async () => {
-            const deleted = await pb.collection("projects").delete(project.id)
+            // Kill the port
+            const deleted = await killServerPort(5173)
+
+
+            // Delete nginx config file
+
+
+            // const deleted = await pb.collection("projects").delete(project.id)
 
             console.log("delete>>>", deleted);
         };
@@ -82,7 +89,6 @@ const Card = (props) => {
                 return false
             }
         };
-
         // Generate a random port number
         const port = generateRandomNumber()
         // Check if the ports exists in DB
@@ -98,8 +104,6 @@ const Card = (props) => {
                 create(port)
             }
         }
-
-
         exists()
     }
 
