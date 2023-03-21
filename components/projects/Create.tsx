@@ -16,6 +16,7 @@ const defaultValues = {
 
 const CreateProject: NextPage<any> = (props): JSX.Element => {
     const router = useRouter()
+    const [showCreateProject, setShowCreateProject] = useState(false)
 
     const user = props.auth.user
 
@@ -50,12 +51,16 @@ const CreateProject: NextPage<any> = (props): JSX.Element => {
         register();
     };
 
+    const handleShowCreateProject = () => {
+        setShowCreateProject(!showCreateProject)
+    }
+
     return (
         <div>
-            <h1 className="text-center text-2xl font-bold mb-12 mt-4">
+            <p onClick={handleShowCreateProject} className="btn">
                 Create Project
-            </h1>
-            <div className="flex justify-center items-center">
+            </p>
+            {showCreateProject && <div className="flex justify-center items-center">
                 <FormProvider {...formMethods}>
                     <form className="form-control max-w-xs">
                         {/* title */}
@@ -63,7 +68,6 @@ const CreateProject: NextPage<any> = (props): JSX.Element => {
                         <input
                             {...register("title", { required: true })}
                             type="text"
-                            placeholder="title"
                             className="input input-bordered w-full max-w-xs"
                         />
                         {/* description */}
@@ -71,7 +75,6 @@ const CreateProject: NextPage<any> = (props): JSX.Element => {
                         <input
                             {...register("description", { required: true })}
                             type="description"
-                            placeholder="description"
                             className="input input-bordered w-full max-w-xs"
                         />
                         {/* link */}
@@ -79,7 +82,6 @@ const CreateProject: NextPage<any> = (props): JSX.Element => {
                         <input
                             {...register("link", { required: true })}
                             type="link"
-                            placeholder="link"
                             className="input input-bordered w-full max-w-xs"
                         />
                         {/* subdomain */}
@@ -87,7 +89,6 @@ const CreateProject: NextPage<any> = (props): JSX.Element => {
                         <input
                             {...register("subdomain", { required: true })}
                             type="subdomain"
-                            placeholder="subdomain"
                             className="input input-bordered w-full max-w-xs"
                         />
 
@@ -100,7 +101,7 @@ const CreateProject: NextPage<any> = (props): JSX.Element => {
                         </button>
                     </form>
                 </FormProvider>
-            </div>
+            </div>}
         </div>
     );
 };
