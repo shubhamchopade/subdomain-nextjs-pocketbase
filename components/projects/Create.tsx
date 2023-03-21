@@ -14,6 +14,17 @@ const defaultValues = {
     subdomain: ""
 };
 
+// example create data
+const projectStatus = {
+    "projectId": "RELATION_RECORD_ID",
+    "cloned": true,
+    "installed": true,
+    "built": true,
+    "isOnline": "test",
+    "stopped": true,
+    "current": "test"
+};
+
 const CreateProject: NextPage<any> = (props): JSX.Element => {
     const router = useRouter()
     const [showCreateProject, setShowCreateProject] = useState(false)
@@ -37,10 +48,26 @@ const CreateProject: NextPage<any> = (props): JSX.Element => {
     const onSubmit: SubmitHandler<any> = (data) => {
         const register = async () => {
             try {
+                // Create project
                 const projectCreated = await pb.collection("projects").create({ ...data, userId: user.id })
-                console.log("PROJECT CREATED>>>", projectCreated);
+                // Create project status
+                if (projectCreated.id) {
+                    const projectStatus = await pb.collection('projectStatus').create({
+                        "projectId": projectCreated.id,
+                        "cloned": false,
+                        "installed": false,
+                        "built": false,
+                        "isOnline": false,
+                        "stopped": false,
+                        "current": "init"
+                    }, {
+                        "projectId": projectCreated.id
+                    });
+                    console.log("projectStatus res", projectStatus)
+                }
+                // console.log("Project created res", projectCreated)
                 toast.success("Project created")
-                router.reload()
+                // router.reload()
             } catch (error) {
                 const errors = error.data.data
                 const keys = Object.keys(errors)

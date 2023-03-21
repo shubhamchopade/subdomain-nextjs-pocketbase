@@ -7,6 +7,7 @@ import UploadForm from "../components/common/UploadForm";
 import UserCard from "../components/common/UserCard";
 import CreateProject from "../components/projects/Create";
 import ProjectsGrid from "../components/projects/ProjectsGrid";
+import Status from "../components/projects/Status";
 import { listAuthMethods } from "../components/utils/pocketbase-api-methods";
 import { useAuthState } from "../store/authState";
 import { authOptions } from "./api/auth/[...nextauth]";
@@ -35,6 +36,7 @@ const Dashboard = (
   // console.log(props)
   return (
     <div>
+      <Status />
       <CreateProject auth={props} />
       <ProjectsGrid auth={props} />
     </div>
