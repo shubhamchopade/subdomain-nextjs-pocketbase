@@ -46,44 +46,77 @@ const Card = (props) => {
         console.log(data);
     };
     const startDevMode = async () => {
+
+        // Get the port from API
+
+        const getPort = await pb.collection('subdomains').getFullList({
+            sort: '-created',
+            projectId: projectId
+        });
+        console.log("DEV PORT", getPort[0].port);
+
+        const port = getPort[0].port
+
         const res = await fetch(
-            `/api/dev?link=${link}&id=${id}&projectId=${projectId}`
+            `/api/dev?link=${link}&id=${id}&projectId=${projectId}&port=${port}`
         );
         const data = await res.json();
-        console.log("startDevMode >>>>", data);
+        console.log("started dev server 🫶 >>>>", data);
     };
 
 
-    // Get port number for current project
 
     const handleDelete = () => {
         const register = async () => {
             // Kill the port
 
-            const killServerPort = async (port) => {
-                const res = await fetch(
-                    `/api/delete?link=${link}&id=${id}&projectId=${projectId}&port=${port}&subdomain=${subdomain}`
-                );
-                const data = await res.json();
-                console.log(data);
-            };
-            const killedPort = await killServerPort(5173)
+            const getPort = await pb.collection('subdomains').getFullList({
+                sort: '-created',
+                projectId: projectId
+            });
+
+            console.log("DEV PORT", getPort[0].port);
+            const port = getPort[0].port
+
+            if (getPort[0].port) {
+                const killServerPort = async (port) => {
+                    const res = await fetch(
+                        `/api/delete?link=${link}&id=${id}&projectId=${projectId}&port=${port}&subdomain=${subdomain}`
+                    );
+                    const data = await res.json();
+                    console.log(data);
+                };
+                const killedPort = await killServerPort(port)
+                console.log("killedPort", killedPort)
+            }
 
 
-            // Delete nginx config file
-            // const deleteNginxConfig = await deleteNginxConfig()
-
-            // console.log(deleteNginxConfig)
             // delete from pocketbase
-            // const deleted = await pb.collection("projects").delete(project.id)
-
-            // console.log("delete>>>", deleted);
+            const deleted = await pb.collection("projects").delete(project.id)
+            console.log("deleted from supabase", deleted);
         };
 
         register();
     };
 
     const createSubdomainEntry = () => {
+
+        // Generate a random port number
+        const port = generateRandomNumber()
+        // Check if the ports exists in DB
+        const exists = async () => {
+            try {
+                const portExists = await pb.collection('subdomains').getFirstListItem(`port = ${port}`);
+                console.log(portExists)
+                return false
+            } catch (e) {
+                // if exists, generate again
+                console.log("SUBDOMAIN DOES NOT EXIST, CREATING NEW", e)
+                // else create a new entry in subdomains
+                create(port)
+            }
+        }
+
         // create a new entry in subdomains
         const create = async (port) => {
             try {
@@ -100,21 +133,7 @@ const Card = (props) => {
                 return false
             }
         };
-        // Generate a random port number
-        const port = generateRandomNumber()
-        // Check if the ports exists in DB
-        const exists = async () => {
-            try {
-                const portExists = await pb.collection('subdomains').getFirstListItem(`port = ${port}`);
-                console.log(portExists)
-                return false
-            } catch (e) {
-                // if exists, generate again
-                // else create a new entry in subdomains
-                console.log("SUBDOMAIN DOES NOT EXIST, CREATING NEW", e)
-                create(port)
-            }
-        }
+
         exists()
     }
 
@@ -131,19 +150,19 @@ const Card = (props) => {
                     <button onClick={cloneRepo} className="btn btn-primary btn-xs">
                         CLONE
                     </button>
-                    <button onClick={installDependencies} className="btn btn-primary btn-xs">
+                    <button onClick={installDependencies} className="btn btn-secondary btn-xs">
                         INSTALL
                     </button>
-                    <button onClick={buildDependencies} className="btn btn-primary btn-xs">
+                    {/* <button onClick={buildDependencies} className="btn btn-primary btn-xs">
                         BUILD
-                    </button>
-                    <button onClick={startProject} className="btn btn-accent btn-xs">
+                    </button> */}
+                    {/* <button onClick={startProject} className="btn btn-accent btn-xs">
                         START
-                    </button>
+                    </button> */}
                     <button onClick={createSubdomainEntry} className="btn btn-accent btn-xs">
                         SUBDOMAIN
                     </button>
-                    <button onClick={startDevMode} className="btn btn-accent btn-xs">
+                    <button onClick={startDevMode} className="btn btn-outline btn-xs">
                         DEV
                     </button>
                 </div>

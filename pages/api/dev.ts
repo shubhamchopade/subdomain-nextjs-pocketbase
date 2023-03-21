@@ -26,7 +26,7 @@ export default function handler(
   const dir = "/home/shubham/Code/monorepo/apps";
 
   console.log("APP IS devING >>>>>");
-  executeCommandChild('cd', [`${dir}/${id}/${projectId}`, `&&`, `pnpm run dev`])
+  executeCommandChild('cd', [`${dir}/${id}/${projectId}`, `&&`, `pnpm run dev`, '--', '-p', port])
     .then((output) => {
       log(chalk.bgBlue("pnpm dev >> ", output.stdout, output.stderr));
       res.status(200).json({ data: "dev Success!!!!" });
