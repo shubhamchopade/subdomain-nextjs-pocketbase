@@ -33,17 +33,15 @@ const CreateProject: NextPage<any> = (props): JSX.Element => {
 
     const onSubmit: SubmitHandler<any> = (data) => {
         const register = async () => {
-            const registered = await pb.collection("projects").create({ ...data, userId: user.id })
-            // if (registered.id) {
-            //     const subdomainCreated = await pb.collection('subdomains').create({
-            //         "projectId": registered.id,
-            //         "subdomain": data.subdomain
-            //     });
-            //     console.log("SD>>>", subdomainCreated)
-            // }
-
-            console.log("REGISTERED>>>", registered);
-            console.log("SUBDOMAIN>>>", data.subdomain);
+            try {
+                const projectCreated = await pb.collection("projects").create({ ...data, userId: user.id })
+                console.log("PROJECT CREATED>>>", projectCreated);
+                toast.success("Project created")
+            } catch (error) {
+                const errors = error.data.data
+                const keys = Object.keys(errors)
+                keys.map(e => toast.error(errors[e].message))
+            }
         };
 
         register();

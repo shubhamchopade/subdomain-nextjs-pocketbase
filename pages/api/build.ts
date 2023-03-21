@@ -26,16 +26,28 @@ export default function handler(
   const dir = "/home/shubham/Code/monorepo/apps";
 
   console.log("APP IS BUILDING >>>>>");
-  executeCommand(`cd ${dir}/${id}/${projectId} && pnpm run build`)
+  executeCommandChild('cd', [`${dir}/${id}/${projectId}`, `&&`, `pnpm run build`])
     .then((output) => {
       log(chalk.bgBlue("pnpm build >> ", output.stdout, output.stderr));
+      res.status(200).json({ data: "Build Success!!!!" });
     })
     // pnpm build failed
     .catch((err) => {
+      res.status(400).json({ data: "Build failed" });
       log(erB("--------pnpm build failed---------"));
     });
+  // executeCommand(`cd ${dir}/${id}/${projectId} && pnpm run build`)
+  //   .then((output) => {
+  //     log(chalk.bgBlue("pnpm build >> ", output.stdout, output.stderr));
+  //     res.status(200).json({ data: "Build Success!!!!" });
+  //   })
+  //   // pnpm build failed
+  //   .catch((err) => {
+  //     res.status(400).json({ data: "Build failed" });
+  //     log(erB("--------pnpm build failed---------"));
+  //   });
 
-  res.status(200).json({ name: "John Doe" });
+
 }
 
 const executeCommand = async (cmd) => {

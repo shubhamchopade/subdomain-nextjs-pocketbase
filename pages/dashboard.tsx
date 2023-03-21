@@ -2,7 +2,9 @@ import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { getServerSession } from "next-auth";
 import { useSession } from "next-auth/react";
 import React from "react";
+import { ToastContainer } from "react-toastify";
 import UploadForm from "../components/common/UploadForm";
+import UserCard from "../components/common/UserCard";
 import CreateProject from "../components/projects/Create";
 import ProjectsGrid from "../components/projects/ProjectsGrid";
 import { listAuthMethods } from "../components/utils/pocketbase-api-methods";
@@ -33,6 +35,7 @@ const Dashboard = (
   // console.log(props)
   return (
     <div>
+      <UserCard name={props.user.name} email={props.user.email} />
       <CreateProject auth={props} />
       <ProjectsGrid auth={props} />
     </div>

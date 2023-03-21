@@ -17,7 +17,7 @@ type Data = {
 
 export default function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Data>
+  res: NextApiResponse<any>
 ) {
   const { link, id = 1, projectId = 1, port = 3 } = req.query;
   console.log("repoLink: ", link);
@@ -30,18 +30,21 @@ export default function handler(
   // get cwd
   executeCommand(`cd ${dir}/${id}/${projectId} && pwd`).then((output) => {
     log(chalk.green("pwd >> ", output.stdout, output.stderr));
+    // res.status(200).json({ data: "Installation Complete" });
   });
 
   // Install dependencies using pnpm
   executeCommand(`cd ${dir}/${id}/${projectId} && pnpm install`)
     .then((output) => {
       log(chalk.bgMagenta("pnpm installed >> ", output.stdout, output.stderr));
+      res.status(200).json({ data: "Installation Complete" });
     })
     .catch((err) => {
       log(erB("--------pnpm install failed---------"));
+      res.status(400).json({ data: "Installation Failed" });
     });
 
-  res.status(200).json({ name: "John Doe" });
+
 }
 
 const executeCommand = async (cmd) => {

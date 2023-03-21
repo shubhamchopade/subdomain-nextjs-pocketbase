@@ -21,7 +21,7 @@ export default function handler(
 ) {
   const { link, id = 1, projectId = 1, port = 30 } = req.query;
   console.log("repoLink: ", link);
-  const portNum = port + projectId + id;
+  const portNum = 3008;
 
   const dir = "/home/shubham/Code/monorepo/apps";
 
@@ -34,7 +34,7 @@ export default function handler(
   });
 
   executeCommand(
-    `cd ${dir}/${id}/${projectId} && npm run start -- -p ${portNum} &`
+    `cd ${dir}/${id}/${projectId} && PORT=${portNum} pnpm run start &`
   ).then((output) => {
     log(chalk.red("EXIT ", output.stdout, output.stderr));
   });

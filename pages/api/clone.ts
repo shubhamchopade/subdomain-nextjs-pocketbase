@@ -17,7 +17,7 @@ type Data = {
 
 export default function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Data>
+  res: NextApiResponse<any>
 ) {
   const { link, id = 1, projectId = 1, port = 3 } = req.query;
   console.log("repoLink: ", link);
@@ -27,21 +27,18 @@ export default function handler(
 
   const gitCloneCmd = `git clone ${link} ${dir}/${id}/${projectId}`;
 
-  executeCommand(`ls ${dir}`)
-    .then((output) => {
-      log(blu("git clone parent >> ", output.stdout, output.stderr));
-      executeCommand(`git clone ${link} ${dir}/${id}/${projectId}`).then(
-        (childRes) => {
-          log(chalk.bgGreen(`Repo cloned ${link} >> `, childRes.stderr));
-        }
-      );
-    })
-    // parent ls failed
-    .catch((err) => {
-      log(erB("--------git clone failed---------"));
-    });
 
-  res.status(200).json({ name: "John Doe" });
+  executeCommand(`git clone ${link} ${dir}/${id}/${projectId}`).then(
+    (childRes) => {
+      log(chalk.bgGreen(`Repo cloned ${link} >> `, childRes.stderr));
+      res.status(200).json({ data: `Repo cloned ${link} >> ` });
+    }
+  ).catch((err) => {
+    log(erB("--------git clone failed---------"));
+    res.status(400).json({ data: `git clone failed` });
+  });
+
+
 }
 
 const executeCommand = async (cmd) => {
@@ -60,3 +57,47 @@ const executeCommand = async (cmd) => {
     throw err;
   }
 };
+
+
+function executeCommandChild(command, args = []) {
+  return new Promise((resolve, reject) => {
+    const childProcess = spawn(command, args, { stdio: "pipe", shell: true });
+
+    let stdout = "";
+    let stderr = "";
+
+    childProcess.stdout.on("data", (data) => {
+      stdout += data.toString();
+      process.stdout.write(data);
+    });
+
+    childProcess.stderr.on("data", (data) => {
+      stderr += data.toString();
+      process.stderr.write(data);
+    });
+
+    childProcess.on("error", (err) => {
+      reject(
+        new Error(
+          `Command executeCommandChild "${command} ${args.join(
+            " "
+          )}" failed with error: ${err}`
+        )
+      );
+    });
+
+    childProcess.on("close", (code, signal) => {
+      if (code !== 0) {
+        reject(
+          new Error(
+            `Command "${command} ${args.join(
+              " "
+            )}" failed with code ${code} and signal ${signal}: ${stderr}`
+          )
+        );
+      } else {
+        resolve({ stdout, stderr });
+      }
+    });
+  });
+}

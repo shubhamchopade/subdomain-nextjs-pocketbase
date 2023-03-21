@@ -66,9 +66,9 @@ const SignUp: NextPage<Props> = (props): JSX.Element => {
               className="input input-bordered w-full max-w-xs"
             />
             {/* Username */}
-            <label htmlFor="user_name">Username</label>
+            <label htmlFor="username">Username</label>
             <input
-              {...register("user_name", { required: true })}
+              {...register("username", { required: true })}
               type="text"
               placeholder="username"
               className="input input-bordered w-full max-w-xs"

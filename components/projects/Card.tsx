@@ -1,4 +1,6 @@
 import React from 'react'
+import PocketBase from "pocketbase";
+
 
 const Card = (props) => {
     const user = props.user
@@ -7,6 +9,10 @@ const Card = (props) => {
     const id = user.id
     const projectId = project.id
     const link = project.link
+    const subdomain = project.subdomain
+
+    const pb = new PocketBase("https://pocketbase.techsapien.dev");
+
 
     // console.log(props)
     const cloneRepo = async () => {
@@ -44,9 +50,19 @@ const Card = (props) => {
         const data = await res.json();
         console.log(data);
     };
-    return (
-        <div><div className="card w-96 bg-base-100 shadow-xl">
 
+    const handleDelete = () => {
+        const register = async () => {
+            const deleted = await pb.collection("projects").delete(project.id)
+
+            console.log("delete>>>", deleted);
+        };
+
+        register();
+    };
+    return (
+        <div><div className="card w-96 bg-base-100 shadow-xl relative">
+            <span onClick={handleDelete} className='absolute top-0 right-0 btn btn-xs btn-error'>delete</span>
             <div className="card-body items-center text-center">
                 <h2 className="card-title">{props.project.title}</h2>
                 <p>{props.project.description}</p>
