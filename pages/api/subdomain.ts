@@ -39,17 +39,19 @@ export default function handler(
   }).catch(e => {
     log(chalk.redBright("NGINX DOES NOT EXIST "));
     res.status(200).json({ data: "Nginx DOES NOT EXIST" });
+
+    // Create nginx file using custom script
+    executeCommand(
+      `sh ${scriptLocation} ${subdomain} ${port}`
+    ).then((output) => {
+      log(chalk.blue("Nginx entry created ", output.stdout, output.stderr));
+    }).catch(e => {
+      log(chalk.redBright("Error creating nginx entry, please try again", e));
+    })
   })
 
 
 
-
-
-  // executeCommand(
-  //   `sh ${scriptLocation} ${subdomain} ${portNum}`
-  // ).then((output) => {
-  //   log(chalk.red("SUBDOMAIN ", output.stdout, output.stderr));
-  // });
 }
 
 const executeCommand = async (cmd) => {

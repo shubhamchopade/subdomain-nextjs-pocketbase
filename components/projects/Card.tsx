@@ -46,11 +46,13 @@ const Card = (props) => {
         console.log(data);
     };
     const subd = async () => {
-        const res = await fetch(
-            `/api/subdomain?link=${link}&id=${id}&projectId=${projectId}&subdomain=${subdomain}`
-        );
-        const data = await res.json();
-        console.log(data);
+        const prt = createSubdomainEntry()
+        console.log("PORTTT", prt)
+        // const res = await fetch(
+        //     `/api/subdomain?link=${link}&id=${id}&projectId=${projectId}&subdomain=${subdomain}&port=${1234}`
+        // );
+        // const data = await res.json();
+        // console.log(data);
     };
 
     const handleDelete = () => {
@@ -65,12 +67,19 @@ const Card = (props) => {
 
     const createSubdomainEntry = () => {
         // create a new entry in subdomains
-        const create = async () => {
+        const create = async (port) => {
             try {
                 const created = await pb.collection("subdomains").create({ projectId, port, name: subdomain })
-                console.log("create subdomain>>>", created);
+                console.log("SUBDOMAIN CREATED", created);
+                const res = await fetch(
+                    `/api/subdomain?link=${link}&id=${id}&projectId=${projectId}&subdomain=${subdomain}&port=${port}`
+                );
+                const data = await res.json();
+                console.log("SUBDOMAIN CREATED", data);
+                return port
             } catch (e) {
                 console.log("ERROR CREATING SUBDOMAIN", e)
+                return false
             }
         };
 
@@ -81,13 +90,16 @@ const Card = (props) => {
             try {
                 const portExists = await pb.collection('subdomains').getFirstListItem(`port = ${port}`);
                 console.log(portExists)
+                return false
             } catch (e) {
                 // if exists, generate again
                 // else create a new entry in subdomains
-                console.log("DOMAIN DOES NOT EXIST", e)
-                create()
+                console.log("SUBDOMAIN DOES NOT EXIST, CREATING NEW", e)
+                create(port)
             }
         }
+
+
         exists()
     }
 
@@ -113,7 +125,7 @@ const Card = (props) => {
                     <button onClick={startProject} className="btn btn-accent btn-xs">
                         START
                     </button>
-                    <button onClick={subd} className="btn btn-accent btn-xs">
+                    <button onClick={createSubdomainEntry} className="btn btn-accent btn-xs">
                         SUBDOMAIN
                     </button>
                 </div>
