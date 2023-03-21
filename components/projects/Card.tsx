@@ -41,16 +41,27 @@ const Card = (props) => {
         console.log(data);
     };
     const buildDependencies = async () => {
+        setIsLoading(true)
         const res = await fetch(
             `/api/build?link=${link}&id=${id}&projectId=${projectId}`
         );
+        if (res) {
+            setIsLoading(false)
+        }
 
         const data = await res.json();
         console.log("build", data);
     };
     const startProject = async () => {
+        const getPort = await pb.collection("subdomains").getFullList({
+            sort: "-created",
+            projectId: projectId,
+        });
+        console.log("DEV PORT", getPort[0].port);
+
+        const port = getPort[0].port;
         const res = await fetch(
-            `/api/start?link=${link}&id=${id}&projectId=${projectId}`
+            `/api/start?link=${link}&id=${id}&projectId=${projectId}&port=${port}`
         );
         const data = await res.json();
         console.log(data);
@@ -177,9 +188,21 @@ const Card = (props) => {
                         </button>
                         <button
                             onClick={installDependencies}
-                            className={`btn btn-secondary btn-xs ${isLoading && "loading"}`}
+                            className={`btn btn-secondary btn-xs`}
                         >
                             INSTALL
+                        </button>
+                        <button
+                            onClick={buildDependencies}
+                            className={`btn btn-secondary btn-xs`}
+                        >
+                            BUILD
+                        </button>
+                        <button
+                            onClick={startProject}
+                            className={`btn btn-secondary btn-xs`}
+                        >
+                            START
                         </button>
                         <button
                             onClick={createSubdomainEntry}

@@ -21,23 +21,28 @@ export default function handler(
 ) {
   const { link, id = 1, projectId = 1, port = 30 } = req.query;
   console.log("repoLink: ", link);
-  const portNum = 3008;
+  // const portNum = 3008;
 
   const dir = "/home/shubham/Code/monorepo/apps";
 
   const gitCloneCmd = `git clone ${link} ${dir}/${id}/${projectId}`;
 
   // Start the project
-  log(chalk.bgYellow("Starting project on port >> ", portNum));
+  log(chalk.bgYellow("Starting project on port >> ", port));
   executeCommand(`pwd`).then((output) => {
     console.log(output.stdout);
   });
 
   executeCommand(
-    `cd ${dir}/${id}/${projectId} && PORT=${portNum} pnpm run start &`
+    `cd ${dir}/${id}/${projectId} && yarn start -- -p ${port} \&`
   ).then((output) => {
     log(chalk.red("EXIT ", output.stdout, output.stderr));
   });
+  // executeCommand(
+  //   `cd ${dir}/${id}/${projectId} && PORT=${portNum} pnpm run start &`
+  // ).then((output) => {
+  //   log(chalk.red("EXIT ", output.stdout, output.stderr));
+  // });
 
   res.status(200).json({ name: "John Doe" });
 }

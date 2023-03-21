@@ -25,8 +25,8 @@ export default function handler(
 
   const dir = "/home/shubham/Code/monorepo/apps";
 
-  console.log("APP IS devING >>>>>");
-  executeCommandChild('cd', [`${dir}/${id}/${projectId}`, `&&`, `pnpm run dev`, '--', '-p', port])
+  console.log("npm Development started >>>>>");
+  executeCommandChild('cd', [`${dir}/${id}/${projectId}`, `&&`, `yarn dev`, '--', '-p', port])
     .then((output) => {
       log(chalk.bgBlue("pnpm dev >> ", output.stdout, output.stderr));
       res.status(200).json({ data: "dev Success!!!!" });
@@ -36,6 +36,19 @@ export default function handler(
       res.status(400).json({ data: "dev failed" });
       log(erB("--------pnpm dev failed---------"));
     });
+
+
+  // console.log("APP IS devING >>>>>");
+  // executeCommandChild('cd', [`${dir}/${id}/${projectId}`, `&&`, `pnpm run dev`, '--', '-p', port])
+  //   .then((output) => {
+  //     log(chalk.bgBlue("pnpm dev >> ", output.stdout, output.stderr));
+  //     res.status(200).json({ data: "dev Success!!!!" });
+  //   })
+  //   // pnpm dev failed
+  //   .catch((err) => {
+  //     res.status(400).json({ data: "dev failed" });
+  //     log(erB("--------pnpm dev failed---------"));
+  //   });
 
 }
 

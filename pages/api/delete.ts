@@ -47,6 +47,8 @@ export default function handler(
                 }).catch(err => {
                     console.error("KILLING FAILED", err)
                 })
+
+            // TODO - delete the folders from /app 
         })
         // pnpm build failed
         .catch((err) => {

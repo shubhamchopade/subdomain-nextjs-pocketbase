@@ -33,14 +33,26 @@ export default function handler(
     // res.status(200).json({ data: "Installation Complete" });
   });
 
-  // Install dependencies using pnpm
-  executeCommand(`cd ${dir}/${id}/${projectId} && pnpm install`)
+  // // Install dependencies using pnpm
+  // executeCommand(`cd ${dir}/${id}/${projectId} && pnpm install`)
+  //   .then((output) => {
+  //     log(chalk.bgMagenta("pnpm installed >> ", output.stdout, output.stderr));
+  //     res.status(200).json({ data: "Installation Complete" });
+  //   })
+  //   .catch((err) => {
+  //     log(erB("--------pnpm install failed---------"));
+  //     res.status(400).json({ data: "Installation Failed" });
+  //   });
+
+
+  // Install dependencies using npm
+  executeCommand(`cd ${dir}/${id}/${projectId} && yarn install`)
     .then((output) => {
-      log(chalk.bgMagenta("pnpm installed >> ", output.stdout, output.stderr));
+      log(chalk.bgMagenta("npm installed >> ", output.stdout, output.stderr));
       res.status(200).json({ data: "Installation Complete" });
     })
     .catch((err) => {
-      log(erB("--------pnpm install failed---------"));
+      log(erB("--------npm install failed---------"));
       res.status(400).json({ data: "Installation Failed" });
     });
 
