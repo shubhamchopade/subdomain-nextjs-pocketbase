@@ -36,7 +36,6 @@ const Dashboard = (
   // console.log(props)
   return (
     <div>
-      <Status />
       <CreateProject auth={props} />
       <ProjectsGrid auth={props} />
     </div>

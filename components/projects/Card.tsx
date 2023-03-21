@@ -3,6 +3,7 @@ import PocketBase from "pocketbase";
 import { generateRandomNumber } from "../utils/build-helpers";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
+import Status from "./Status";
 
 const Card = (props) => {
     const user = props.user;
@@ -179,6 +180,8 @@ const Card = (props) => {
                 <div className="card-body">
                     <h2 className="card-title">{props.project.title}</h2>
                     <p>{props.project.description}</p>
+
+                    <Status project={props.project} />
 
                     <div className="h-5">
 
