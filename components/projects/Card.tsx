@@ -128,13 +128,13 @@ const Card = (props) => {
                 const portExists = await pb
                     .collection("subdomains")
                     .getFirstListItem(`port = ${port}`);
-                console.log(portExists);
+                console.log("portExists", portExists);
                 return false;
             } catch (e) {
                 // if exists, generate again
-                console.log("SUBDOMAIN DOES NOT EXIST, CREATING NEW", e);
+                console.log("Port already in use, assigning new");
                 // else create a new entry in subdomains
-                create(port);
+                return create(port);
             }
         };
 
@@ -144,16 +144,22 @@ const Card = (props) => {
                 const created = await pb
                     .collection("subdomains")
                     .create({ projectId, port, name: subdomain });
-                console.log("SUBDOMAIN CREATED", created);
+                console.log("PK - SUBDOMAIN CREATED", created);
+
+
                 const res = await fetch(
                     `/api/subdomain?link=${link}&id=${id}&projectId=${projectId}&subdomain=${subdomain}&port=${port}`
                 );
                 const data = await res.json();
-                console.log("SUBDOMAIN CREATED", data);
-                toast.success(`Subdomain created ${subdomain}`)
-                return port;
+                console.log("NGNX - .conf file created", data);
+
+
+                toast.success(`CLIent - Subdomain created ${subdomain}`)
+                return res;
+
+
             } catch (e) {
-                console.log("ERROR CREATING SUBDOMAIN", e);
+                console.log("CLIent - ERROR CREATING SUBDOMAIN", e);
                 return false;
             }
         };

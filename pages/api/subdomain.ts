@@ -31,28 +31,35 @@ export default function handler(
   // test -f /etc/resolv.conf && echo "$FILE exists."
 
 
-  executeCommand(
-    `test -f /etc/nginx/conf.d/${subdomain}.techsapien.dev.conf`
-  ).then((output) => {
-    log(chalk.red("NGINX CONFIG EXISTS "));
-    res.status(400).json({ data: "Nginx config exists" });
-  }).catch(e => {
-    log(chalk.redBright("NGINX DOES NOT EXIST "));
-    res.status(200).json({ data: "Nginx DOES NOT EXIST" });
+  // executeCommand(
+  //   `test -f /etc/nginx/conf.d/${subdomain}.techsapien.dev.conf`
+  // ).then((output) => {
+  //   log(chalk.red("NGINX CONFIG ALREADY EXISTS "));
 
-    // Create nginx file using custom script
-    executeCommand(
-      `sh ${scriptLocation} ${subdomain} ${port}`
-    ).then((output) => {
-      log(chalk.blue("Nginx entry created ", output.stdout, output.stderr));
-    }).catch(e => {
-      log(chalk.redBright("Error creating nginx entry, please try again", e));
-    })
+  // }).catch(e => {
+  //   log(chalk.redBright("creating nginx config.. "));
+  //   // // Create nginx file using custom script
+  //   // executeCommandChild(
+  //   //   `sh`, [`${scriptLocation}`, `${subdomain}`, `${port}`]
+  //   // ).then((output) => {
+  //   //   log(chalk.blue("Nginx entry created ", output.stdout, output.stderr));
+  //   //   res.status(200).json({ data: "created nginx entry.." });
+  //   // }).catch(e => {
+  //   //   log(chalk.redBright("Error creating nginx entry, please try again", e));
+  //   // })
+  // })
+
+  // Create nginx file using custom script
+  executeCommand(`sh ${scriptLocation} ${subdomain} ${port}`).then((output) => {
+    log(chalk.blue("Nginx entry created ", output.stdout, output.stderr));
+    res.status(200).json({ data: "created nginx entry.." });
+  }).catch(e => {
+    log(chalk.redBright("Error creating nginx entry, please try again", e));
   })
 
-
-
+  // res.status(400).json({ data: "NGINX SUBDOMAIN END" });
 }
+
 
 const executeCommand = async (cmd) => {
   try {
