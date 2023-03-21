@@ -49,8 +49,18 @@ export default function handler(
   //   // })
   // })
 
+  // // Create nginx file using custom script
+  // executeCommand(`sh ${scriptLocation} ${subdomain} ${port}`).then((output) => {
+  //   log(chalk.blue("Nginx entry created ", output.stdout, output.stderr));
+  //   res.status(200).json({ data: "created nginx entry.." });
+  // }).catch(e => {
+  //   log(chalk.redBright("Error creating nginx entry, please try again", e));
+  // })
+
   // Create nginx file using custom script
-  executeCommand(`sh ${scriptLocation} ${subdomain} ${port}`).then((output) => {
+  executeCommandChild(
+    `sh`, [`${scriptLocation}`, `${subdomain}`, `${port}`]
+  ).then((output) => {
     log(chalk.blue("Nginx entry created ", output.stdout, output.stderr));
     res.status(200).json({ data: "created nginx entry.." });
   }).catch(e => {
