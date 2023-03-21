@@ -1,5 +1,6 @@
 import React from 'react'
 import PocketBase from "pocketbase";
+import { generateRandomNumber } from '../utils/build-helpers';
 
 
 const Card = (props) => {
@@ -33,8 +34,9 @@ const Card = (props) => {
         const res = await fetch(
             `/api/build?link=${link}&id=${id}&projectId=${projectId}`
         );
+
         const data = await res.json();
-        console.log(data);
+        console.log("build", data);
     };
     const startProject = async () => {
         const res = await fetch(
@@ -60,6 +62,42 @@ const Card = (props) => {
 
         register();
     };
+
+    const createSubdomainEntry = () => {
+
+        // create a new entry in subdomains
+        const create = async () => {
+            try {
+                const created = await pb.collection("subdomains").create({ projectId, port, name: subdomain })
+                console.log("create subdomain>>>", created);
+            } catch (e) {
+                console.log("ERROR CREATING SUBDOMAIN", e)
+            }
+
+        };
+
+
+        // Generate a random port number
+        const port = generateRandomNumber()
+        // Check if the ports exists in DB
+        const exists = async () => {
+            try {
+                const portExists = await pb.collection('subdomains').getFirstListItem(`port = ${port}`);
+                console.log(portExists)
+            } catch (e) {
+                // if exists, generate again
+                // else create a new entry in subdomains
+                console.log("DOMAIN DOES NOT EXIST", e)
+                create()
+            }
+        }
+
+        exists()
+
+
+    }
+
+
     return (
         <div><div className="card w-96 bg-base-100 shadow-xl relative">
             <span onClick={handleDelete} className='absolute top-0 right-0 btn btn-xs btn-error'>delete</span>
@@ -81,7 +119,7 @@ const Card = (props) => {
                     <button onClick={startProject} className="btn btn-accent btn-xs">
                         START
                     </button>
-                    <button onClick={subd} className="btn btn-accent btn-xs">
+                    <button onClick={createSubdomainEntry} className="btn btn-accent btn-xs">
                         SUBDOMAIN
                     </button>
                 </div>
