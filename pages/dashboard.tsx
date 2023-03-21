@@ -35,7 +35,6 @@ const Dashboard = (
   // console.log(props)
   return (
     <div>
-      <UserCard name={props.user.name} email={props.user.email} />
       <CreateProject auth={props} />
       <ProjectsGrid auth={props} />
     </div>
