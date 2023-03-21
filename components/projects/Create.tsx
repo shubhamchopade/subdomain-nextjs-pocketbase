@@ -5,6 +5,7 @@ import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { createUser } from "../../components/utils/pocketbase-api-methods";
 import PocketBase from "pocketbase";
+import { useRouter } from "next/router";
 
 const defaultValues = {
     title: "",
@@ -14,6 +15,7 @@ const defaultValues = {
 };
 
 const CreateProject: NextPage<any> = (props): JSX.Element => {
+    const router = useRouter()
 
     const user = props.auth.user
 
@@ -37,6 +39,7 @@ const CreateProject: NextPage<any> = (props): JSX.Element => {
                 const projectCreated = await pb.collection("projects").create({ ...data, userId: user.id })
                 console.log("PROJECT CREATED>>>", projectCreated);
                 toast.success("Project created")
+                router.reload()
             } catch (error) {
                 const errors = error.data.data
                 const keys = Object.keys(errors)
