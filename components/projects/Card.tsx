@@ -45,28 +45,39 @@ const Card = (props) => {
         const data = await res.json();
         console.log(data);
     };
-    const killServerPort = async (port) => {
+    const startDevMode = async () => {
         const res = await fetch(
-            `/api/delete?link=${link}&id=${id}&projectId=${projectId}&port=${port}`
+            `/api/dev?link=${link}&id=${id}&projectId=${projectId}`
         );
         const data = await res.json();
-        console.log(data);
+        console.log("startDevMode >>>>", data);
     };
+
 
     // Get port number for current project
 
     const handleDelete = () => {
         const register = async () => {
             // Kill the port
-            const deleted = await killServerPort(5173)
+
+            const killServerPort = async (port) => {
+                const res = await fetch(
+                    `/api/delete?link=${link}&id=${id}&projectId=${projectId}&port=${port}&subdomain=${subdomain}`
+                );
+                const data = await res.json();
+                console.log(data);
+            };
+            const killedPort = await killServerPort(5173)
 
 
             // Delete nginx config file
+            // const deleteNginxConfig = await deleteNginxConfig()
 
-
+            // console.log(deleteNginxConfig)
+            // delete from pocketbase
             // const deleted = await pb.collection("projects").delete(project.id)
 
-            console.log("delete>>>", deleted);
+            // console.log("delete>>>", deleted);
         };
 
         register();
@@ -131,6 +142,9 @@ const Card = (props) => {
                     </button>
                     <button onClick={createSubdomainEntry} className="btn btn-accent btn-xs">
                         SUBDOMAIN
+                    </button>
+                    <button onClick={startDevMode} className="btn btn-accent btn-xs">
+                        DEV
                     </button>
                 </div>
             </div>
