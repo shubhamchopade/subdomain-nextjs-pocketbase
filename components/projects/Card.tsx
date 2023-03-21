@@ -1,6 +1,6 @@
 import React from 'react'
 import PocketBase from "pocketbase";
-import { generateRandomNumber } from '../utils/build-helpers';
+import { createNginxConf, generateRandomNumber } from '../utils/build-helpers';
 
 
 const Card = (props) => {
@@ -64,7 +64,6 @@ const Card = (props) => {
     };
 
     const createSubdomainEntry = () => {
-
         // create a new entry in subdomains
         const create = async () => {
             try {
@@ -73,9 +72,7 @@ const Card = (props) => {
             } catch (e) {
                 console.log("ERROR CREATING SUBDOMAIN", e)
             }
-
         };
-
 
         // Generate a random port number
         const port = generateRandomNumber()
@@ -91,10 +88,7 @@ const Card = (props) => {
                 create()
             }
         }
-
         exists()
-
-
     }
 
 
@@ -119,7 +113,7 @@ const Card = (props) => {
                     <button onClick={startProject} className="btn btn-accent btn-xs">
                         START
                     </button>
-                    <button onClick={createSubdomainEntry} className="btn btn-accent btn-xs">
+                    <button onClick={subd} className="btn btn-accent btn-xs">
                         SUBDOMAIN
                     </button>
                 </div>

@@ -27,14 +27,29 @@ export default function handler(
 
   const scriptLocation = '/home/shubham/Code/nginx-config/nginxsub.sh'
 
+  // createNginxConf(`/etc/nginx/conf.d/${subdomain}.techsapien.dev.conf`)
+  // test -f /etc/resolv.conf && echo "$FILE exists."
+
 
   executeCommand(
-    `sh ${scriptLocation} ${subdomain} ${portNum}`
+    `test -f /etc/nginx/conf.d/${subdomain}.techsapien.dev.conf`
   ).then((output) => {
-    log(chalk.red("SUBDOMAIN ", output.stdout, output.stderr));
-  });
+    log(chalk.red("NGINX CONFIG EXISTS "));
+    res.status(400).json({ data: "Nginx config exists" });
+  }).catch(e => {
+    log(chalk.redBright("NGINX DOES NOT EXIST "));
+    res.status(200).json({ data: "Nginx DOES NOT EXIST" });
+  })
 
-  res.status(200).json({ name: "John Doe" });
+
+
+
+
+  // executeCommand(
+  //   `sh ${scriptLocation} ${subdomain} ${portNum}`
+  // ).then((output) => {
+  //   log(chalk.red("SUBDOMAIN ", output.stdout, output.stderr));
+  // });
 }
 
 const executeCommand = async (cmd) => {
