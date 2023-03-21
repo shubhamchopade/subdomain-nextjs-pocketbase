@@ -31,18 +31,18 @@ export default function handler(
             log(chalk.bgBlue(`PORT > ${port} - PID >`, pid.stdout));
             res.status(200).json({ data: "lsof" });
 
+            // DELETE config file at nginx
+            executeCommandChild('rm', ['-f', `/etc/nginx/conf.d/${subdomain}.techsapien.dev.conf`])
+                .then((res) => {
+                    log(chalk.bgGreen(`DELETED ${subdomain}.techsapien.dev.conf`, res.stdout));
+                }).catch(e => {
+                    console.error("DELETING nginx/conf.d failed", e)
+                })
+
             // kill the process
             executeCommandChild('kill', ['-9', pid.stdout])
                 .then(output => {
                     log(chalk.bgBlue(`kill > ${output.stdout} -----`));
-
-                    // DELETE config file at nginx
-                    executeCommandChild('rm', ['-f', `/etc/nginx/conf.d/${subdomain}.techsapien.dev.conf`])
-                        .then((res) => {
-                            log(chalk.bgGreen(`DELETED ${subdomain}.techsapien.dev.conf`, res.stdout));
-                        }).catch(e => {
-                            console.error("DELETING nginx/conf.d failed", e)
-                        })
 
                 }).catch(err => {
                     console.error("KILLING FAILED", err)

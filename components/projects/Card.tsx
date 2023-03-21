@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import PocketBase from "pocketbase";
 import { generateRandomNumber } from "../utils/build-helpers";
 import { useRouter } from "next/router";
+import { toast } from "react-toastify";
 
 const Card = (props) => {
     const user = props.user;
@@ -138,6 +139,7 @@ const Card = (props) => {
                 );
                 const data = await res.json();
                 console.log("SUBDOMAIN CREATED", data);
+                toast.success(`Subdomain created ${subdomain}`)
                 return port;
             } catch (e) {
                 console.log("ERROR CREATING SUBDOMAIN", e);
@@ -150,10 +152,10 @@ const Card = (props) => {
 
     return (
         <div>
-            <div className="card w-96 bg-base-200 shadow-xl relative m-4">
+            <div className={`card max-w-xl bg-base-200 shadow-xl relative m-4 ${isLoading && "animate-pulse"}`}>
                 <span
                     onClick={handleDelete}
-                    className="absolute top-0 right-0 btn btn-xs btn-error"
+                    className="absolute top-2 right-2 btn btn-xs btn-square btn-outline btn-error"
                 >
                     x
                 </span>
@@ -175,7 +177,7 @@ const Card = (props) => {
                         </button>
                         <button
                             onClick={installDependencies}
-                            className="btn btn-secondary btn-xs"
+                            className={`btn btn-secondary btn-xs ${isLoading && "loading"}`}
                         >
                             INSTALL
                         </button>
