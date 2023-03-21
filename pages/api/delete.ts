@@ -19,20 +19,31 @@ export default function handler(
     req: NextApiRequest,
     res: NextApiResponse<any>
 ) {
-    const { link, id = 1, projectId = 1, port = 3000 } = req.query;
+    const { link, id = 1, projectId = 1, port = 3000, subdomain } = req.query;
     console.log("repoLink: ", link);
 
     const dir = "/home/shubham/Code/monorepo/apps";
 
     console.log(`DELETING APP at port ${port}`);
+    // Get the process id
     executeCommandChild('lsof', [`-t`, `-i:${port}`])
         .then((pid) => {
             log(chalk.bgBlue(`PORT > ${port} - PID >`, pid.stdout));
             res.status(200).json({ data: "lsof" });
 
+            // kill the process
             executeCommandChild('kill', ['-9', pid.stdout])
                 .then(output => {
-                    log(chalk.bgBlue(`kill > ${pid.stdout} -----`));
+                    log(chalk.bgBlue(`kill > ${output.stdout} -----`));
+
+                    // DELETE config file at nginx
+                    executeCommandChild('rm', ['-f', `/etc/nginx/conf.d/${subdomain}.techsapien.dev.conf`])
+                        .then((res) => {
+                            log(chalk.bgGreen(`DELETED ${subdomain}.techsapien.dev.conf`, res.stdout));
+                        }).catch(e => {
+                            console.error("DELETING nginx/conf.d failed", e)
+                        })
+
                 }).catch(err => {
                     console.error("KILLING FAILED", err)
                 })
@@ -40,7 +51,7 @@ export default function handler(
         // pnpm build failed
         .catch((err) => {
             res.status(400).json({ data: "DELETING APP failed" });
-            log(erB("--------DELETING APP FAILED---------"));
+            log(erB("--------Get the process id FAILED---------"));
         });
 }
 
