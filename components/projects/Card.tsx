@@ -43,7 +43,7 @@ const Card = (props) => {
             `/api/framework?link=${link}&id=${id}&projectId=${projectId}`
         );
         const data = await res.json();
-        console.log("Framework client", data);
+        return data
     }
 
     // Clone repo
@@ -51,23 +51,32 @@ const Card = (props) => {
         setIsLoading(true)
         console.log(status)
 
-        const res = await fetch(
+        const cloneRes = await fetch(
             `/api/clone?link=${link}&id=${id}&projectId=${projectId}`
         );
-        if (res) {
+        if (cloneRes) {
             setIsLoading(false)
         }
 
-        if (res.status == 200) {
+        if (cloneRes.status == 200) {
             if (status) {
-                const res = await pb.collection('projectStatus').update(status.id, {
+                const projectStatusRes = await pb.collection('projectStatus').update(status.id, {
                     cloned: true
                 })
-                console.log(res)
+                console.log(projectStatusRes)
             }
 
-            const res = await getFramework()
-            console.log(res)
+            // Call getFramework() API
+            const framework = await getFramework()
+            console.log(framework)
+
+            if (framework) {
+                const frameworkRes = await pb.collection('projects').update(projectId, {
+                    framework: framework.data
+                })
+                console.log(frameworkRes)
+            }
+
 
         }
 
@@ -77,8 +86,6 @@ const Card = (props) => {
             })
             console.log("cloned", res)
         }
-        const data = await res.json();
-        console.log(data);
     };
 
 
