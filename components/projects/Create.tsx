@@ -90,20 +90,6 @@ const CreateProject: NextPage<any> = (props): JSX.Element => {
             {showCreateProject && <div className="flex justify-center items-center">
                 <FormProvider {...formMethods}>
                     <form className="form-control max-w-xs">
-                        {/* title */}
-                        <label htmlFor="title">title</label>
-                        <input
-                            {...register("title", { required: true })}
-                            type="text"
-                            className="input input-bordered w-full max-w-xs"
-                        />
-                        {/* description */}
-                        <label htmlFor="description">description</label>
-                        <input
-                            {...register("description", { required: true })}
-                            type="description"
-                            className="input input-bordered w-full max-w-xs"
-                        />
                         {/* link */}
                         <label htmlFor="link">link</label>
                         <input
@@ -118,6 +104,21 @@ const CreateProject: NextPage<any> = (props): JSX.Element => {
                             type="subdomain"
                             className="input input-bordered w-full max-w-xs"
                         />
+                        {/* title */}
+                        <label htmlFor="title">title</label>
+                        <input
+                            {...register("title", { required: true })}
+                            type="text"
+                            className="input input-bordered w-full max-w-xs"
+                        />
+                        {/* description */}
+                        <label htmlFor="description">description</label>
+                        <input
+                            {...register("description", { required: true })}
+                            type="description"
+                            className="input input-bordered w-full max-w-xs"
+                        />
+
 
                         <button
                             type="submit"
