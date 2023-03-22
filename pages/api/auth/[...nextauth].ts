@@ -17,48 +17,48 @@ export const authOptions: NextAuthOptions = {
       clientId: process.env.NEXT_PUBLIC_GITHUB_ID || "",
       clientSecret: process.env.NEXT_PUBLIC_GITHUB_SECRET || "",
     }),
-    CredentialsProvider({
-      type: "credentials",
-      credentials: {
-        username: {
-          label: "Username",
-          type: "text",
-          placeholder: "jsmith",
-          value: "",
-        },
-        password: { label: "Password", type: "password", value: "" },
-      },
-      // @ts-ignore
-      async authorize(credentials, req) {
-        const authResponse = await authWithPassword({
-          identity: credentials.username,
-          password: credentials.password,
-        });
+    // CredentialsProvider({
+    //   type: "credentials",
+    //   credentials: {
+    //     username: {
+    //       label: "Username",
+    //       type: "text",
+    //       placeholder: "jsmith",
+    //       value: "",
+    //     },
+    //     password: { label: "Password", type: "password", value: "" },
+    //   },
+    //   // @ts-ignore
+    //   async authorize(credentials, req) {
+    //     const authResponse = await authWithPassword({
+    //       identity: credentials.username,
+    //       password: credentials.password,
+    //     });
 
-        const json = await authResponse.json();
-        // console.log("AUTH______________", json);
+    //     const json = await authResponse.json();
+    //     // console.log("AUTH______________", json);
 
-        if (authResponse.ok) {
-          return { data: json.record, token: json.token };
-        }
+    //     if (authResponse.ok) {
+    //       return { data: json.record, token: json.token };
+    //     }
 
-        return null;
-      },
-    }),
+    //     return null;
+    //   },
+    // }),
   ],
-  pages: { signIn: "/auth/signin" },
+  pages: { signIn: "/" },
   callbacks: {
-    async jwt({ token, user, profile }) {
-      if (user) {
-        token.user = user.data;
-        token.token = user.token;
-        // console.log("JWT______________", token);
-        // 2 hrs to expire
-      }
-      return token;
-    },
+    // async jwt({ token, user, profile }) {
+    //   if (user) {
+    //     token.user = user.data;
+    //     token.token = user.token;
+    //     // console.log("JWT______________", token);
+    //     // 2 hrs to expire
+    //   }
+    //   return token;
+    // },
     async session({ session, token }) {
-      // console.log("Token______________", token);
+      console.log("Token______________", token);
       session.user = token.user;
       session.token = token.token;
       return session;

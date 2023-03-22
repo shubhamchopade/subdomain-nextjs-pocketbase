@@ -59,6 +59,7 @@ export async function authWithOauth2(props: authWithOauth2): Promise<any> {
     }
   );
   const login = await res.json();
+  console.log("LOGGING in", login)
   return login;
 }
 

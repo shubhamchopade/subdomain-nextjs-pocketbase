@@ -4,7 +4,7 @@ import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 
-interface Props {}
+interface Props { }
 interface UserInfo {
   username: string;
   password: string;
@@ -57,6 +57,7 @@ const Login: NextPage<Props> = (props): JSX.Element => {
     <div>
       <h1 className="text-center text-2xl font-bold mb-12 mt-4">Login</h1>
       <div className="flex justify-center items-center">
+        <button className="btn btn-ghost">Github Provider</button>
         <FormProvider {...formMethods}>
           <form className="form-control max-w-xs">
             {/* EMAIL */}

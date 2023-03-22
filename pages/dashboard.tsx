@@ -65,11 +65,13 @@ export const getServerSideProps: GetServerSideProps<any> = async (context) => {
     console.log(e);
   }
 
+  console.log(session)
+
   if (session) {
     return {
       props: {
-        user: session.user,
-        token: session.token,
+        // user: session?.user,
+        // token: session?.token,
         posts,
       },
     };

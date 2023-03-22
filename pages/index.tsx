@@ -1,3 +1,4 @@
+'use-client'
 import {
   GetServerSideProps,
   GetServerSidePropsContext,
@@ -11,7 +12,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { Octokit } from "octokit";
-import pocketbaseEs from "pocketbase";
+import PocketBase from "pocketbase";
 import { useEffect, useState } from "react";
 import {
   authWithOauth2,
@@ -21,6 +22,12 @@ import {
 import { useAuthState } from "../store/authState";
 import styles from "../styles/Home.module.css";
 import { authOptions } from "./api/auth/[...nextauth]";
+
+const Demo = () => (
+  <NewWindow>
+    <h1>Hi 👋</h1>
+  </NewWindow>
+)
 
 type User = {
   expires: string;
@@ -58,8 +65,55 @@ const Home = (
   const { callbackUrl } = useRouter().query;
   const authState = useAuthState();
 
+  const items = props?.posts?.items;
+  const user = props?.auth?.user;
+
+
+
+
+  const [githubAuth, setGithubAuth] = useState(null);
+
+  // console.log(callbackUrl)
+
+
+
+  const authUrl = props?.methods?.authProviders[0]?.authUrl;
+  const codeVerifier = props?.methods?.authProviders[0]?.codeVerifier;
+  const name = props?.methods?.authProviders[0]?.name;
+  const pb = new PocketBase('https://pocketbase.techsapien.dev');
+  const code = router?.query?.code
+
+  console.log("authUrl", authUrl)
+
+
   useEffect(() => {
-    console.log(props);
+    const isSignedIn = localStorage.getItem("userGithub")
+    if (!isSignedIn && authUrl && !router.query.code && !githubAuth) {
+      router.replace(authUrl)
+      localStorage.removeItem("userGithub")
+    } else {
+      signIn();
+    }
+
+    async function signIn() {
+      const code = router?.query?.code?.toString();
+      try {
+        if (router.query.code && authUrl && !githubAuth) {
+          const authData = await pb.collection('users').authWithOAuth2(
+            name,
+            code,
+            codeVerifier,
+            "https://pkfr.techsapien.dev/dashboard",
+          );
+          console.log(authData)
+          // setGithubAuth(authData)
+          localStorage.setItem("userGithub", authData)
+          //  save the user metadata to db
+        }
+      } catch (e) {
+        console.log(e)
+      }
+    }
   }, []);
 
   return (
@@ -71,7 +125,6 @@ const Home = (
             <p className="py-6">
               We are powered with ultimate build power!
             </p>
-            <button className="btn btn-primary">Get Started</button>
           </div>
         </div>
       </div>
@@ -110,11 +163,14 @@ export const getServerSideProps: GetServerSideProps<any> = async (context) => {
     console.log(e);
   }
 
+  console.log("GITHUB", session)
+
   if (session) {
     return {
       props: {
-        user: session.user,
-        token: session.token,
+        methods
+        // user: session?.user,
+        // token: session?.token,
       },
     };
   }
