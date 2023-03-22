@@ -67,7 +67,7 @@ const CreateProject: NextPage<any> = (props): JSX.Element => {
                 }
                 // console.log("Project created res", projectCreated)
                 toast.success("Project created")
-                // router.reload()
+                router.reload()
             } catch (error) {
                 const errors = error.data.data
                 const keys = Object.keys(errors)

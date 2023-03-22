@@ -27,16 +27,20 @@ export default function handler(
 
   const gitCloneCmd = `git clone ${link} ${dir}/${id}/${projectId}`;
 
+  try {
+    executeCommand(`git clone ${link} ${dir}/${id}/${projectId}`).then(
+      (childRes) => {
+        log(chalk.bgGreen(`Repo cloned ${link} >> `, childRes.stderr));
+        res.status(200).json({ data: `Repo cloned ${link} >> ` });
+      }
+    ).catch((err) => {
+      log(erB("--------git clone failed---------"));
+      res.status(400).json({ data: `git clone failed` });
+    });
 
-  executeCommand(`git clone ${link} ${dir}/${id}/${projectId}`).then(
-    (childRes) => {
-      log(chalk.bgGreen(`Repo cloned ${link} >> `, childRes.stderr));
-      res.status(200).json({ data: `Repo cloned ${link} >> ` });
-    }
-  ).catch((err) => {
-    log(erB("--------git clone failed---------"));
-    res.status(400).json({ data: `git clone failed` });
-  });
+  } catch (e) {
+    console.error(e)
+  }
 
 
 }

@@ -26,7 +26,7 @@ const Card = (props) => {
                 const statusExists = await pb
                     .collection("projectStatus")
                     .getFullList({ projectId: projectId }, { $autoCancel: false })
-                console.log(statusExists[0])
+                // console.log(statusExists[0])
                 setStatus(statusExists[0])
                 return statusExists[0]
             } catch (e) {
@@ -36,6 +36,15 @@ const Card = (props) => {
         };
         getStatusId()
     }, [])
+
+    // Get the framework
+    const getFramework = async () => {
+        const res = await fetch(
+            `/api/framework?link=${link}&id=${id}&projectId=${projectId}`
+        );
+        const data = await res.json();
+        console.log("Framework client", data);
+    }
 
     // Clone repo
     const cloneRepo = async () => {
@@ -56,6 +65,10 @@ const Card = (props) => {
                 })
                 console.log(res)
             }
+
+            const res = await getFramework()
+            console.log(res)
+
         }
 
         if (status) {
@@ -67,6 +80,8 @@ const Card = (props) => {
         const data = await res.json();
         console.log(data);
     };
+
+
 
     // Install dependencies
     const installDependencies = async () => {

@@ -9,15 +9,20 @@ const Status = (props) => {
     const [status, setStatus] = React.useState(props?.status)
     const statusId = props?.status?.id
 
-    console.log(props)
+    // console.log(props)
 
     useEffect(() => {
 
+        try {
+            pb.collection('projectStatus').subscribe(statusId, function (e) {
+                // console.log(e.record);
+                setStatus(e.record)
+            });
+        } catch (e) {
+            console.error(e)
+        }
         // getStatusId()
-        pb.collection('projectStatus').subscribe(statusId, function (e) {
-            console.log(e.record);
-            setStatus(e.record)
-        });
+
 
     }, [statusId])
 
