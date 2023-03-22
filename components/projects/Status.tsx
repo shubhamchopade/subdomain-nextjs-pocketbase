@@ -6,51 +6,20 @@ import Card from './Card';
 
 const Status = (props) => {
     const pb = new PocketBase('https://pocketbase.techsapien.dev');
-    const [status, setStatus] = React.useState({})
-    const statusId = status?.id
+    const [status, setStatus] = React.useState(props?.status)
+    const statusId = props?.status?.id
 
-    // const user = props.auth.user
-    const projectId = props.project.id
-
-
-
-    // get record id for this project status collection
-    const getStatusId = async () => {
-        try {
-            const statusExists = await pb
-                .collection("projectStatus")
-                .getFullList({ projectId: projectId }, { $autoCancel: false })
-            setStatus(statusExists[0])
-            console.log(statusExists[0])
-        } catch (e) {
-            console.error("statusExists error");
-        }
-    };
-
-    console.log(statusId)
-
-
-
+    console.log(props)
 
     useEffect(() => {
 
-        getStatusId()
-
-
-        if (statusId) {
-
-            pb.collection('projectStatus').subscribe(statusId, function (e) {
-                console.log(e.record);
-                setStatus(e.record)
-            });
-        }
-
-
+        // getStatusId()
+        pb.collection('projectStatus').subscribe(statusId, function (e) {
+            console.log(e.record);
+            setStatus(e.record)
+        });
 
     }, [statusId])
-
-
-
 
 
     return (

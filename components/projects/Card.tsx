@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PocketBase from "pocketbase";
 import { generateRandomNumber } from "../utils/build-helpers";
 import { useRouter } from "next/router";
@@ -15,17 +15,54 @@ const Card = (props) => {
     const link = project.link;
     const subdomain = project.subdomain;
     const [isLoading, setIsLoading] = useState(false)
+    const [status, setStatus] = useState(null)
 
     const pb = new PocketBase("https://pocketbase.techsapien.dev");
+
+    // get id for this project status collection
+    useEffect(() => {
+        const getStatusId = async () => {
+            try {
+                const statusExists = await pb
+                    .collection("projectStatus")
+                    .getFullList({ projectId: projectId }, { $autoCancel: false })
+                console.log(statusExists[0])
+                setStatus(statusExists[0])
+                return statusExists[0]
+            } catch (e) {
+                console.error("statusExists error");
+                return null
+            }
+        };
+        getStatusId()
+    }, [])
 
     // console.log(props)
     const cloneRepo = async () => {
         setIsLoading(true)
+        console.log(status)
+
         const res = await fetch(
             `/api/clone?link=${link}&id=${id}&projectId=${projectId}`
         );
         if (res) {
             setIsLoading(false)
+        }
+
+        if (res.status == 200) {
+            if (status) {
+                const res = await pb.collection('projectStatus').update(status.id, {
+                    cloned: true
+                })
+                console.log(res)
+            }
+        }
+
+        if (status) {
+            const res = await pb.collection('projectStatus').update(status.id, {
+                cloned: true
+            })
+            console.log(res)
         }
         const data = await res.json();
         console.log(data);
@@ -181,7 +218,7 @@ const Card = (props) => {
                     <h2 className="card-title">{props.project.title}</h2>
                     <p>{props.project.description}</p>
 
-                    <Status project={props.project} />
+                    {status && <Status status={status} />}
 
                     <div className="h-5">
 
