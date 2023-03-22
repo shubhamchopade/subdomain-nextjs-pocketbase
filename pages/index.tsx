@@ -23,11 +23,6 @@ import { useAuthState } from "../store/authState";
 import styles from "../styles/Home.module.css";
 import { authOptions } from "./api/auth/[...nextauth]";
 
-const Demo = () => (
-  <NewWindow>
-    <h1>Hi 👋</h1>
-  </NewWindow>
-)
 
 type User = {
   expires: string;
@@ -73,7 +68,7 @@ const Home = (
 
   const [githubAuth, setGithubAuth] = useState(null);
 
-  // console.log(callbackUrl)
+  console.log(props)
 
 
 
@@ -83,12 +78,11 @@ const Home = (
   const pb = new PocketBase('https://pocketbase.techsapien.dev');
   const code = router?.query?.code
 
-  console.log("authUrl", authUrl)
+  // console.log("authUrl", authUrl)
 
 
   useEffect(() => {
-    const isSignedIn = localStorage.getItem("userGithub")
-    if (!isSignedIn && authUrl && !router.query.code && !githubAuth) {
+    if (authUrl && !router.query.code && !githubAuth) {
       router.replace(authUrl)
       localStorage.removeItem("userGithub")
     } else {
@@ -105,10 +99,23 @@ const Home = (
             codeVerifier,
             "https://pkfr.techsapien.dev/dashboard",
           );
-          console.log(authData)
+
+          if (authData) {
+            const data = {
+              "accessToken": authData?.meta?.accessToken,
+              "name": authData?.meta?.name,
+              "username": authData?.meta?.username,
+              "userId": authData?.record?.id
+            };
+
+            const record = await pb.collection('githubUserMeta').create(data);
+            console.log(record)
+          }
+
           // setGithubAuth(authData)
-          localStorage.setItem("userGithub", authData)
           //  save the user metadata to db
+          // get id from record.id and rest from meta
+
         }
       } catch (e) {
         console.log(e)
@@ -157,7 +164,7 @@ export const getServerSideProps: GetServerSideProps<any> = async (context) => {
       context.res,
       authOptions
     );
-    console.log("GSSR ---------------", sessionRes.user);
+    console.log("GSSR ---------------", sessionRes);
     session = sessionRes;
   } catch (e) {
     console.log(e);
@@ -168,8 +175,8 @@ export const getServerSideProps: GetServerSideProps<any> = async (context) => {
   if (session) {
     return {
       props: {
-        methods
-        // user: session?.user,
+        methods,
+        user: session?.user,
         // token: session?.token,
       },
     };

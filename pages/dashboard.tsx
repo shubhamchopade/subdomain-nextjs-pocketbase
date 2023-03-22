@@ -33,7 +33,7 @@ type Post = {
 const Dashboard = (
   props: InferGetServerSidePropsType<typeof getServerSideProps>
 ) => {
-  // console.log(props)
+  console.log(props)
   return (
     <div>
       <CreateProject auth={props} />
@@ -70,7 +70,7 @@ export const getServerSideProps: GetServerSideProps<any> = async (context) => {
   if (session) {
     return {
       props: {
-        // user: session?.user,
+        user: session?.user,
         // token: session?.token,
         posts,
       },

@@ -57,10 +57,18 @@ export const authOptions: NextAuthOptions = {
     //   }
     //   return token;
     // },
+    // async jwt({ token, user, profile }) {
+    //   if (user) {
+    //     token.user = user.data;
+    //     token.token = user.token;
+    //     // console.log("JWT______________", token);
+    //     // 2 hrs to expire
+    //   }
+    //   return token;
+    // },
     async session({ session, token }) {
-      console.log("Token______________", token);
-      session.user = token.user;
-      session.token = token.token;
+      // console.log("Token______________", token);
+      session.user = token;
       return session;
     },
     // async redirect(params: { url: string }) {

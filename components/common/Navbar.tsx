@@ -9,7 +9,7 @@ const Navbar = () => {
   const [userData, setUserData] = useState({})
   const authState = useAuthState();
 
-  console.log(authState)
+  // console.log(authState)
 
   const handleSignin = async () => {
     signIn("github", {

@@ -29,7 +29,7 @@ const CreateProject: NextPage<any> = (props): JSX.Element => {
     const router = useRouter()
     const [showCreateProject, setShowCreateProject] = useState(false)
 
-    const user = props.auth.user
+    const user = props?.auth?.user
 
     // console.log(user)
     const formMethods = useForm<any>({
