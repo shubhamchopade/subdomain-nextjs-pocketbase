@@ -151,7 +151,8 @@ const Card = (props) => {
         if (res.status == 200) {
             if (status) {
                 const res = await pb.collection('projectStatus').update(status.id, {
-                    isOnline: true
+                    isOnline: true,
+                    stopped: false
                 })
                 console.log("isOnline", res)
             }
@@ -159,6 +160,42 @@ const Card = (props) => {
         const data = await res.json();
         console.log(data);
     };
+
+    // Stop the project
+    const stopProject = () => {
+
+        const stopProjectCallback = async () => {
+            // Kill the port
+            const getPort = await pb.collection("subdomains").getFullList({
+                sort: "-created",
+                projectId: projectId,
+            });
+            const port = getPort[0]?.port;
+            console.log("ACTIVE PORT =", port);
+
+            if (port && status) {
+                const killServerPort = async (port) => {
+                    const res = await fetch(
+                        `/api/delete?link=${link}&id=${id}&projectId=${projectId}&port=${port}&subdomain=${subdomain}`
+                    );
+                    const data = await res.json();
+                    console.log(data);
+                };
+                const killedPort = await killServerPort(port);
+                console.log("killedPort STOP", killedPort);
+
+
+                const projectStatusRes = await pb.collection('projectStatus').update(status.id, {
+                    stopped: true,
+                    isOnline: false
+                })
+                console.log("PK - STOP", projectStatusRes)
+
+            }
+        }
+
+        stopProjectCallback()
+    }
 
     // Start dev mode
     const startDevMode = async () => {
@@ -182,7 +219,6 @@ const Card = (props) => {
     const handleDelete = () => {
         const register = async () => {
             // Kill the port
-
             const getPort = await pb.collection("subdomains").getFullList({
                 sort: "-created",
                 projectId: projectId,
@@ -313,6 +349,12 @@ const Card = (props) => {
                             className={`btn btn-outline btn-xs`}
                         >
                             START
+                        </button>
+                        <button
+                            onClick={stopProject}
+                            className={`btn btn-outline btn-xs`}
+                        >
+                            STOP
                         </button>
 
                         <button onClick={startDevMode} className="btn btn-outline btn-xs">
