@@ -37,7 +37,7 @@ const Card = (props) => {
         getStatusId()
     }, [])
 
-    // console.log(props)
+    // Clone repo
     const cloneRepo = async () => {
         setIsLoading(true)
         console.log(status)
@@ -62,11 +62,13 @@ const Card = (props) => {
             const res = await pb.collection('projectStatus').update(status.id, {
                 cloned: true
             })
-            console.log(res)
+            console.log("cloned", res)
         }
         const data = await res.json();
         console.log(data);
     };
+
+    // Install dependencies
     const installDependencies = async () => {
         setIsLoading(true)
         const res = await fetch(
@@ -75,9 +77,20 @@ const Card = (props) => {
         if (res) {
             setIsLoading(false)
         }
+        if (res.status == 200) {
+            if (status) {
+                const res = await pb.collection('projectStatus').update(status.id, {
+                    installed: true
+                })
+                console.log("Installed", res)
+            }
+        }
+
         const data = await res.json();
         console.log(data);
     };
+
+    // Build dependencies
     const buildDependencies = async () => {
         setIsLoading(true)
         const res = await fetch(
@@ -87,9 +100,20 @@ const Card = (props) => {
             setIsLoading(false)
         }
 
+        if (res.status == 200) {
+            if (status) {
+                const res = await pb.collection('projectStatus').update(status.id, {
+                    built: true
+                })
+                console.log("built", res)
+            }
+        }
+
         const data = await res.json();
         console.log("build", data);
     };
+
+    // Start project
     const startProject = async () => {
         const getPort = await pb.collection("subdomains").getFullList({
             sort: "-created",
@@ -101,9 +125,20 @@ const Card = (props) => {
         const res = await fetch(
             `/api/start?link=${link}&id=${id}&projectId=${projectId}&port=${port}`
         );
+
+        if (res.status == 200) {
+            if (status) {
+                const res = await pb.collection('projectStatus').update(status.id, {
+                    isOnline: true
+                })
+                console.log("isOnline", res)
+            }
+        }
         const data = await res.json();
         console.log(data);
     };
+
+    // Start dev mode
     const startDevMode = async () => {
         // Get the port from API
 
@@ -143,6 +178,7 @@ const Card = (props) => {
                 };
                 const killedPort = await killServerPort(port);
                 console.log("killedPort", killedPort);
+
             }
 
             // delete from pocketbase
@@ -229,33 +265,34 @@ const Card = (props) => {
                     <a href={`https://${props.project.subdomain}.techsapien.dev`} className="link my-2 ml-auto">{props.project.subdomain}.techsapien.dev</a>
 
                     <div className="card-actions">
-                        <button onClick={cloneRepo} className="btn btn-primary text-xs btn-xs">
+                        <button onClick={cloneRepo} className="btn btn-outline text-xs btn-xs">
                             CLONE
                         </button>
                         <button
                             onClick={installDependencies}
-                            className={`btn btn-secondary btn-xs`}
+                            className={`btn btn-outline btn-xs`}
                         >
                             INSTALL
                         </button>
                         <button
                             onClick={buildDependencies}
-                            className={`btn btn-secondary btn-xs`}
+                            className={`btn btn-outline btn-xs`}
                         >
                             BUILD
                         </button>
                         <button
-                            onClick={startProject}
-                            className={`btn btn-secondary btn-xs`}
-                        >
-                            START
-                        </button>
-                        <button
                             onClick={createSubdomainEntry}
-                            className="btn btn-accent btn-xs"
+                            className="btn btn-outline btn-xs"
                         >
                             SUBDOMAIN
                         </button>
+                        <button
+                            onClick={startProject}
+                            className={`btn btn-outline btn-xs`}
+                        >
+                            START
+                        </button>
+
                         <button onClick={startDevMode} className="btn btn-outline btn-xs">
                             DEV
                         </button>
