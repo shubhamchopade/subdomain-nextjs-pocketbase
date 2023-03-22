@@ -6,11 +6,9 @@ import { toast } from "react-toastify";
 import Status from "./Status";
 
 const Card = (props) => {
-    const user = props.user;
     const project = props.project;
-
     const router = useRouter()
-    const id = user.id;
+    const id = props.userId;
     const projectId = project.id;
     const link = project.link;
     const subdomain = project.subdomain;

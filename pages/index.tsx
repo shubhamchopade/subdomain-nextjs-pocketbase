@@ -141,18 +141,12 @@ const Home = (
 
 export default Home;
 
-const getPosts = async () => {
-  const res = await fetch(
-    "https://pocketbase.techsapien.dev/api/collections/blogs/records"
-  );
-  const posts = await res.json();
-  return posts;
-};
 
 export const getServerSideProps: GetServerSideProps<any> = async (context) => {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API}/api/collections/blogs/records`
   );
+
 
   const methods = await listAuthMethods();
   const posts: Posts = await res.json();

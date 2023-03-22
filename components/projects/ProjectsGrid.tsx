@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import PocketBase from 'pocketbase'
 import Card from './Card';
 
@@ -7,13 +7,19 @@ import Card from './Card';
 const ProjectsGrid = (props) => {
     const pb = new PocketBase('https://pocketbase.techsapien.dev');
     const [allProjects, setAllProjects] = React.useState([])
+    const [_userId, setUserId] = useState("")
 
-    const user = props?.auth?.user
+    // const user = props?.auth?.user
+
 
     useEffect(() => {
+        const auth = localStorage.getItem("pocketbase_auth")
+        const json = JSON.parse(auth)
+        const userId = json?.model?.id
+        setUserId(userId)
         const getProjects = async () => {
             const records = await pb.collection('projects').getFullList({
-                userId: user?.id
+                userId
             }, { $autoCancel: false });
             setAllProjects(records)
             // console.log(records)
@@ -24,7 +30,7 @@ const ProjectsGrid = (props) => {
 
     return (
         <div className='flex flex-wrap'>{allProjects && allProjects.map(project => (
-            <Card user={user} key={project.id} project={project} />
+            <Card userId={_userId} key={project.id} project={project} />
         ))}</div>
     )
 }
