@@ -29,7 +29,7 @@ const CreateProject: NextPage<any> = (props): JSX.Element => {
     const router = useRouter()
     const [showCreateProject, setShowCreateProject] = useState(false)
 
-    const user = props.auth.user
+    const user = props?.auth?.user
 
     // console.log(user)
     const formMethods = useForm<any>({
@@ -46,33 +46,38 @@ const CreateProject: NextPage<any> = (props): JSX.Element => {
     } = formMethods;
 
     const onSubmit: SubmitHandler<any> = (data) => {
+        const auth = localStorage.getItem("pocketbase_auth")
+        const json = JSON.parse(auth)
+        const userId = json?.model?.id
         const register = async () => {
-            try {
-                // Create project
-                const projectCreated = await pb.collection("projects").create({ ...data, userId: user.id })
-                // Create project status
-                if (projectCreated.id) {
-                    const projectStatus = await pb.collection('projectStatus').create({
-                        "projectId": projectCreated.id,
-                        "cloned": false,
-                        "installed": false,
-                        "built": false,
-                        "isOnline": false,
-                        "stopped": false,
-                        "current": "init"
-                    }, {
-                        "projectId": projectCreated.id
-                    });
-                    console.log("projectStatus res", projectStatus)
+            if (userId)
+                try {
+                    // Create project
+                    const projectCreated = await pb.collection("projects").create({ ...data, userId })
+                    // Create project status
+                    if (projectCreated.id) {
+                        const projectStatus = await pb.collection('projectStatus').create({
+                            "projectId": projectCreated.id,
+                            "cloned": false,
+                            "installed": false,
+                            "built": false,
+                            "isOnline": false,
+                            "stopped": false,
+                            "current": "init"
+                        }, {
+                            "projectId": projectCreated.id
+                        });
+                        console.log("projectStatus res", projectStatus)
+                    }
+                    // console.log("Project created res", projectCreated)
+                    toast.success("Project created")
+                    router.reload()
+                } catch (error) {
+                    console.log(error)
+                    // const errors = error?.data?.data
+                    // const keys = Object.keys(errors)
+                    // keys.map(e => toast.error(errors[e].message))
                 }
-                // console.log("Project created res", projectCreated)
-                toast.success("Project created")
-                router.reload()
-            } catch (error) {
-                const errors = error.data.data
-                const keys = Object.keys(errors)
-                keys.map(e => toast.error(errors[e].message))
-            }
         };
 
         register();
@@ -84,10 +89,9 @@ const CreateProject: NextPage<any> = (props): JSX.Element => {
 
     return (
         <div>
-            <p onClick={handleShowCreateProject} className="btn">
-                Create Project
-            </p>
-            {showCreateProject && <div className="flex justify-center items-center">
+
+            {/* MANUAL ADD PROJECT */}
+            {false && <div className="flex justify-center items-center">
                 <FormProvider {...formMethods}>
                     <form className="form-control max-w-xs">
                         {/* link */}

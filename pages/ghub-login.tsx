@@ -11,7 +11,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { Octokit } from "octokit";
-import pocketbaseEs from "pocketbase";
+import NewWindow from 'react-new-window'
 import { useEffect, useState } from "react";
 import {
   authWithOauth2,
@@ -57,39 +57,43 @@ const Home = (
   const { callbackUrl } = useRouter().query;
   const authState = useAuthState();
 
-  console.log(authState.user, authState.token);
+
 
   const [githubAuth, setGithubAuth] = useState();
+
+
 
   const authUrl = props?.methods?.authProviders[0]?.authUrl;
   const codeVerifier = props?.methods?.authProviders[0]?.codeVerifier;
   const name = props?.methods?.authProviders[0]?.name;
 
+  console.log("authUrl", authUrl)
+
   useEffect(() => {
-    // if (authUrl && !router.query.code) {
-    //   router.push(authUrl);
-    // }
-    // async function signIn() {
-    //   if (router.query.code && authUrl && !githubAuth) {
-    //     const code = router.query.code.toString();
-    //     console.log("code", code);
-    //     const githubAuthData = await authWithOauth2({
-    //       provider: name,
-    //       code,
-    //       codeVerifier,
-    //       redirectUrl: "http://localhost:3000",
-    //     });
-    //     if (githubAuthData?.error) {
-    //       console.log("error", githubAuthData.error);
-    //       return;
-    //     }
-    //     setGithubAuth(githubAuthData);
-    //     authState.setUser(githubAuthData.meta);
-    //     authState.setToken(githubAuthData.token);
-    //     router.push("/");
-    //     console.log("INSIDE -----", githubAuthData);
-    //   }
-    // }
+    if (authUrl && !router.query.code) {
+      router.push(authUrl);
+    }
+    async function signIn() {
+      if (router.query.code && authUrl && !githubAuth) {
+        const code = router.query.code.toString();
+        console.log("code", code);
+        const githubAuthData = await authWithOauth2({
+          provider: name,
+          code,
+          codeVerifier,
+          redirectUrl: "http://localhost:3000",
+        });
+        if (githubAuthData?.error) {
+          console.log("error", githubAuthData.error);
+          return;
+        }
+        setGithubAuth(githubAuthData);
+        authState.setUser(githubAuthData.meta);
+        authState.setToken(githubAuthData.token);
+        // router.push("/");
+        console.log("INSIDE -----", githubAuthData);
+      }
+    }
     // signIn();
   }, []);
 
@@ -100,7 +104,7 @@ const Home = (
     signOut({ redirect: true, callbackUrl: "/" });
   };
 
-  console.log(githubAuth);
+  // console.log(githubAuth);
 
   return (
     <div>
@@ -115,6 +119,7 @@ const Home = (
       ) : (
         <button onClick={handleSignin}>SIGNIN</button>
       )}
+
     </div>
   );
 };
@@ -145,7 +150,7 @@ export const getServerSideProps: GetServerSideProps<{
   if (session) {
     return {
       props: {
-        auth: session,
+        // auth: session,
         posts,
         methods,
       },
@@ -156,3 +161,10 @@ export const getServerSideProps: GetServerSideProps<{
     props: {},
   };
 };
+
+
+const DemoWindow = () => (
+  <NewWindow>
+    <h1>Hi 👋</h1>
+  </NewWindow>
+)

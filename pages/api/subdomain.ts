@@ -25,7 +25,8 @@ export default function handler(
 
   const dir = "/home/shubham/Code/monorepo/apps";
 
-  const scriptLocation = '/home/shubham/Code/nginx-config/nginxsub.sh'
+  // const scriptLocation = '/home/shubham/Code/nginx-config/nginxsub.sh'
+  const scriptLocation = '/home/shubham/Code/nginx-config/nginx-techsapien.sh'
 
   // createNginxConf(`/etc/nginx/conf.d/${subdomain}.techsapien.dev.conf`)
   // test -f /etc/resolv.conf && echo "$FILE exists."
@@ -59,7 +60,7 @@ export default function handler(
 
   // Create nginx file using custom script
   executeCommandChild(
-    `sh`, [`${scriptLocation}`, `${subdomain}`, `${port}`]
+    `sh`, [`${scriptLocation}`, `${subdomain}`, `${port}`, `${id}`]
   ).then((output) => {
     log(chalk.blue("Nginx entry created ", output.stdout, output.stderr));
     res.status(200).json({ data: "created nginx entry.." });

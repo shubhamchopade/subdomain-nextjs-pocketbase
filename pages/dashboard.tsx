@@ -6,8 +6,10 @@ import { ToastContainer } from "react-toastify";
 import UploadForm from "../components/common/UploadForm";
 import UserCard from "../components/common/UserCard";
 import CreateProject from "../components/projects/Create";
+import GithubRepos from "../components/projects/GithubRepos";
 import ProjectsGrid from "../components/projects/ProjectsGrid";
 import Status from "../components/projects/Status";
+import { getRepos } from "../components/utils/build-helpers";
 import { listAuthMethods } from "../components/utils/pocketbase-api-methods";
 import { useAuthState } from "../store/authState";
 import { authOptions } from "./api/auth/[...nextauth]";
@@ -33,10 +35,11 @@ type Post = {
 const Dashboard = (
   props: InferGetServerSidePropsType<typeof getServerSideProps>
 ) => {
-  // console.log(props)
+  console.log(props)
   return (
     <div>
       <CreateProject auth={props} />
+      <GithubRepos />
       <ProjectsGrid auth={props} />
     </div>
   );
@@ -53,23 +56,27 @@ export const getServerSideProps: GetServerSideProps<any> = async (context) => {
   const posts: Posts = await res.json();
   let session = null;
 
+
+
   try {
     const sessionRes = await getServerSession(
       context.req,
       context.res,
       authOptions
     );
-    console.log("GSSR ---------------", sessionRes.user);
+    // console.log("GSSR ---------------", sessionRes.user);
     session = sessionRes;
   } catch (e) {
     console.log(e);
   }
 
+  console.log(session)
+
   if (session) {
     return {
       props: {
-        user: session.user,
-        token: session.token,
+        user: session?.user,
+        // token: session?.token,
         posts,
       },
     };

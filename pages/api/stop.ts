@@ -27,7 +27,6 @@ export default function handler(
     const projectPath = `${dir}/${id}/${projectId}`;
 
     console.log(`DELETING APP at port ${port}`);
-
     // Get the process id
     executeCommandChild('lsof', [`-t`, `-i:${port}`])
         .then((pid) => {
@@ -40,36 +39,15 @@ export default function handler(
                     log(chalk.bgBlue(`kill > ${output.stdout} -----`));
 
                 }).catch(err => {
-                    console.error("killing process failed", err)
+                    console.error("KILLING FAILED", err)
                 })
+
         })
         // pnpm build failed
         .catch((err) => {
-            res.status(400).json({ data: "deleting app failed" });
+            res.status(400).json({ data: "Project is currently inactive" });
             log(erB("--------Get the process id FAILED---------"));
         });
-
-
-
-    // DELETE config file at nginx
-    executeCommandChild('rm', ['-f', `/etc/nginx/conf.d/${subdomain}.techsapien.dev.conf`])
-        .then((res) => {
-            log(chalk.bgGreen(`DELETED ${subdomain}.techsapien.dev.conf`, res.stdout));
-        }).catch(e => {
-            console.error("DELETING nginx/conf.d failed", e)
-        })
-
-
-
-    // TODO - delete the project files from /app 
-    executeCommandChild('rm', ['-rf', projectPath])
-        .then(output => {
-            log(chalk.bgBlue(`delete the project files from /app ${output.stdout} -----`));
-        }).catch(err => {
-            console.error("delete the project files from /app FAILED", err)
-        })
-
-    return res.status(200).json({ data: "Project deleted" })
 }
 
 const executeCommand = async (cmd) => {

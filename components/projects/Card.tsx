@@ -6,11 +6,9 @@ import { toast } from "react-toastify";
 import Status from "./Status";
 
 const Card = (props) => {
-    const user = props.user;
     const project = props.project;
-
     const router = useRouter()
-    const id = user.id;
+    const id = props.userId;
     const projectId = project.id;
     const link = project.link;
     const subdomain = project.subdomain;
@@ -176,7 +174,7 @@ const Card = (props) => {
             if (port && status) {
                 const killServerPort = async (port) => {
                     const res = await fetch(
-                        `/api/delete?link=${link}&id=${id}&projectId=${projectId}&port=${port}&subdomain=${subdomain}`
+                        `/api/stop?link=${link}&id=${id}&projectId=${projectId}&port=${port}&subdomain=${subdomain}`
                     );
                     const data = await res.json();
                     console.log(data);
@@ -224,24 +222,39 @@ const Card = (props) => {
                 projectId: projectId,
             });
             const port = getPort[0]?.port;
-            console.log("DEV PORT", port);
+            console.log("card-handleDelete-port", port);
 
             if (port) {
-                const killServerPort = async (port) => {
+                // First stop then delete
+                // If port then stop and delete
+                // else only delete
+                stopProject()
+
+                const dangerouslyDeleteProject = async (port) => {
                     const res = await fetch(
                         `/api/delete?link=${link}&id=${id}&projectId=${projectId}&port=${port}&subdomain=${subdomain}`
                     );
                     const data = await res.json();
                     console.log(data);
                 };
-                const killedPort = await killServerPort(port);
-                console.log("killedPort", killedPort);
-
+                const stoppedProject = await dangerouslyDeleteProject(port);
+                console.log("stoppedProject", stoppedProject);
+            } else {
+                const dangerouslyDeleteProject = async (port) => {
+                    const res = await fetch(
+                        `/api/delete?link=${link}&id=${id}&projectId=${projectId}&port=${port}&subdomain=${subdomain}`
+                    );
+                    const data = await res.json();
+                    console.log(data);
+                };
+                const stoppedProject = await dangerouslyDeleteProject(port);
+                console.log("stoppedProject", stoppedProject);
             }
 
             // delete from pocketbase
             const deleted = await pb.collection("projects").delete(project.id);
             console.log("deleted from supabase", deleted);
+
 
             if (deleted) {
                 router.reload()

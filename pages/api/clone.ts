@@ -27,8 +27,10 @@ export default function handler(
 
   const gitCloneCmd = `git clone ${link} ${dir}/${id}/${projectId}`;
 
+  // TODO - convert this to child function
+
   try {
-    executeCommand(`git clone ${link} ${dir}/${id}/${projectId}`).then(
+    executeCommandChild(`git`, ['clone', `${link}`, `${dir}/${id}/${projectId}`]).then(
       (childRes) => {
         log(chalk.bgGreen(`Repo cloned ${link} >> `, childRes.stderr));
         res.status(200).json({ data: `Repo cloned ${link} >> ` });

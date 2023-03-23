@@ -1,3 +1,4 @@
+'use-client'
 import {
   GetServerSideProps,
   GetServerSidePropsContext,
@@ -11,7 +12,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { Octokit } from "octokit";
-import pocketbaseEs from "pocketbase";
+import PocketBase from "pocketbase";
 import { useEffect, useState } from "react";
 import {
   authWithOauth2,
@@ -21,6 +22,7 @@ import {
 import { useAuthState } from "../store/authState";
 import styles from "../styles/Home.module.css";
 import { authOptions } from "./api/auth/[...nextauth]";
+
 
 type User = {
   expires: string;
@@ -58,8 +60,67 @@ const Home = (
   const { callbackUrl } = useRouter().query;
   const authState = useAuthState();
 
+  const items = props?.posts?.items;
+  const user = props?.auth?.user;
+
+
+
+
+  const [githubAuth, setGithubAuth] = useState(null);
+
+  // console.log(props)
+
+
+
+  const authUrl = props?.methods?.authProviders[0]?.authUrl;
+  const codeVerifier = props?.methods?.authProviders[0]?.codeVerifier;
+  const name = props?.methods?.authProviders[0]?.name;
+  const pb = new PocketBase('https://pocketbase.techsapien.dev');
+  const code = router?.query?.code
+
+  // console.log("authUrl", authUrl)
+
+
   useEffect(() => {
-    console.log(props);
+    if (authUrl && !router.query.code && !githubAuth) {
+      router.replace(authUrl)
+      localStorage.removeItem("userGithub")
+    } else {
+      signIn();
+    }
+
+    async function signIn() {
+      const code = router?.query?.code?.toString();
+      try {
+        if (router.query.code && authUrl && !githubAuth) {
+          const authData = await pb.collection('users').authWithOAuth2(
+            name,
+            code,
+            codeVerifier,
+            "https://pkfr.techsapien.dev/dashboard",
+          );
+
+          if (authData) {
+            const data = {
+              "accessToken": authData?.meta?.accessToken,
+              "name": authData?.meta?.name,
+              "username": authData?.meta?.username,
+              "userId": authData?.record?.id
+            };
+
+            const record = await pb.collection('githubUserMeta').create(data);
+            console.log(record)
+          }
+
+          // setGithubAuth(authData)
+          //  save the user metadata to db
+          // get id from record.id and rest from meta
+
+        }
+      } catch (e) {
+        console.log(e)
+      }
+    }
   }, []);
 
   return (
@@ -71,7 +132,6 @@ const Home = (
             <p className="py-6">
               We are powered with ultimate build power!
             </p>
-            <button className="btn btn-primary">Get Started</button>
           </div>
         </div>
       </div>
@@ -81,18 +141,12 @@ const Home = (
 
 export default Home;
 
-const getPosts = async () => {
-  const res = await fetch(
-    "https://pocketbase.techsapien.dev/api/collections/blogs/records"
-  );
-  const posts = await res.json();
-  return posts;
-};
 
 export const getServerSideProps: GetServerSideProps<any> = async (context) => {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API}/api/collections/blogs/records`
   );
+
 
   const methods = await listAuthMethods();
   const posts: Posts = await res.json();
@@ -104,17 +158,20 @@ export const getServerSideProps: GetServerSideProps<any> = async (context) => {
       context.res,
       authOptions
     );
-    console.log("GSSR ---------------", sessionRes.user);
+    console.log("GSSR ---------------", sessionRes);
     session = sessionRes;
   } catch (e) {
     console.log(e);
   }
 
+  console.log("GITHUB", session)
+
   if (session) {
     return {
       props: {
-        user: session.user,
-        token: session.token,
+        methods,
+        user: session?.user,
+        // token: session?.token,
       },
     };
   }

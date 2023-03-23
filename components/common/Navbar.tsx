@@ -2,18 +2,25 @@ import { useSession, signIn, signOut } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
+import { useAuthState } from "../../store/authState";
 
 const Navbar = () => {
   const session = useSession();
   const [userData, setUserData] = useState({})
+  const authState = useAuthState();
+
+  // console.log(authState)
 
   const handleSignin = async () => {
-    signIn("credentials", {
-      redirect: true,
-      callbackUrl: "/",
-      username: "",
-      password: "",
+    signIn("github", {
+      redirect: false,
     });
+    // signIn("credentials", {
+    //   redirect: true,
+    //   callbackUrl: "/",
+    //   username: "",
+    //   password: "",
+    // });
   };
   const handleSignOut = async () => {
     signOut({ redirect: true, callbackUrl: "/" });
