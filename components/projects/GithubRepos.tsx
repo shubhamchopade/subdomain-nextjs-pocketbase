@@ -1,12 +1,14 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { getRepos } from '../utils/build-helpers'
 import PocketBase from "pocketbase";
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/router';
+import LinkCard from './LinkCard';
 
 const GithubRepos = () => {
     const [repos, setRepos] = useState([])
     const router = useRouter()
+    const framework = "nextjs"
     const handleRepos = async () => {
         const auth = localStorage.getItem("pocketbase_auth")
         const json = JSON.parse(auth)
@@ -14,12 +16,19 @@ const GithubRepos = () => {
         // console.log(JSON.parse(auth))
         // get userid then username
         // get username here
+
         if (username) {
-            const reposRes = await getRepos('shubhamchopade')
+            const reposRes = await getRepos(username)
             setRepos(reposRes)
             console.log(repos)
         }
     }
+
+    useEffect(() => {
+        handleRepos()
+    }, [])
+
+
 
     const handleCreateProject = (name, link) => {
         const auth = localStorage.getItem("pocketbase_auth")
@@ -48,7 +57,7 @@ const GithubRepos = () => {
                     }
                     // console.log("Project created res", projectCreated)
                     toast.success("Project created")
-                    router.reload()
+                    router.push('/dashboard')
                 } catch (error) {
                     console.log(error)
                     // const errors = error?.data?.data
@@ -60,42 +69,20 @@ const GithubRepos = () => {
         register();
     };
     return (
-        <div><button className='btn' onClick={handleRepos}>Github Repos</button>
-
-            <div className="overflow-x-auto">
-                <table className="table-xs w-full">
-                    {/* head */}
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th>Name</th>
-                            <th>Job</th>
-                            <th>URL</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {/* row 1 */}
-                        {
-                            repos.map(repo => (
-                                <tr>
-                                    <th>{repo.id}</th>
-                                    <td>{repo.name}</td>
-                                    <td>{repo.fullname}</td>
-                                    {/* TODO - Trigger create project for this repo! */}
-                                    <td><p className='btn btn-primary btn-xs' onClick={() => handleCreateProject(repo.name, repo.html_url)}>USE THIS</p></td>
-                                </tr>))
-                        }
-                    </tbody>
-                </table>
+        <div className='mx-auto w-96 grid place-items-center'>
+            {/* <button className='btn' onClick={handleRepos}>Github Repos</button> */}
+            <div className=''>
+                <label htmlFor='project-search'>Search github repository</label>
+                <input className='input input-bordered w-full' name="project-search" value={"input"} onChange={() => console.log("clicked")} />
             </div>
-
-            {/*            
-                    <div key={repo.id} className='card w-40 bg-base-100 shadow-xl'>
-                        <p>{repo.name}</p>
-                        <p>{repo.fullname}</p>
-                        <p>{repo.git_url}</p>
-                    </div> */}
-
+            <div className="flex  flex-col h-96 overflow-y-auto overflow-x-hidden">
+                {
+                    repos.map(repo => (
+                        <div className='cursor-pointer hover:scale-105 bg-gray-700' onClick={() => handleCreateProject(repo.name, repo.html_url)}>
+                            <LinkCard name={repo.name} link={repo.html_url} />
+                        </div>))
+                }
+            </div>
         </div>
     )
 }

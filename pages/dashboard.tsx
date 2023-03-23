@@ -38,8 +38,7 @@ const Dashboard = (
   console.log(props)
   return (
     <div>
-      <CreateProject auth={props} />
-      <GithubRepos />
+      {/* <GithubRepos /> */}
       <ProjectsGrid auth={props} />
     </div>
   );

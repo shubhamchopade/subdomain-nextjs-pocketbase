@@ -28,6 +28,8 @@ const ProjectsGrid = (props) => {
         getProjects()
     }, [])
 
+    console.log(allProjects)
+
     return (
         <div className='flex flex-wrap'>{allProjects && allProjects.map(project => (
             <Card userId={_userId} key={project.id} project={project} />

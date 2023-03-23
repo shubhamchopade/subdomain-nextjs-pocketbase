@@ -12,9 +12,7 @@ const Navbar = () => {
   // console.log(authState)
 
   const handleSignin = async () => {
-    signIn("github", {
-      redirect: false,
-    });
+    signIn("github", { redirect: true, callbackUrl: "/" });
     // signIn("credentials", {
     //   redirect: true,
     //   callbackUrl: "/",
@@ -36,9 +34,14 @@ const Navbar = () => {
         <a className="btn btn-ghost normal-case text-xl">daisyUI</a>
       </div>
       {session.data && (
-        <Link className="flex-1 link" href={"/dashboard"}>
-          Dashboard
-        </Link>
+        <div className="flex-1">
+          <Link className="flex-1 link" href={"/dashboard"}>
+            Dashboard
+          </Link>
+          <Link className="flex-1 link" href={"/create"}>
+            Create
+          </Link>
+        </div>
       )}
       <div className="flex-none">
         <p className="text-sm">{userData?.email}</p>
