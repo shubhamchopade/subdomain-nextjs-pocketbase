@@ -46,7 +46,7 @@ export default function handler(
 
 
   // Install dependencies using npm
-  executeCommand(`cd ${dir}/${id}/${projectId} && pnpm install`)
+  executeCommandChild('cd', [`${dir}/${id}/${projectId}`, `&&`, `yarn install`])
     .then((output) => {
       log(chalk.bgMagenta("npm installed >> ", output.stdout, output.stderr));
       res.status(200).json({ data: "Installation Complete" });
