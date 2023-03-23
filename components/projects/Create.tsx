@@ -89,10 +89,9 @@ const CreateProject: NextPage<any> = (props): JSX.Element => {
 
     return (
         <div>
-            <p onClick={handleShowCreateProject} className="btn">
-                Create Project
-            </p>
-            {showCreateProject && <div className="flex justify-center items-center">
+
+            {/* MANUAL ADD PROJECT */}
+            {false && <div className="flex justify-center items-center">
                 <FormProvider {...formMethods}>
                     <form className="form-control max-w-xs">
                         {/* link */}
