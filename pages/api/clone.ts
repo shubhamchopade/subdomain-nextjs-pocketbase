@@ -27,6 +27,8 @@ export default function handler(
 
   const gitCloneCmd = `git clone ${link} ${dir}/${id}/${projectId}`;
 
+  // TODO - convert this to child function
+
   try {
     executeCommand(`git clone ${link} ${dir}/${id}/${projectId}`).then(
       (childRes) => {

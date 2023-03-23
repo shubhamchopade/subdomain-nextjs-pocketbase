@@ -68,7 +68,7 @@ const Home = (
 
   const [githubAuth, setGithubAuth] = useState(null);
 
-  console.log(props)
+  // console.log(props)
 
 
 

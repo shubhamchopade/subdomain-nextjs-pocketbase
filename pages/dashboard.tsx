@@ -64,7 +64,7 @@ export const getServerSideProps: GetServerSideProps<any> = async (context) => {
       context.res,
       authOptions
     );
-    console.log("GSSR ---------------", sessionRes.user);
+    // console.log("GSSR ---------------", sessionRes.user);
     session = sessionRes;
   } catch (e) {
     console.log(e);
