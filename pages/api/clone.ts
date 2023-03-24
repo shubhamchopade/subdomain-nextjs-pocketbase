@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import chalk from "chalk";
-import { executeCommandChild } from "../../components/utils/build-helpers";
+import { executeCommandChild } from "../../backend/node-multithreading";
 
 const log = console.log;
 const erB = chalk.bold.redBright;
@@ -17,7 +17,7 @@ export default function handler(
     executeCommandChild(`git`, ['clone', `${link}`, `${dir}/${id}/${projectId}`]).then(
       (childRes: any) => {
         log(chalk.bgGreen(`Repo cloned - ${link}`, childRes.stderr));
-        res.status(200).json({ data: `Repo cloned - ${link}` });
+        res.status(200).json({ data: `Repo cloned ${link}` });
       }
     ).catch((err) => {
       log(erB("--------git clone failed---------"));

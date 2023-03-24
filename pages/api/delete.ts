@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import chalk from "chalk";
-import { executeCommandChild } from "../../components/utils/build-helpers";
+import { executeCommandChild } from "../../backend/node-multithreading";
 
 const log = console.log;
 const erB = chalk.bold.redBright;
@@ -40,11 +40,11 @@ export default function handler(
         });
 
     // DELETE config file at nginx
-    executeCommandChild('rm', ['-f', `/etc/nginx/conf.d/${subdomain}.techsapien.dev.conf`])
+    executeCommandChild('rm', ['-f', `/etc/nginx/techsapien.d/${subdomain}.techsapien.dev.conf`])
         .then((res: any) => {
             log(chalk.bgGreen(`DELETED ${subdomain}.techsapien.dev.conf`, res.stdout));
         }).catch(e => {
-            console.error("DELETING nginx/conf.d failed", e)
+            console.error("DELETING nginx/chsapien.d failed", e)
         })
 
     // delete the project files from /app 

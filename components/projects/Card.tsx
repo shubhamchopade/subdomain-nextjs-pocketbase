@@ -14,6 +14,7 @@ const Card = (props) => {
     const subdomain = project.subdomain;
     const [isLoading, setIsLoading] = useState(false)
     const [status, setStatus] = useState(null)
+    const [framework, setFramework] = useState(null)
 
     const pb = new PocketBase("https://pocketbase.techsapien.dev");
 
@@ -73,6 +74,7 @@ const Card = (props) => {
                     framework: framework.data
                 })
                 console.log(frameworkRes)
+                setFramework(framework)
             }
         }
 
@@ -136,24 +138,31 @@ const Card = (props) => {
             sort: "-created",
             projectId: projectId,
         });
-        console.log("DEV PORT", getPort[0].port);
+        console.log("PROD PORT", getPort[0].port);
+
+        const framework = await getFramework()
 
         const port = getPort[0].port;
-        const res = await fetch(
-            `/api/start?link=${link}&id=${id}&projectId=${projectId}&port=${port}`
-        );
+        const subdomain = getPort[0].name;
+        console.log("framework", framework)
+        if (framework && port) {
+            const res = await fetch(
+                `/api/start?link=${link}&id=${id}&projectId=${projectId}&port=${port}&framework=${framework.data}`
+            );
 
-        if (res.status == 200) {
-            if (status) {
-                const res = await pb.collection('projectStatus').update(status.id, {
-                    isOnline: true,
-                    stopped: false
-                })
-                console.log("isOnline", res)
+            if (res.status == 200) {
+                if (status) {
+                    const res = await pb.collection('projectStatus').update(status.id, {
+                        isOnline: true,
+                        stopped: false
+                    })
+                    console.log("isOnline", res)
+                }
             }
+            const data = await res.json();
+            console.log(data);
         }
-        const data = await res.json();
-        console.log(data);
+
     };
 
     // Stop the project
@@ -291,10 +300,11 @@ const Card = (props) => {
                 );
                 const data = await res.json();
                 console.log("NGNX - .conf file created", data);
-                toast.success(`CLIent - Subdomain created ${subdomain}`)
+                toast.success(`Subdomain created ${subdomain}`)
                 return res;
             } catch (e) {
-                console.log("CLIent - ERROR CREATING SUBDOMAIN", e);
+                toast.error(`Subdomain already exists, please try again`)
+                console.log("ERROR CREATING SUBDOMAIN", e);
                 return false;
             }
         };

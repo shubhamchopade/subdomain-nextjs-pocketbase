@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import chalk from "chalk";
-import { executeCommandChild } from "../../components/utils/build-helpers";
+import { executeCommandChild } from "../../backend/node-multithreading";
+
 
 // TODO - Add a description of the function
 
@@ -14,7 +15,7 @@ export default function handler(
 ) {
   const { link, id = 1, projectId = 1, port = 30, subdomain = "test" } = req.query;
   console.log("repoLink: ", link);
-  const scriptLocation = '/home/shubham/Code/nginx-config/nginx-techsapien.sh'
+  const scriptLocation = '/home/shubham/Code/system-scripts/nginx-techsapien.sh'
 
 
   executeCommandChild(

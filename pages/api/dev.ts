@@ -1,7 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 import chalk from "chalk";
-import { executeCommandChild } from "../../components/utils/build-helpers";
+import { executeCommandChild } from "../../backend/node-multithreading";
 
 const log = console.log;
 const erB = chalk.bold.redBright;
