@@ -23,7 +23,7 @@ export default function handler(
   executeCommandChild('cd', [`${dir}/${id}/${projectId}`, `&&`, `yarn install`])
     .then((output: any) => {
       log(chalk.bgMagenta("npm installed >> ", output.stdout, output.stderr));
-      res.status(200).json({ data: "Installation Complete" });
+      res.status(200).json({ data: "Installation Complete", logs: JSON.stringify(output.stdout) });
     })
     .catch((err) => {
       log(erB("--------npm install failed---------"));

@@ -21,6 +21,7 @@ export default function handler(
       log(chalk.bgBlue("build output ", output.stdout, output.stderr));
       res.status(200).json({
         data: `build success for ${projectId}`,
+        logs: JSON.stringify(output.stdout),
       })
     })
     .catch((err) => {

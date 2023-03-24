@@ -124,12 +124,11 @@ const Card = (props) => {
                 const res = await pb.collection('projectStatus').update(status.id, {
                     built: true
                 })
-                console.log("built", res)
             }
         }
 
         const data = await res.json();
-        console.log("build", data);
+        console.log("build logs", JSON.parse(data.logs));
     };
 
     // Start project
@@ -261,7 +260,7 @@ const Card = (props) => {
 
 
             if (deleted) {
-                router.reload()
+                // router.reload()
             }
         };
 
