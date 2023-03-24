@@ -74,9 +74,6 @@ const CreateProject: NextPage<any> = (props): JSX.Element => {
                     router.reload()
                 } catch (error) {
                     console.log(error)
-                    // const errors = error?.data?.data
-                    // const keys = Object.keys(errors)
-                    // keys.map(e => toast.error(errors[e].message))
                 }
         };
 
@@ -89,7 +86,6 @@ const CreateProject: NextPage<any> = (props): JSX.Element => {
 
     return (
         <div>
-
             {/* MANUAL ADD PROJECT */}
             {false && <div className="flex justify-center items-center">
                 <FormProvider {...formMethods}>
@@ -122,8 +118,6 @@ const CreateProject: NextPage<any> = (props): JSX.Element => {
                             type="description"
                             className="input input-bordered w-full max-w-xs"
                         />
-
-
                         <button
                             type="submit"
                             onClick={handleSubmit(onSubmit)}

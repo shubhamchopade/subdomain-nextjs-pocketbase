@@ -13,9 +13,6 @@ const GithubRepos = () => {
         const auth = localStorage.getItem("pocketbase_auth")
         const json = JSON.parse(auth)
         const username = json?.model?.username
-        // console.log(JSON.parse(auth))
-        // get userid then username
-        // get username here
 
         if (username) {
             const reposRes = await getRepos(username)
@@ -27,8 +24,6 @@ const GithubRepos = () => {
     useEffect(() => {
         handleRepos()
     }, [])
-
-
 
     const handleCreateProject = (name, link) => {
         const auth = localStorage.getItem("pocketbase_auth")
@@ -55,14 +50,10 @@ const GithubRepos = () => {
                         });
                         console.log("projectStatus res", projectStatus)
                     }
-                    // console.log("Project created res", projectCreated)
                     toast.success("Project created")
                     router.push('/dashboard')
                 } catch (error) {
                     console.log(error)
-                    // const errors = error?.data?.data
-                    // const keys = Object.keys(errors)
-                    // keys.map(e => toast.error(errors[e].message))
                 }
         };
 
@@ -70,7 +61,6 @@ const GithubRepos = () => {
     };
     return (
         <div className='mx-auto w-96 grid place-items-center'>
-            {/* <button className='btn' onClick={handleRepos}>Github Repos</button> */}
             <div className=''>
                 <label htmlFor='project-search'>Search github repository</label>
                 <input className='input input-bordered w-full' name="project-search" value={"input"} onChange={() => console.log("clicked")} />

@@ -74,8 +74,6 @@ const Card = (props) => {
                 })
                 console.log(frameworkRes)
             }
-
-
         }
 
         if (status) {
@@ -105,7 +103,6 @@ const Card = (props) => {
                 console.log("Installed", res)
             }
         }
-
         const data = await res.json();
         console.log(data);
     };
@@ -198,7 +195,6 @@ const Card = (props) => {
     // Start dev mode
     const startDevMode = async () => {
         // Get the port from API
-
         const getPort = await pb.collection("subdomains").getFullList({
             sort: "-created",
             projectId: projectId,
@@ -290,28 +286,20 @@ const Card = (props) => {
                     .collection("subdomains")
                     .create({ projectId, port, name: subdomain });
                 console.log("PK - SUBDOMAIN CREATED", created);
-
-
                 const res = await fetch(
                     `/api/subdomain?link=${link}&id=${id}&projectId=${projectId}&subdomain=${subdomain}&port=${port}`
                 );
                 const data = await res.json();
                 console.log("NGNX - .conf file created", data);
-
-
                 toast.success(`CLIent - Subdomain created ${subdomain}`)
                 return res;
-
-
             } catch (e) {
                 console.log("CLIent - ERROR CREATING SUBDOMAIN", e);
                 return false;
             }
         };
-
         exists();
     };
-
     return (
         <div>
             <div className={`card max-w-xl bg-base-200 shadow-xl relative m-4 ${isLoading && "animate-pulse"}`}>

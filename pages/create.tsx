@@ -1,11 +1,9 @@
 import { getServerSession } from 'next-auth';
 import React from 'react'
-import CreateProject from '../components/projects/Create';
 import GithubRepos from '../components/projects/GithubRepos';
-import { listAuthMethods } from '../components/utils/pocketbase-api-methods';
 import { authOptions } from './api/auth/[...nextauth]';
 
-const Create = (props) => {
+const Create = (props: any) => {
     return (
         <div>  <GithubRepos /></div>
     )
@@ -13,7 +11,7 @@ const Create = (props) => {
 
 export default Create
 
-export const getServerSideProps = async (context) => {
+export const getServerSideProps = async (context: any) => {
     let session = null;
     try {
         const sessionRes = await getServerSession(

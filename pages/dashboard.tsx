@@ -1,17 +1,9 @@
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { getServerSession } from "next-auth";
-import { useSession } from "next-auth/react";
 import React from "react";
-import { ToastContainer } from "react-toastify";
-import UploadForm from "../components/common/UploadForm";
-import UserCard from "../components/common/UserCard";
-import CreateProject from "../components/projects/Create";
 import GithubRepos from "../components/projects/GithubRepos";
 import ProjectsGrid from "../components/projects/ProjectsGrid";
-import Status from "../components/projects/Status";
-import { getRepos } from "../components/utils/build-helpers";
 import { listAuthMethods } from "../components/utils/pocketbase-api-methods";
-import { useAuthState } from "../store/authState";
 import { authOptions } from "./api/auth/[...nextauth]";
 import Pocketbase from "pocketbase";
 

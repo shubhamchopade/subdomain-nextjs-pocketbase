@@ -9,9 +9,6 @@ const ProjectsGrid = (props) => {
     const [allProjects, setAllProjects] = React.useState([])
     const [_userId, setUserId] = useState("")
 
-    // const user = props?.auth?.user
-
-
     useEffect(() => {
         const auth = localStorage.getItem("pocketbase_auth")
         const json = JSON.parse(auth)

@@ -1,37 +1,18 @@
 'use-client'
 import {
   GetServerSideProps,
-  GetServerSidePropsContext,
   InferGetServerSidePropsType,
-  NextPage,
 } from "next";
-import { getServerSession, Session } from "next-auth";
-import { signIn, signOut } from "next-auth/react";
-import Head from "next/head";
-import Image from "next/image";
-import Link from "next/link";
+import { getServerSession } from "next-auth";
 import { useRouter } from "next/router";
-import { Octokit } from "octokit";
 import PocketBase from "pocketbase";
 import { useEffect, useState } from "react";
 import {
-  authWithOauth2,
   listAuthMethods,
-  listAuthMethodsResponse,
 } from "../components/utils/pocketbase-api-methods";
-import { useAuthState } from "../store/authState";
 import styles from "../styles/Home.module.css";
 import { authOptions } from "./api/auth/[...nextauth]";
 
-
-type User = {
-  expires: string;
-  user: {
-    email: string;
-    image: string;
-    name: string;
-  };
-};
 
 type Posts = {
   page: number;
@@ -54,32 +35,13 @@ type Post = {
 const Home = (
   props: InferGetServerSidePropsType<typeof getServerSideProps>
 ) => {
-  // const items = props?.posts?.items;
-  // const user = props?.auth?.user;
   const router = useRouter();
-  const { callbackUrl } = useRouter().query;
-  const authState = useAuthState();
-
-  const items = props?.posts?.items;
-  const user = props?.auth?.user;
-
-
-
-
-  const [githubAuth, setGithubAuth] = useState(null);
-
-  // console.log(props)
-
-
-
+  const [githubAuth, setGithubAuth] = useState(null)
   const authUrl = props?.methods?.authProviders[0]?.authUrl;
   const codeVerifier = props?.methods?.authProviders[0]?.codeVerifier;
   const name = props?.methods?.authProviders[0]?.name;
   const pb = new PocketBase('https://pocketbase.techsapien.dev');
   const code = router?.query?.code
-
-  // console.log("authUrl", authUrl)
-
 
   useEffect(() => {
     if (authUrl && !router.query.code && !githubAuth) {
@@ -111,10 +73,6 @@ const Home = (
             const record = await pb.collection('githubUserMeta').create(data);
             console.log(record)
           }
-
-          // setGithubAuth(authData)
-          //  save the user metadata to db
-          // get id from record.id and rest from meta
 
         }
       } catch (e) {

@@ -1,17 +1,11 @@
 import {
   GetServerSideProps,
-  GetServerSidePropsContext,
   InferGetServerSidePropsType,
-  NextPage,
 } from "next";
 import { getServerSession, Session } from "next-auth";
 import { signIn, signOut } from "next-auth/react";
-import Head from "next/head";
 import Image from "next/image";
-import Link from "next/link";
 import { useRouter } from "next/router";
-import { Octokit } from "octokit";
-import NewWindow from 'react-new-window'
 import { useEffect, useState } from "react";
 import {
   authWithOauth2,
@@ -20,15 +14,6 @@ import {
 } from "../components/utils/pocketbase-api-methods";
 import { useAuthState } from "../store/authState";
 import { authOptions } from "./api/auth/[...nextauth]";
-
-type User = {
-  expires: string;
-  user: {
-    email: string;
-    image: string;
-    name: string;
-  };
-};
 
 type Posts = {
   page: number;
@@ -57,11 +42,7 @@ const Home = (
   const { callbackUrl } = useRouter().query;
   const authState = useAuthState();
 
-
-
   const [githubAuth, setGithubAuth] = useState();
-
-
 
   const authUrl = props?.methods?.authProviders[0]?.authUrl;
   const codeVerifier = props?.methods?.authProviders[0]?.codeVerifier;
@@ -88,8 +69,8 @@ const Home = (
           return;
         }
         setGithubAuth(githubAuthData);
-        authState.setUser(githubAuthData.meta);
-        authState.setToken(githubAuthData.token);
+        authState?.setUser(githubAuthData.meta);
+        authState?.setToken(githubAuthData.token);
         // router.push("/");
         console.log("INSIDE -----", githubAuthData);
       }
@@ -161,10 +142,3 @@ export const getServerSideProps: GetServerSideProps<{
     props: {},
   };
 };
-
-
-const DemoWindow = () => (
-  <NewWindow>
-    <h1>Hi 👋</h1>
-  </NewWindow>
-)

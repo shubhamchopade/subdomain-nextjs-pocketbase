@@ -1,19 +1,9 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 import chalk from "chalk";
-
-import util from "util";
-import { spawn } from "child_process";
-
-const exec = util.promisify(require("child_process").exec);
+import { executeCommandChild } from "../../components/utils/build-helpers";
 
 const log = console.log;
 const erB = chalk.bold.redBright;
-const blu = chalk.bold.blue;
-
-type Data = {
-    name: string;
-};
 
 export default function handler(
     req: NextApiRequest,
@@ -26,18 +16,18 @@ export default function handler(
 
     const projectPath = `${dir}/${id}/${projectId}`;
 
-    console.log(`DELETING APP at port ${port}`);
+    console.log(erB(`DELETING APP at port ${port}`));
 
     // Get the process id
     executeCommandChild('lsof', [`-t`, `-i:${port}`])
-        .then((pid) => {
-            log(chalk.bgBlue(`PORT > ${port} - PID >`, pid.stdout));
+        .then((pid: any) => {
+            log(chalk.red(`PORT > ${port} - PID >`, pid.stdout));
             res.status(200).json({ data: "lsof" });
 
             // kill the process
             executeCommandChild('kill', ['-9', pid.stdout])
-                .then(output => {
-                    log(chalk.bgBlue(`kill > ${output.stdout} -----`));
+                .then((output: any) => {
+                    log(chalk.red(`kill > ${output.stdout} -----`));
 
                 }).catch(err => {
                     console.error("killing process failed", err)
@@ -49,85 +39,21 @@ export default function handler(
             log(erB("--------Get the process id FAILED---------"));
         });
 
-
-
     // DELETE config file at nginx
     executeCommandChild('rm', ['-f', `/etc/nginx/conf.d/${subdomain}.techsapien.dev.conf`])
-        .then((res) => {
+        .then((res: any) => {
             log(chalk.bgGreen(`DELETED ${subdomain}.techsapien.dev.conf`, res.stdout));
         }).catch(e => {
             console.error("DELETING nginx/conf.d failed", e)
         })
 
-
-
-    // TODO - delete the project files from /app 
+    // delete the project files from /app 
     executeCommandChild('rm', ['-rf', projectPath])
-        .then(output => {
+        .then((output: any) => {
             log(chalk.bgBlue(`delete the project files from /app ${output.stdout} -----`));
         }).catch(err => {
             console.error("delete the project files from /app FAILED", err)
         })
 
     return res.status(200).json({ data: "Project deleted" })
-}
-
-const executeCommand = async (cmd) => {
-    try {
-        const { stdout, stderr } = await exec(cmd);
-        if (stderr) {
-            console.error(`Command "${cmd}" produced error output: ${stderr}`);
-        }
-        return { stdout, stderr };
-    } catch (err) {
-        console.error(
-            chalk.red.bold(`Error running command`),
-            cmd,
-            chalk.red(err.stderr)
-        );
-        throw err;
-    }
-};
-
-function executeCommandChild(command, args = []) {
-    return new Promise((resolve, reject) => {
-        const childProcess = spawn(command, args, { stdio: "pipe", shell: true });
-
-        let stdout = "";
-        let stderr = "";
-
-        childProcess.stdout.on("data", (data) => {
-            stdout += data.toString();
-            process.stdout.write(data);
-        });
-
-        childProcess.stderr.on("data", (data) => {
-            stderr += data.toString();
-            process.stderr.write(data);
-        });
-
-        childProcess.on("error", (err) => {
-            reject(
-                new Error(
-                    `Command executeCommandChild "${command} ${args.join(
-                        " "
-                    )}" failed with error: ${err}`
-                )
-            );
-        });
-
-        childProcess.on("close", (code, signal) => {
-            if (code !== 0) {
-                reject(
-                    new Error(
-                        `Command "${command} ${args.join(
-                            " "
-                        )}" failed with code ${code} and signal ${signal}: ${stderr}`
-                    )
-                );
-            } else {
-                resolve({ stdout, stderr });
-            }
-        });
-    });
 }

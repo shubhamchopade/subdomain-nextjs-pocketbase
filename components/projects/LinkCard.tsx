@@ -5,8 +5,6 @@ const LinkCard = (props) => {
     const name = props?.name
     const link = props?.link
 
-
-
     return (
         <div className='card shadow-md '>
             <div className='flex'>

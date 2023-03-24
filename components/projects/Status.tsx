@@ -10,9 +10,7 @@ const Status = (props) => {
     const statusId = props?.status?.id
 
     // console.log(props)
-
     useEffect(() => {
-
         try {
             pb.collection('projectStatus').subscribe(statusId, function (e) {
                 // console.log(e.record);
@@ -21,14 +19,11 @@ const Status = (props) => {
         } catch (e) {
             console.error(e)
         }
-        // getStatusId()
-
-
     }, [statusId])
 
 
     return (
-        <div>
+        <div className='flex'>
             <div>{status.cloned && <p className="badge badge-warning">cloned</p>}</div>
             <div>{status.installed && <p className="badge badge-info">installed</p>}</div>
             <div>{status.built && <p className="badge badge-info">built</p>}</div>
