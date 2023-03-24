@@ -9,7 +9,7 @@ export default function handler(
     req: NextApiRequest,
     res: NextApiResponse<any>
 ) {
-    const { link, id = 1, projectId = 1, port = 3000, subdomain } = req.query;
+    const { link, id = 1, projectId = 1, port = 3000, subdomain, framework } = req.query;
     console.log("repoLink: ", link);
 
     const dir = "/home/shubham/Code/monorepo/apps";
@@ -51,9 +51,21 @@ export default function handler(
     executeCommandChild('rm', ['-rf', projectPath])
         .then((output: any) => {
             log(chalk.bgBlue(`delete the project files from /app ${output.stdout} -----`));
+            res.status(200).json({ data: "deleted project files" });
         }).catch(err => {
             console.error("delete the project files from /app FAILED", err)
+            res.status(400).json({ data: "delete error" });
         })
 
-    return res.status(200).json({ data: "Project deleted" })
+    // disable the project from systemctl
+    executeCommandChild(
+        `systemctl`, [`disable`, `$(systemd-escape`, `--template`, `techsapien@.service`, `"${projectId} ${port} ${id} ${framework}")`]
+    ).then((output: any) => {
+        console.log("Service disabled", output.stdout, output.stderr)
+        res.status(200).json({ data: "service disabled" });
+    }).catch((err) => {
+        console.log("Service disabled failed", err);
+        res.status(400).json({ data: "service disabled failed" });
+    }
+    );
 }

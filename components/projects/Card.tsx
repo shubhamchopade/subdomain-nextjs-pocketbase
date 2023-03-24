@@ -74,7 +74,7 @@ const Card = (props) => {
                     framework: framework.data
                 })
                 console.log(frameworkRes)
-                setFramework(framework)
+                setFramework(framework.data)
             }
         }
 
@@ -138,12 +138,11 @@ const Card = (props) => {
             sort: "-created",
             projectId: projectId,
         });
-        console.log("PROD PORT", getPort[0].port);
+        console.log("PROD PORT", getPort[0]?.port);
 
         const framework = await getFramework()
 
-        const port = getPort[0].port;
-        const subdomain = getPort[0].name;
+        const port = getPort[0]?.port;
         console.log("framework", framework)
         if (framework && port) {
             const res = await fetch(
@@ -237,7 +236,7 @@ const Card = (props) => {
 
                 const dangerouslyDeleteProject = async (port) => {
                     const res = await fetch(
-                        `/api/delete?link=${link}&id=${id}&projectId=${projectId}&port=${port}&subdomain=${subdomain}`
+                        `/api/delete?link=${link}&id=${id}&projectId=${projectId}&port=${port}&subdomain=${subdomain}&framework=${framework}`
                     );
                     const data = await res.json();
                     console.log(data);
@@ -247,7 +246,7 @@ const Card = (props) => {
             } else {
                 const dangerouslyDeleteProject = async (port) => {
                     const res = await fetch(
-                        `/api/delete?link=${link}&id=${id}&projectId=${projectId}&port=${port}&subdomain=${subdomain}`
+                        `/api/delete?link=${link}&id=${id}&projectId=${projectId}&port=${port}&subdomain=${subdomain}&framework=${framework}`
                     );
                     const data = await res.json();
                     console.log(data);
