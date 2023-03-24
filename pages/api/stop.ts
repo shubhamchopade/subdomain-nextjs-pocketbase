@@ -13,14 +13,14 @@ export default function handler(
     req: NextApiRequest,
     res: NextApiResponse<any>
 ) {
-    const { link, id = 1, projectId = 1, port = 3000, subdomain } = req.query;
+    const { link, id = 1, projectId = 1, port = 3000, subdomain, framework } = req.query;
     console.log("repoLink: ", link);
 
     const dir = "/home/shubham/Code/monorepo/apps";
 
     // TODO: Run system ctl command to stop the services
 
-    console.log(`DELETING APP at port ${port}`);
+    console.log(`deleting started at port ${port}`);
     // Get the process id
     executeCommandChild('lsof', [`-t`, `-i:${port}`])
         .then((pid) => {
@@ -42,4 +42,17 @@ export default function handler(
             res.status(400).json({ data: "Project is currently inactive" });
             log(erB("--------Get the process id FAILED---------"));
         });
+
+
+    executeCommandChild(
+        `systemctl`, [`stop`, `$(systemd-escape`, `--template`, `techsapien@.service`, `"${projectId} ${port} ${id} ${framework}")`]
+    ).then((output: any) => {
+        console.log("Service stopped", output.stdout, output.stderr)
+        res.status(200).json({ data: "service stopped" });
+    }).catch((err) => {
+        console.log("Service stop failed", err);
+        res.status(400).json({ data: "service stop failed" });
+    }
+    );
+
 }

@@ -14,7 +14,7 @@ const Card = (props) => {
     const subdomain = project.subdomain;
     const [isLoading, setIsLoading] = useState(false)
     const [status, setStatus] = useState(null)
-    const [framework, setFramework] = useState(null)
+    const [framework, setFramework] = useState(props?.project.framework)
 
     const pb = new PocketBase("https://pocketbase.techsapien.dev");
 
@@ -169,7 +169,7 @@ const Card = (props) => {
     const stopProject = () => {
 
         const stopProjectCallback = async () => {
-            // Kill the port
+
             const getPort = await pb.collection("subdomains").getFullList({
                 sort: "-created",
                 projectId: projectId,
@@ -177,24 +177,24 @@ const Card = (props) => {
             const port = getPort[0]?.port;
             console.log("ACTIVE PORT =", port);
 
-            if (port && status) {
+            // Kill the port
+            if (port && status && framework) {
                 const killServerPort = async (port) => {
                     const res = await fetch(
-                        `/api/stop?link=${link}&id=${id}&projectId=${projectId}&port=${port}&subdomain=${subdomain}`
+                        `/api/stop?link=${link}&id=${id}&projectId=${projectId}&port=${port}&subdomain=${subdomain}&framework=${framework}`
                     );
                     const data = await res.json();
                     console.log(data);
                 };
                 const killedPort = await killServerPort(port);
-                console.log("killedPort STOP", killedPort);
+                console.log("port killed", killedPort);
 
-
+                // Update the project status
                 const projectStatusRes = await pb.collection('projectStatus').update(status.id, {
                     stopped: true,
                     isOnline: false
                 })
-                console.log("PK - STOP", projectStatusRes)
-
+                console.log("project stopped", projectStatusRes)
             }
         }
 
@@ -319,7 +319,7 @@ const Card = (props) => {
                 >
                     x
                 </span>
-                <span className="uppercase text-xs font-bold">{props?.project?.framework}</span>
+                <span className="uppercase text-xs font-bold">{framework}</span>
                 <div className="card-body">
                     <h2 className="card-title">{props.project.title}</h2>
                     <p>{props.project.description}</p>
