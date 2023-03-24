@@ -321,6 +321,7 @@ const Card = (props) => {
                 >
                     x
                 </span>
+                <span className="uppercase text-xs font-bold">{props?.project?.framework}</span>
                 <div className="card-body">
                     <h2 className="card-title">{props.project.title}</h2>
                     <p>{props.project.description}</p>

@@ -13,6 +13,7 @@ import { getRepos } from "../components/utils/build-helpers";
 import { listAuthMethods } from "../components/utils/pocketbase-api-methods";
 import { useAuthState } from "../store/authState";
 import { authOptions } from "./api/auth/[...nextauth]";
+import Pocketbase from "pocketbase";
 
 type Posts = {
   page: number;
@@ -38,7 +39,7 @@ const Dashboard = (
   console.log(props)
   return (
     <div>
-      {/* <GithubRepos /> */}
+      <GithubRepos />
       <ProjectsGrid auth={props} />
     </div>
   );
@@ -55,6 +56,11 @@ export const getServerSideProps: GetServerSideProps<any> = async (context) => {
   const posts: Posts = await res.json();
   let session = null;
 
+  const pb = new Pocketbase("https://pocketbase.techsapien.dev");
+
+  const resultList = await pb.collection('blogs').getList(1, 50);
+
+
 
 
   try {
@@ -69,7 +75,7 @@ export const getServerSideProps: GetServerSideProps<any> = async (context) => {
     console.log(e);
   }
 
-  console.log(session)
+  console.log(resultList)
 
   if (session) {
     return {

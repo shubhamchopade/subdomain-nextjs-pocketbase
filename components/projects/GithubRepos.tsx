@@ -78,7 +78,7 @@ const GithubRepos = () => {
             <div className="flex  flex-col h-96 overflow-y-auto overflow-x-hidden">
                 {
                     repos.map(repo => (
-                        <div className='cursor-pointer hover:scale-105 bg-gray-700' onClick={() => handleCreateProject(repo.name, repo.html_url)}>
+                        <div key={repo.id} className='cursor-pointer hover:scale-105 bg-gray-700' onClick={() => handleCreateProject(repo.name, repo.html_url)}>
                             <LinkCard name={repo.name} link={repo.html_url} />
                         </div>))
                 }
