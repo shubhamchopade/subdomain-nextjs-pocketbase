@@ -25,7 +25,7 @@ const ProjectsGrid = (props) => {
         getProjects()
     }, [])
 
-    console.log(allProjects)
+    // console.log(allProjects)
 
     return (
         <div className='flex flex-wrap'>{allProjects && allProjects.map(project => (
