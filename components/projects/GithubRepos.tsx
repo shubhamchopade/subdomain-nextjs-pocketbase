@@ -53,6 +53,7 @@ const GithubRepos = () => {
                     toast.success("Project created")
                     router.push('/dashboard')
                 } catch (error) {
+                    toast.error("Failed to create project, a project with the same name already exists");
                     console.log(error)
                 }
         };
