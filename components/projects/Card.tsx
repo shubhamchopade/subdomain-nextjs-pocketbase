@@ -87,8 +87,7 @@ const Card = (props) => {
             console.log("cloned", res)
         }
 
-        const data = await cloneRes.json();
-        return data
+        return cloneRes
     };
 
 
@@ -277,7 +276,7 @@ const Card = (props) => {
     };
 
     // Create subdomain entry
-    const createSubdomainEntry = () => {
+    const createSubdomainEntry = async () => {
         // Generate a random port number
         const port = generateRandomNumber();
         // Check if the ports exists in DB
@@ -316,23 +315,24 @@ const Card = (props) => {
                 return false;
             }
         };
-        exists();
+
+
+        return await exists();
     };
 
 
     // DEPLOY
     const deploy = async () => {
-        const clone = cloneRepo()
-        const subdomain = createSubdomainEntry()
-        const install = installDependencies()
-        const build = buildDependencies()
-        const start = startProject()
-
-        const items = [clone, subdomain, install, build, start]
-        items.map(async (item) => {
-            const res = await item
-            console.log(res)
-        })
+        try {
+            const clone = await cloneRepo()
+            const subdomain = await createSubdomainEntry()
+            const install = await installDependencies()
+            const build = await buildDependencies()
+            const start = startProject()
+            console.log(clone, subdomain, install, build, start)
+        } catch (e) {
+            console.log(e)
+        }
     }
 
 

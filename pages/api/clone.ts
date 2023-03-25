@@ -26,5 +26,6 @@ export default function handler(
 
   } catch (e) {
     console.error(e)
+    res.status(400).json({ data: `git clone failed, file already exists` });
   }
 }
