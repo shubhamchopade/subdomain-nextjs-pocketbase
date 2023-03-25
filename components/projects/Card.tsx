@@ -331,6 +331,7 @@ const Card = (props) => {
             const start = startProject()
             console.log(clone, subdomain, install, build, start)
         } catch (e) {
+            toast.error(`Build failed, please check the logs for more info`)
             console.log(e)
         }
     }
