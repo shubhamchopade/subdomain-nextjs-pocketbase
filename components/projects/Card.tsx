@@ -14,6 +14,7 @@ const Card = (props) => {
     const projectId = project.id;
     const link = project.link;
     const subdomain = project.subdomain;
+    // const [isLoading, setIsLoading] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
     const [status, setStatus] = useState(null)
     const [framework, setFramework] = useState(props?.project.framework)
@@ -55,23 +56,25 @@ const Card = (props) => {
 
     // Clone repo
     const cloneRepo = async () => {
-        setIsLoading(true)
         console.log(status)
 
         const cloneRes = await fetch(
             `/api/clone?link=${link}&id=${id}&projectId=${projectId}`
         );
-        if (cloneRes) {
-            setIsLoading(false)
-        }
 
         if (cloneRes.status == 200) {
+            const data = await cloneRes.json();
+            console.log("clone logs", JSON.parse(data.logs));
             if (status) {
                 const projectStatusRes = await pb.collection('projectStatus').update(status.id, {
-                    cloned: true
+                    cloned: true,
+                    logClone: data.logs
                 })
-                console.log(projectStatusRes)
+                console.log("cloneRes", cloneRes?.data)
+                // console.log(projectStatusRes)
             }
+
+
 
             // Call getFramework() API
             const framework = await getFramework()
@@ -87,12 +90,6 @@ const Card = (props) => {
             }
         }
 
-        if (status) {
-            const res = await pb.collection('projectStatus').update(status.id, {
-                cloned: true
-            })
-            console.log("cloned", res)
-        }
 
         return cloneRes
     };
@@ -101,46 +98,43 @@ const Card = (props) => {
 
     // Install dependencies
     const installDependencies = async () => {
-        setIsLoading(true)
+
         const res = await fetch(
             `/api/install?link=${link}&id=${id}&projectId=${projectId}`
         );
-        if (res) {
-            setIsLoading(false)
-        }
+
         if (res.status == 200) {
+            const data = await res.json();
+            console.log("install logs", JSON.parse(data.logs));
             if (status) {
-                const res = await pb.collection('projectStatus').update(status.id, {
-                    installed: true
+                const _res = await pb.collection('projectStatus').update(status.id, {
+                    installed: true,
+                    logInstall: data.logs
                 })
-                console.log("Installed", res)
+                console.log("Installed", _res)
             }
+            return data
         }
-        const data = await res.json();
-        console.log(data);
-        setInstallLogs(data.logs)
-        return data
     };
 
     // Build dependencies
     const buildDependencies = async () => {
-        setIsLoading(true)
+
         const res = await fetch(
             `/api/build?link=${link}&id=${id}&projectId=${projectId}`
         );
-        if (res) {
-            setIsLoading(false)
-        }
+
 
         if (res.status == 200) {
-            if (status) {
-                const res = await pb.collection('projectStatus').update(status.id, {
-                    built: true
-                })
-            }
             const data = await res.json();
             console.log("build logs", JSON.parse(data.logs));
             setBuildLogs(JSON.parse(data.logs))
+            if (status) {
+                await pb.collection('projectStatus').update(status.id, {
+                    built: true,
+                    logBuild: data.logs
+                })
+            }
         } else {
             const data = await res.json();
             console.log("build failed", data);
@@ -175,11 +169,12 @@ const Card = (props) => {
                 // setStartLogs(res?.logs)
 
                 if (status) {
-                    const res = await pb.collection('projectStatus').update(status.id, {
+                    const _res = await pb.collection('projectStatus').update(status.id, {
                         isOnline: true,
-                        stopped: false
+                        stopped: false,
+                        logStart: res?.data
                     })
-                    console.log("isOnline", res)
+                    console.log("isOnline", _res)
                 }
             }
 
@@ -336,16 +331,19 @@ const Card = (props) => {
 
     // DEPLOY
     const deploy = async () => {
+        setIsLoading(true)
         try {
             const clone = await cloneRepo()
             const subdomain = await createSubdomainEntry()
             const install = await installDependencies()
             const build = await buildDependencies()
             const start = await startProject()
+            setIsLoading(false)
 
             toast.success(`Project deployed successfully`)
 
         } catch (e) {
+            setIsLoading(false)
             toast.error(`Build failed, please check the logs for more info`)
             console.log(e)
         }
@@ -429,10 +427,12 @@ const Card = (props) => {
 
             {/* Logger */}
             <Modal component={<Logger logs={{
+                projectId,
                 clone: cloneLogs,
                 build: buildLogs,
                 install: installLogs,
                 start: startLogs,
+                status: status
             }} />} id="logger-card" title="Logger" />
         </div>
     );

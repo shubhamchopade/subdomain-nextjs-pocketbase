@@ -1,25 +1,89 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import PocketBase from 'pocketbase'
 
 type Props = {
     logs: {
+        projectId: string,
         clone: string,
         install: string,
         build: string,
-        start: string
+        start: string,
+        status: any
     }
 }
 
 const Logger = (props: Props) => {
-    console.log(props)
+    const pb = new PocketBase('https://pocketbase.techsapien.dev');
+    const [logs, setlLogs] = React.useState("")
+    const statusId = props?.logs.status
+    const [cloneLogs, setcloneLogs] = useState("")
+    const [installLogs, setInstallLogs] = useState("")
+    const [buildLogs, setBuildLogs] = useState("")
+    const [startLogs, setStartLogs] = useState("")
+    useEffect(() => {
+        const getStatusId = async () => {
+            try {
+                const projectLogs = await pb
+                    .collection("projectStatus")
+                    .getFullList({ projectId: props.logs.projectId }, { $autoCancel: false })
+                // console.log(projectLogs[0])
+                setlLogs(projectLogs[0])
+                return projectLogs[0]
+            } catch (e) {
+                console.error("projectLogs error");
+                return null
+            }
+        };
+        getStatusId()
+    }, [props.logs.projectId])
+
+    // console.log(statusId)
+    useEffect(() => {
+
+        if (statusId?.logBuild) {
+            // console.log(JSON.parse(logs.logBuild))
+            setBuildLogs(JSON.parse(statusId.logBuild))
+        }
+
+        if (statusId?.logClone) {
+            // console.log(JSON.parse(logs.logClone))
+            setcloneLogs(JSON.parse(statusId.logClone))
+        }
+
+        if (statusId?.logInstall) {
+            // console.log(JSON.parse(logs.logInstall))
+            setInstallLogs(JSON.parse(statusId.logInstall))
+        }
+
+        if (statusId?.logStart) {
+            // console.log(JSON.parse(logs.logStart))
+            setStartLogs(JSON.parse(statusId.logStart))
+        }
+
+    }, [])
+    // console.log(installLogs)
     return (
-        <div className=''>
-            <h1>asdasdas</h1>
-            <p>{props.logs.clone}</p>
-            <p>{props.logs.install}</p>
-            <p>{props.logs.build}</p>
-            <p>{props.logs.start}</p>
+        <div className='prose'>
+            {/* <p>sadasdf</p> */}
+            {logs && <>
+                <pre>{logs.logClone && JSON.parse(logs.logClone)}</pre>
+                <pre >{logs.logInstall && JSON.parse(logs.logInstall)}</pre>
+                <pre >{logs.logBuild && JSON.parse(logs.logBuild)}</pre>
+                <p >{logs.logStart}</p></>}
+            <p>{installLogs}</p>
+            <p>{buildLogs}</p>
+            {/* <p>{logs.logClone}</p>
+            <p>{logs.logInstall}</p>
+            <p>{logs.logBuild}</p>
+            <p>{logs.logStart}</p> */}
         </div>
     )
 }
 
 export default Logger
+
+function LogOutput({ logText }) {
+    return (
+        <pre dangerouslySetInnerHTML={{ __html: logText }}></pre>
+    );
+}
