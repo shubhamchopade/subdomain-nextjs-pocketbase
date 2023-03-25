@@ -17,11 +17,11 @@ export default function handler(
     executeCommandChild(`git`, ['clone', `${link}`, `${dir}/${id}/${projectId}`]).then(
       (childRes: any) => {
         log(chalk.bgGreen(`Repo cloned - ${link}`, childRes.stderr));
-        res.status(200).json({ data: `Repo cloned ${link}` });
+        res.status(200).json({ data: `Repo cloned ${link}`, logs: JSON.stringify(childRes.stdout), });
       }
     ).catch((err) => {
-      log(erB("--------git clone failed---------"));
-      res.status(400).json({ data: `git clone failed` });
+      log(erB("--------git clone failed---------", err.stderr));
+      res.status(400).json({ data: `git clone failed, file already exists` });
     });
 
   } catch (e) {

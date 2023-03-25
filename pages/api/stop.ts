@@ -21,38 +21,41 @@ export default function handler(
     // TODO: Run system ctl command to stop the services
 
     console.log(`deleting started at port ${port}`);
+
     // Get the process id
     executeCommandChild('lsof', [`-t`, `-i:${port}`])
-        .then((pid) => {
-            log(chalk.bgBlue(`PORT > ${port} - PID >`, pid.stdout));
+        .then((pid: any) => {
+            log(chalk.red(`PORT > ${port} - PID >`, pid.stdout));
             res.status(200).json({ data: "lsof" });
 
             // kill the process
             executeCommandChild('kill', ['-9', pid.stdout])
-                .then(output => {
-                    log(chalk.bgBlue(`kill > ${output.stdout} -----`));
+                .then((output: any) => {
+                    log(chalk.red(`kill > ${output.stdout} -----`));
 
                 }).catch(err => {
-                    console.error("KILLING FAILED", err)
+                    console.error("/api/stop - process does not exist", err)
                 })
 
+            // stop the project from systemctl
+            executeCommandChild(
+                `systemctl`, [`stop`, `$(systemd-escape`, `--template`, `techsapien@.service`, `"${projectId} ${port} ${id} ${framework}")`]
+            ).then((output: any) => {
+                console.log("Service stopped", output.stdout, output.stderr)
+                res.status(200).json({ data: "service stopped" });
+            }).catch((err) => {
+                console.log("Service stop failed", err);
+                res.status(400).json({ data: "service stop failed" });
+            }
+            );
+
         })
-        // pnpm build failed
+        // if the process does not exist
         .catch((err) => {
-            res.status(400).json({ data: "Project is currently inactive" });
-            log(erB("--------Get the process id FAILED---------"));
+            res.status(400).json({ data: "app is already in stopped state" });
+            log(erB("app is already in stopped state"));
         });
 
 
-    executeCommandChild(
-        `systemctl`, [`stop`, `$(systemd-escape`, `--template`, `techsapien@.service`, `"${projectId} ${port} ${id} ${framework}")`]
-    ).then((output: any) => {
-        console.log("Service stopped", output.stdout, output.stderr)
-        res.status(200).json({ data: "service stopped" });
-    }).catch((err) => {
-        console.log("Service stop failed", err);
-        res.status(400).json({ data: "service stop failed" });
-    }
-    );
 
 }

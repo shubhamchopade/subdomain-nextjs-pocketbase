@@ -26,7 +26,7 @@ export default function handler(
       res.status(200).json({ data: "Installation Complete", logs: JSON.stringify(output.stdout) });
     })
     .catch((err) => {
-      log(erB("--------npm install failed---------"));
-      res.status(400).json({ data: "Installation Failed" });
+      log(erB("--------npm install failed---------", err.stderr));
+      res.status(400).json({ data: "Installation Failed", logs: JSON.stringify(err.stderr) });
     });
 }

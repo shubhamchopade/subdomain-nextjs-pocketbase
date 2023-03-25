@@ -18,24 +18,26 @@ export function executeCommandChild(command: string, args: any) {
         });
 
         childProcess.on("error", (err) => {
-            reject(
-                new Error(
-                    `Command executeCommandChild "${command} ${args.join(
-                        " "
-                    )}" failed with error: ${err}`
-                )
-            );
+            reject({ err, stderr });
+            // reject(
+            //     new Error(
+            //         `Command executeCommandChild "${command} ${args.join(
+            //             " "
+            //         )}" failed with error: ${err}`
+            //     )
+            // );
         });
 
         childProcess.on("close", (code, signal) => {
             if (code !== 0) {
-                reject(
-                    new Error(
-                        `Command "${command} ${args.join(
-                            " "
-                        )}" failed with code ${code} and signal ${signal}: ${stderr}`
-                    )
-                );
+                reject({ stderr });
+                // reject(
+                //     new Error(
+                //         `Command "${command} ${args.join(
+                //             " "
+                //         )}" failed with code ${code} and signal ${signal}: ${stderr}`
+                //     )
+                // );
             } else {
                 resolve({ stdout, stderr });
             }
