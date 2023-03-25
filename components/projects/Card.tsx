@@ -45,6 +45,8 @@ const Card = (props) => {
         return data
     }
 
+
+
     // Clone repo
     const cloneRepo = async () => {
         setIsLoading(true)
@@ -84,6 +86,9 @@ const Card = (props) => {
             })
             console.log("cloned", res)
         }
+
+        const data = await cloneRes.json();
+        return data
     };
 
 
@@ -107,6 +112,7 @@ const Card = (props) => {
         }
         const data = await res.json();
         console.log(data);
+        return data
     };
 
     // Build dependencies
@@ -132,6 +138,7 @@ const Card = (props) => {
             console.log("build failed", data);
         }
 
+        return res
 
 
     };
@@ -164,6 +171,8 @@ const Card = (props) => {
             }
             const data = await res.json();
             console.log(data);
+
+            return data
         }
 
     };
@@ -309,6 +318,25 @@ const Card = (props) => {
         };
         exists();
     };
+
+
+    // DEPLOY
+    const deploy = async () => {
+        const clone = cloneRepo()
+        const subdomain = createSubdomainEntry()
+        const install = installDependencies()
+        const build = buildDependencies()
+        const start = startProject()
+
+        const items = [clone, subdomain, install, build, start]
+        items.map(async (item) => {
+            const res = await item
+            console.log(res)
+        })
+    }
+
+
+
     return (
         <div>
             <div className={`card max-w-xl bg-base-200 shadow-xl relative m-4 ${isLoading && "animate-pulse"}`}>
@@ -334,8 +362,8 @@ const Card = (props) => {
                     <a href={`https://${props.project.subdomain}.techsapien.dev`} className="link my-2 ml-auto">{props.project.subdomain}.techsapien.dev</a>
 
                     <div className="card-actions">
-                        <button onClick={cloneRepo} className="btn btn-outline text-xs btn-xs">
-                            CLONE
+                        <button onClick={deploy} className="btn btn-primary text-xs btn-xs">
+                            DEPLOY
                         </button>
                         <button
                             onClick={createSubdomainEntry}
