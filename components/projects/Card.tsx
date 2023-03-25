@@ -125,10 +125,15 @@ const Card = (props) => {
                     built: true
                 })
             }
+            const data = await res.json();
+            console.log("build logs", JSON.parse(data.logs));
+        } else {
+            const data = await res.json();
+            console.log("build failed", data);
         }
 
-        const data = await res.json();
-        console.log("build logs", JSON.parse(data.logs));
+
+
     };
 
     // Start project
@@ -165,15 +170,13 @@ const Card = (props) => {
 
     // Stop the project
     const stopProject = () => {
-
         const stopProjectCallback = async () => {
-
             const getPort = await pb.collection("subdomains").getFullList({
                 sort: "-created",
                 projectId: projectId,
             });
             const port = getPort[0]?.port;
-            console.log("ACTIVE PORT =", port);
+            // console.log("ACTIVE PORT =", port);
 
             // Kill the port
             if (port && status && framework) {
@@ -187,12 +190,11 @@ const Card = (props) => {
                 const killedPort = await killServerPort(port);
                 console.log("port killed", killedPort);
 
-                // Update the project status
-                const projectStatusRes = await pb.collection('projectStatus').update(status.id, {
-                    stopped: true,
-                    isOnline: false
-                })
-                console.log("project stopped", projectStatusRes)
+                // // Update the project status
+                // const projectStatusRes = await pb.collection('projectStatus').update(status.id, {
+                //     stopped: true,
+                //     isOnline: false
+                // })
             }
         }
 
@@ -217,6 +219,7 @@ const Card = (props) => {
         console.log("started dev server 🫶 >>>>", data);
     };
 
+    // Delete project
     const handleDelete = () => {
         const register = async () => {
             // Kill the port
@@ -225,7 +228,7 @@ const Card = (props) => {
                 projectId: projectId,
             });
             const port = getPort[0]?.port;
-            console.log("card-handleDelete-port", port);
+            // console.log("card-handleDelete-port", port);
 
             if (port) {
                 // First stop then delete
@@ -233,9 +236,9 @@ const Card = (props) => {
                 // else only delete
                 stopProject()
 
-                const dangerouslyDeleteProject = async (port) => {
+                const dangerouslyDeleteProject = async (_port) => {
                     const res = await fetch(
-                        `/api/delete?link=${link}&id=${id}&projectId=${projectId}&port=${port}&subdomain=${subdomain}&framework=${framework}`
+                        `/api/delete?link=${link}&id=${id}&projectId=${projectId}&port=${_port}&subdomain=${subdomain}&framework=${framework}`
                     );
                     const data = await res.json();
                     console.log(data);
@@ -243,9 +246,9 @@ const Card = (props) => {
                 const stoppedProject = await dangerouslyDeleteProject(port);
                 console.log("stoppedProject", stoppedProject);
             } else {
-                const dangerouslyDeleteProject = async (port) => {
+                const dangerouslyDeleteProject = async (_port) => {
                     const res = await fetch(
-                        `/api/delete?link=${link}&id=${id}&projectId=${projectId}&port=${port}&subdomain=${subdomain}&framework=${framework}`
+                        `/api/delete?link=${link}&id=${id}&projectId=${projectId}&port=${_port}&subdomain=${subdomain}&framework=${framework}`
                     );
                     const data = await res.json();
                     console.log(data);
@@ -254,19 +257,17 @@ const Card = (props) => {
                 console.log("stoppedProject", stoppedProject);
             }
 
-            // delete from pocketbase
-            const deleted = await pb.collection("projects").delete(project.id);
-            console.log("deleted from supabase", deleted);
-
-
-            if (deleted) {
-                // router.reload()
-            }
+            // // delete from pocketbase
+            // const deleted = await pb.collection("projects").delete(project.id);
+            // if (deleted) {
+            //     // router.reload()
+            // }
         };
 
         register();
     };
 
+    // Create subdomain entry
     const createSubdomainEntry = () => {
         // Generate a random port number
         const port = generateRandomNumber();
@@ -337,6 +338,12 @@ const Card = (props) => {
                             CLONE
                         </button>
                         <button
+                            onClick={createSubdomainEntry}
+                            className="btn btn-outline btn-xs"
+                        >
+                            SUBDOMAIN
+                        </button>
+                        <button
                             onClick={installDependencies}
                             className={`btn btn-outline btn-xs`}
                         >
@@ -347,12 +354,6 @@ const Card = (props) => {
                             className={`btn btn-outline btn-xs`}
                         >
                             BUILD
-                        </button>
-                        <button
-                            onClick={createSubdomainEntry}
-                            className="btn btn-outline btn-xs"
-                        >
-                            SUBDOMAIN
                         </button>
                         <button
                             onClick={startProject}
