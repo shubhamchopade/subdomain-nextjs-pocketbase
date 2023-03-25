@@ -25,8 +25,8 @@ export default function handler(
       })
     })
     .catch((err) => {
-      res.status(400).json({ data: `build failed for ${projectId}` });
-      log(erB("build failed for ${projectId}", err));
+      res.status(400).json({ data: `build failed for ${projectId}`, logs: JSON.stringify(err.stderr) });
+      log(erB(`build failed for ${projectId}`, err.stderr));
     });
 }
 
