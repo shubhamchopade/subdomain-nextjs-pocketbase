@@ -20,6 +20,8 @@ const Logger = (props: Props) => {
     const [installLogs, setInstallLogs] = useState("")
     const [buildLogs, setBuildLogs] = useState("")
     const [startLogs, setStartLogs] = useState("")
+
+    console.log(props.logs.projectId)
     useEffect(() => {
         const getStatusId = async () => {
             try {
@@ -35,7 +37,7 @@ const Logger = (props: Props) => {
             }
         };
         getStatusId()
-    }, [props.logs.projectId])
+    }, [statusId])
 
     // console.log(statusId)
     useEffect(() => {
@@ -63,13 +65,13 @@ const Logger = (props: Props) => {
     }, [])
     // console.log(installLogs)
     return (
-        <div className='prose'>
+        <div className='prose card bg-base-200 p-4 max-w-xl shadow text-xs absolute z-10 top-50 h-44 overflow-y-auto overflow-x-auto'>
             {/* <p>sadasdf</p> */}
             {logs && <>
                 <pre>{logs.logClone && JSON.parse(logs.logClone)}</pre>
                 <pre >{logs.logInstall && JSON.parse(logs.logInstall)}</pre>
                 <pre >{logs.logBuild && JSON.parse(logs.logBuild)}</pre>
-                <p >{logs.logStart}</p></>}
+                <pre >{logs.logStart}</pre></>}
             <p>{installLogs}</p>
             <p>{buildLogs}</p>
             {/* <p>{logs.logClone}</p>
