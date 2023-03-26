@@ -8,7 +8,7 @@ import PocketBase from 'pocketbase'
 const log = console.log;
 const erB = chalk.bold.redBright;
 const blu = chalk.bold.blue;
-const pb = new PocketBase("https://pocketbase.techsapien.dev");
+
 
 
 export default function handler(
@@ -16,9 +16,10 @@ export default function handler(
   res: NextApiResponse<any>
 ) {
   const { link, id = 1, projectId = 1, port = 30, subdomain = "test", statusId } = req.query;
-  // console.log("repoLink: ", link);
+  console.log("id: ", id);
   const scriptLocation = '/home/shubham/Code/system-scripts/nginx-techsapien.sh'
   console.log("subdomain", statusId)
+  const pb = new PocketBase("https://pocketbase.techsapien.dev");
 
   executeCommandChild(
     `sh`, [`${scriptLocation}`, `${subdomain}`, `${port}`, `${id}`]
@@ -37,6 +38,6 @@ export default function handler(
       logSubdomain: "Uh Oh! Subdomain already assigned, please choose another one. 🤔"
     })
     log(chalk.redBright("Error creating nginx entry, please try again", e));
-    res.status(200).json({ data: "Error assinging subdomain" });
+    res.status(400).json({ data: "Error assinging subdomain" });
   })
 }

@@ -15,17 +15,12 @@ export default function handler(
   const dir = "/home/shubham/Code/monorepo/apps";
   const pb = new PocketBase("https://pocketbase.techsapien.dev");
 
-  // get cwd
-  // executeCommandChild(`cd`, [`${dir}/${id}/${projectId}`, `&&`, `pwd`]).then((output: any) => {
-  //   log(chalk.green("pwd >> ", output.stdout, output.stderr));
-  // });
-
   // Install dependencies using npm
   executeCommandChild('cd', [`${dir}/${id}/${projectId}`, `&&`, `yarn install`])
     .then((output: any) => {
-      log(chalk.bgMagenta("install output -", output.stdout, output.stderr));
+      // log(chalk.bgYellow("install output -", output.stdout, output.stderr));
       pb.collection('projectStatus').update(statusId, {
-        install: true,
+        installed: true,
         current: "installation complete",
         logInstall: JSON.stringify(output.stdout)
       })
@@ -34,7 +29,7 @@ export default function handler(
     .catch((err) => {
       log(erB("--------install failed---------", err.stderr));
       pb.collection('projectStatus').update(statusId, {
-        install: false,
+        installed: false,
         current: "installation failed",
         logInstall: JSON.stringify(err.stderr)
       })
