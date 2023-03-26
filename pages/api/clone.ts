@@ -20,24 +20,29 @@ export default function handler(
       (childRes: any) => {
         log(chalk.bgGreen(`Repo cloned - ${link}`, childRes.stderr));
         pb.collection('projectStatus').update(statusId, {
-          status: "cloned",
+          current: "cloned",
           cloned: true,
-          logClone: "Cloned successfully"
+          logClone: "cloned successfully"
         })
         res.status(200).json({ data: `Repo cloned ${link}`, logs: JSON.stringify(childRes.stdout), });
       }
     ).catch((err) => {
-      log(erB("--------git clone failed---------", err.stderr));
+      log(erB("git clone skipped", err.stderr));
       pb.collection('projectStatus').update(statusId, {
-        status: "clone failed",
-        cloned: false,
-        logClone: "Cloning failed"
+        current: "clone skipped",
+        cloned: true,
+        logClone: "git clone skipped, file already exists"
       })
       res.status(400).json({ data: `git clone failed, file already exists` });
     });
 
   } catch (e) {
     console.error(e)
+    pb.collection('projectStatus').update(statusId, {
+      current: "clone failed",
+      cloned: false,
+      logClone: "git clone failed, file already exists"
+    })
     res.status(400).json({ data: `git clone failed, file already exists` });
   }
 }
