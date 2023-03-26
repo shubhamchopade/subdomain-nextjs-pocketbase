@@ -8,7 +8,7 @@ import LinkCard from './LinkCard';
 const GithubRepos = () => {
     const [repos, setRepos] = useState([])
     const router = useRouter()
-    const framework = "nextjs"
+
     const handleRepos = async () => {
         const auth = localStorage.getItem("pocketbase_auth")
         const json = JSON.parse(auth)

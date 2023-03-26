@@ -4,7 +4,7 @@ import Card from './Card';
 
 // Fetch all the projects
 
-const ProjectsGrid = (props) => {
+const ProjectsGrid = () => {
     const pb = new PocketBase('https://pocketbase.techsapien.dev');
     const [allProjects, setAllProjects] = React.useState([])
     const [_userId, setUserId] = useState("")
