@@ -23,7 +23,7 @@ export default function handler(
   // Install dependencies using npm
   executeCommandChild('cd', [`${dir}/${id}/${projectId}`, `&&`, `yarn install`])
     .then((output: any) => {
-      log(chalk.bgMagenta("npm installed >> ", output.stdout, output.stderr));
+      log(chalk.bgMagenta("install output -", output.stdout, output.stderr));
       pb.collection('projectStatus').update(statusId, {
         install: true,
         current: "installation complete",
@@ -32,7 +32,7 @@ export default function handler(
       res.status(200).json({ data: "Installation Complete", logs: JSON.stringify(output.stdout) });
     })
     .catch((err) => {
-      log(erB("--------npm install failed---------", err.stderr));
+      log(erB("--------install failed---------", err.stderr));
       pb.collection('projectStatus').update(statusId, {
         install: false,
         current: "installation failed",
