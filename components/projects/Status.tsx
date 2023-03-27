@@ -9,7 +9,7 @@ const Status = (props) => {
     const [status, setStatus] = React.useState(props?.status)
     const statusId = status?.id
 
-    console.log(props)
+    // console.log(props)
     useEffect(() => {
         try {
             if (statusId) {
