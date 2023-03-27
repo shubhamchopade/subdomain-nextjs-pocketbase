@@ -24,12 +24,12 @@ const Navbar = () => {
         <a className="btn btn-ghost normal-case text-xl">TechSapien</a>
       </div>
       {session.data && (
-        <div className="flex-1">
-          <Link className="flex-1 link" href={"/dashboard"}>
+        <div className="flex">
+          <Link className="link" href={"/dashboard"}>
             Dashboard
           </Link>
-          <Link className="flex-1 link" href={"/create"}>
-            Create
+          <Link className="btn btn-primary mx-4" href={"/create"}>
+            Create new project
           </Link>
         </div>
       )}
