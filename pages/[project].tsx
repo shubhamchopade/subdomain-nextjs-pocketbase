@@ -1,14 +1,12 @@
 import { getServerSession } from 'next-auth'
 import Link from 'next/link'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import PocketBase from "pocketbase";
 import { GetServerSideProps } from 'next';
 import { authOptions } from './api/auth/[...nextauth]';
 import Status from '../components/projects/Status';
 import { useRouter } from 'next/router';
-import { generateRandomNumber } from '../components/utils/build-helpers';
 import { toast } from 'react-toastify';
-import Logger from '../components/projects/Logger';
 
 const Project = (props) => {
     const status = JSON.parse(props.status)
@@ -26,15 +24,6 @@ const Project = (props) => {
     const [isLoading, setIsLoading] = useState(false)
 
     const pb = new PocketBase("https://pocketbase.techsapien.dev");
-
-    // Get the framework
-    const getFramework = async () => {
-        const res = await fetch(
-            `/api/framework?link=${link}&id=${id}&projectId=${projectId}`
-        );
-        const data = await res.json();
-        return data
-    }
 
 
     // Clone repo
@@ -65,19 +54,11 @@ const Project = (props) => {
 
     // Start project
     const startProject = async () => {
-        const res = await fetch(
+        return await fetch(
             `/api/start?link=${link}&id=${id}&projectId=${projectId}&subdomain=${subdomain}&statusId=${status.id}`
         );
 
     };
-
-    // Stop the project
-    const stopProject = async () => {
-        return await fetch(
-            `/api/stop?link=${link}&id=${id}&projectId=${projectId}&subdomain=${subdomain}&framework=${framework}&statusId=${status.id}`
-        );
-    }
-
 
     // Delete project
     const handleDelete = async () => {
@@ -114,9 +95,7 @@ const Project = (props) => {
             const build = await buildDependencies()
             const start = await startProject()
             setIsLoading(false)
-
             toast.success(`Project deployed successfully`)
-
         } catch (e) {
             setIsLoading(false)
             toast.error(`Build failed, please check the logs for more info`)
