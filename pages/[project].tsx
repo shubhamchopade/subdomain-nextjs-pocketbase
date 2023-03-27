@@ -65,22 +65,6 @@ const Project = (props) => {
 
     // Start project
     const startProject = async () => {
-        // const getPort = await pb.collection("subdomains").getFullList({
-        //     sort: "-created",
-        //     projectId: projectId,
-        // });
-        // console.log("PROD PORT", getPort[0]?.port);
-
-        // const framework = await getFramework()
-
-        // const port = getPort[0]?.port;
-        // console.log("framework", framework)
-        // if (framework && port) {
-
-
-        //     return res
-        // }
-
         const res = await fetch(
             `/api/start?link=${link}&id=${id}&projectId=${projectId}&subdomain=${subdomain}&statusId=${status.id}`
         );
@@ -88,46 +72,31 @@ const Project = (props) => {
     };
 
     // Stop the project
-    const stopProject = () => {
-        const stopProjectCallback = async () => {
-            const getPort = await pb.collection("subdomains").getFullList({
-                sort: "-created",
-                projectId: projectId,
-            });
-            const port = getPort[0]?.port;
-            // console.log("ACTIVE PORT =", port);
+    const stopProject = async () => {
+        // const stopProjectCallback = async () => {
+        //     const getPort = await pb.collection("subdomains").getFullList({
+        //         sort: "-created",
+        //         projectId: projectId,
+        //     });
+        //     const port = getPort[0]?.port;
+        //     // console.log("ACTIVE PORT =", port);
 
-            // Kill the port
-            if (port && status && framework) {
-                const killServerPort = async (port) => {
-                    await fetch(
-                        `/api/stop?link=${link}&id=${id}&projectId=${projectId}&port=${port}&subdomain=${subdomain}&framework=${framework}&statusId=${status.id}`
-                    );
-                };
-                await killServerPort(port);
-            }
-        }
+        //     // Kill the port
+        //     if (port && status && framework) {
+        //         const killServerPort = async (port) => {
 
-        stopProjectCallback()
+        //         };
+        //         await killServerPort(port);
+        //     }
+        // }
+
+        // stopProjectCallback()
+
+        return await fetch(
+            `/api/stop?link=${link}&id=${id}&projectId=${projectId}&subdomain=${subdomain}&framework=${framework}&statusId=${status.id}`
+        );
     }
 
-    // Start dev mode
-    const startDevMode = async () => {
-        // Get the port from API
-        const getPort = await pb.collection("subdomains").getFullList({
-            sort: "-created",
-            projectId: projectId,
-        });
-        console.log("DEV PORT", getPort[0].port);
-
-        const port = getPort[0].port;
-
-        const res = await fetch(
-            `/api/dev?link=${link}&id=${id}&projectId=${projectId}&port=${port}`
-        );
-        const data = await res.json();
-        console.log("started dev server 🫶 >>>>", data);
-    };
 
     // Delete project
     const handleDelete = () => {
@@ -180,7 +149,6 @@ const Project = (props) => {
 
     // Create subdomain entry
     const createSubdomainEntry = async () => {
-        // create a new entry in subdomains
         const res = await fetch(
             `/api/subdomain?link=${link}&id=${id}&projectId=${projectId}&statusId=${status.id}&subdomain=${subdomain}`
         );
@@ -266,7 +234,7 @@ const Project = (props) => {
                             START
                         </button>
                         <button
-                            // onClick={stopProject}
+                            onClick={stopProject}
                             className={`btn btn-outline btn-xs`}
                         >
                             STOP
