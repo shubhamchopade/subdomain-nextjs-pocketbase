@@ -29,7 +29,7 @@ const GithubRepos = () => {
         const auth = localStorage.getItem("pocketbase_auth")
         const json = JSON.parse(auth)
         const userId = json?.model?.id
-        const pb = new PocketBase("https://pocketbase.techsapien.dev");
+        const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
         const register = async () => {
             if (userId)
                 try {
@@ -66,10 +66,10 @@ const GithubRepos = () => {
                 <label htmlFor='project-search'>Search github repository</label>
                 <input className='input input-bordered w-full' name="project-search" value={"input"} onChange={() => console.log("clicked")} />
             </div>
-            <div className="flex  flex-col h-96 overflow-y-auto overflow-x-hidden">
+            <div className="flex flex-col h-96 overflow-y-auto overflow-x-hidden">
                 {
                     repos.map(repo => (
-                        <div key={repo.id} className='cursor-pointer hover:scale-105 bg-gray-700' onClick={() => handleCreateProject(repo.name, repo.html_url)}>
+                        <div key={repo.id} className='cursor-pointer hover:scale-105 card bg-base-300' onClick={() => handleCreateProject(repo.name, repo.html_url)}>
                             <LinkCard name={repo.name} link={repo.html_url} />
                         </div>))
                 }

@@ -16,8 +16,7 @@ export default function handler(
 ) {
     const { link, id = 1, projectId = 1, subdomain, framework, statusId } = req.query;
 
-    const dir = "/home/shubham/Code/monorepo/apps";
-    const pb = new PocketBase("https://pocketbase.techsapien.dev");
+    const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
 
 
     // Get the port and 

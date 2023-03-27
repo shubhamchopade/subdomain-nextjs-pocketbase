@@ -20,7 +20,7 @@ export default function handler(
   const { link, id = 1, projectId = 1, statusId, subdomain = "test" } = req.query;
   const scriptLocation = '/home/shubham/Code/system-scripts/nginx-techsapien.sh'
   // console.log("subdomain", statusId)
-  const pb = new PocketBase("https://pocketbase.techsapien.dev");
+  const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
 
   // generate a random numbers between 1000 and 9999
   const randomPort = Math.floor(Math.random() * 8999 + 1000);

@@ -5,7 +5,7 @@ import Card from './Card';
 // Fetch all the projects
 
 const Status = (props) => {
-    const pb = new PocketBase('https://pocketbase.techsapien.dev');
+    const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
     const [status, setStatus] = React.useState(props?.status)
     const statusId = status?.id
 

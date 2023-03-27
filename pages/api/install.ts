@@ -12,8 +12,8 @@ export default function handler(
   res: NextApiResponse<any>
 ) {
   const { link, id = 1, projectId = 1, port = 3, statusId } = req.query;
-  const dir = "/home/shubham/Code/monorepo/apps";
-  const pb = new PocketBase("https://pocketbase.techsapien.dev");
+  const dir = process.env.NEXT_PUBLIC_LOCAL_PATH_TO_PROJECTS;
+  const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
 
   // Install dependencies using npm
   executeCommandChild('cd', [`${dir}/${id}/${projectId}`, `&&`, `yarn install`])

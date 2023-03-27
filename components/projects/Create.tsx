@@ -36,7 +36,7 @@ const CreateProject: NextPage<any> = (props): JSX.Element => {
         defaultValues,
     });
 
-    const pb = new PocketBase("https://pocketbase.techsapien.dev");
+    const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
     const {
         handleSubmit,
         register,

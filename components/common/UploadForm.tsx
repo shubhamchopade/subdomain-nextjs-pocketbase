@@ -6,7 +6,7 @@ export default function UploadForm(props) {
   const [createObjectURL, setCreateObjectURL] = useState<string>();
   const [imageRecords, setImageRecords] = useState([]);
 
-  const pb = new PocketBase("https://pocketbase.techsapien.dev");
+  const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
 
   const uploadToClient = async (event) => {
     if (event.target.files && event.target.files[0]) {

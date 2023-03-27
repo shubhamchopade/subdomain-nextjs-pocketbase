@@ -12,13 +12,12 @@ export default function handler(
     res: NextApiResponse<any>
 ) {
     const { link, id = 1, projectId = 1, subdomain, statusId } = req.query;
-
-    const dir = "/home/shubham/Code/monorepo/apps";
+    const dir = process.env.NEXT_PUBLIC_LOCAL_PATH_TO_PROJECTS;
 
     const projectPath = `${dir}/${id}/${projectId}`;
 
 
-    const pb = new PocketBase("https://pocketbase.techsapien.dev");
+    const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
 
 
     pb.collection('projects').getOne(projectId).then((project: any) => {

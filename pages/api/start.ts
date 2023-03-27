@@ -23,8 +23,7 @@ export default function handler(
   res: NextApiResponse<any>
 ) {
   const { link, id = 1, projectId = 1, statusId, subdomain } = req.query;
-  const dir = "/home/shubham/Code/monorepo/apps";
-  const pb = new PocketBase("https://pocketbase.techsapien.dev");
+  const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
 
   try {
     // Get framework

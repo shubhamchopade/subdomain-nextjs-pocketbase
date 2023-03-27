@@ -23,7 +23,7 @@ const Project = (props) => {
 
     const [isLoading, setIsLoading] = useState(false)
 
-    const pb = new PocketBase("https://pocketbase.techsapien.dev");
+    const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
 
 
     // Clone repo
@@ -135,7 +135,7 @@ const Project = (props) => {
                     </div>
                 </div>
             </div>
-            <Status status={status} />
+            {status && <Status status={status} />}
             {/* <Logger projectId={projectId} status={status} /> */}
         </div>
     )
@@ -145,7 +145,7 @@ export default Project
 
 
 export const getServerSideProps: GetServerSideProps<any> = async (context) => {
-    const pb = new PocketBase("https://pocketbase.techsapien.dev");
+    const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
 
     let session = null;
     let status = null;
