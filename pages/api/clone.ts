@@ -19,11 +19,9 @@ export default function handler(
   const dir = "/home/shubham/Code/monorepo/apps";
   const scriptLocation = '/home/shubham/Code/nginx-config/get-framework.sh'
   const pb = new PocketBase("https://pocketbase.techsapien.dev");
-  // TODO: Add get framework api
 
-  console.log("clone started")
+
   try {
-
     executeCommandChild(`git`, ['clone', `${link}`, `${dir}/${id}/${projectId}`]).then(
       (childRes: any) => {
         log(chalk.bgGreen(`Repo cloned - ${link}`, childRes.stdout, childRes.stderr));
@@ -38,32 +36,39 @@ export default function handler(
           `sh`, [`${scriptLocation}`, `${dir}/${id}/${projectId}`]
         ).then((output: any) => {
           log(chalk.bgGreenBright.black("framework detected ", output.stdout, output.stderr));
-          // res.status(200).json({ data: output.stdout });
+
+          // Update the framework in the database
+          pb.collection('projects').update(projectId, { framework: output.stdout })
+
+
         }).catch(e => {
           log(chalk.redBright("unsupported framework detected", e));
-          // res.status(404).json({ data: "unsupported framework detected. We are still working on this, sorry." });
         })
 
-
-        res.status(200).json({ data: `Repo cloned ${link}`, logs: JSON.stringify(childRes.stdout), });
+        // Return the success response
+        res.status(200).json({ data: `Repo cloned ${link}`, logs: JSON.stringify(childRes.stdout) });
       }
     ).catch((err) => {
       log(erB("git clone skipped", err.stderr));
+      // Update the status in the database
       pb.collection('projectStatus').update(statusId, {
         current: "clone skipped",
         cloned: true,
         logClone: "git clone skipped, file already exists"
       })
+      // Return the error response
       res.status(400).json({ data: `git clone failed, file already exists` });
     });
 
   } catch (e) {
     console.error(e)
+    // Update the status in the database
     pb.collection('projectStatus').update(statusId, {
       current: "clone failed",
       cloned: false,
       logClone: "git clone failed, file already exists"
     })
+    // Return the error response
     res.status(400).json({ data: `git clone failed, file already exists` });
   }
 }
