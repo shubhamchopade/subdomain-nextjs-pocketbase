@@ -25,26 +25,39 @@ export default function handler(
         const { port, framework } = project;
         console.log(erB(`DELETING APP at port ${port}`));
 
-        // DELETE config file at nginx
-        executeCommandChild('rm', ['-f', `/etc/nginx/techsapien.d/${subdomain}.techsapien.dev.conf`])
 
-        // delete the project files from /app 
-        executeCommandChild('rm', ['-rf', projectPath])
+
 
         // disable the project from systemctl
         executeCommandChild(`systemctl`, [`disable`, `$(systemd-escape`, `--template`, `techsapien@.service`, `"${projectId} ${port} ${id} ${framework}")`])
+            .then(() => {
+                // Update status of project
+                pb.collection('projectStatus').update(statusId, {
+                    isOnline: false,
+                    stopped: true,
+                    current: "project inactive",
+                })
 
-        // delete from pocketbase
-        pb.collection("projects").delete(projectId);
+                // DELETE config file at nginx
+                executeCommandChild('rm', ['-f', `/etc/nginx/techsapien.d/${subdomain}.techsapien.dev.conf`])
 
-        // Update status of project
-        pb.collection('projectStatus').update(statusId, {
-            isOnline: false,
-            stopped: true,
-            current: "project inactive",
-        })
+                // delete the project files from /app 
+                executeCommandChild('rm', ['-rf', projectPath])
 
-        res.status(200).json({ name: "App Deleted" });
+
+                // delete from pocketbase
+                pb.collection("projects").delete(projectId);
+
+
+                res.status(200).json({ name: "App Deleted" });
+
+            })
+            .catch((err) => {
+                console.log(err);
+                res.status(400).json({ name: "App could not be deleted" });
+            })
+
+
 
     }).catch((err) => {
         console.log("Could not delete the app", err);
