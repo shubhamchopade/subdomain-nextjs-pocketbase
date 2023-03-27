@@ -40,9 +40,9 @@ export default function UploadForm(props) {
   return (
     <div>
       <div>
-        {imageRecords.map((record) => {
+        {/* {imageRecords.map((record) => {
           return <img key={record.id} src={record} />;
-        })}
+        })} */}
         <h4>Select Image</h4>
         <input type="file" name="myImage" onChange={uploadToClient} />
       </div>

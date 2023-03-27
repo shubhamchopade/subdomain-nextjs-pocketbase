@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Link from "next/link";
+import CardStatus from "./CardStatus";
 
 const Card = (props) => {
     const project = props.project;
@@ -15,6 +16,7 @@ const Card = (props) => {
     return (
         <div className="relative">
             <div className={`card max-w-xl bg-base-200 shadow-xl relative m-4 ${isLoading && "animate-pulse"}`}>
+                <CardStatus />
                 <span className="uppercase text-xs font-bold">{framework}</span>
                 <div className="card-body">
                     <Link href={`${projectId}?framework=${framework}&userId=${id}`} className="card-title">{props.project.title}</Link>

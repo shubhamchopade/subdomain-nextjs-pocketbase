@@ -15,7 +15,8 @@ const Status = (props) => {
             if (statusId) {
                 pb.collection('projectStatus').subscribe(statusId, function (e) {
                     // console.log(e.record);
-                    setStatus(e.record)
+                    setStatus(e.record);
+                    // liveStatus.setStatus(e.record);
                 });
             }
 

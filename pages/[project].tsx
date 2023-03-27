@@ -7,6 +7,7 @@ import { authOptions } from './api/auth/[...nextauth]';
 import Status from '../components/projects/Status';
 import { useRouter } from 'next/router';
 import { toast } from 'react-toastify';
+import { useStatusState } from '../store/statusState';
 
 const Project = (props) => {
     const status = JSON.parse(props.status)
@@ -20,6 +21,7 @@ const Project = (props) => {
     const subdomain = data?.subdomain
     const id = data?.userId;
     const link = data?.link;
+    const liveStatus = useStatusState()
 
     const [isLoading, setIsLoading] = useState(false)
 
@@ -103,9 +105,9 @@ const Project = (props) => {
         }
     }
 
-
+    console.log(liveStatus)
     return (
-        <div>
+        <div className='mb-16'>
             <div className={`card bg-base-200 shadow-xl relative m-4 `}>
                 <span
                     onClick={handleDelete}

@@ -26,7 +26,7 @@ const ProjectsGrid = () => {
         getProjects()
     }, [])
 
-    console.log(allProjects)
+    // console.log(allProjects)
 
     return (
         <div className='max-w-4xl mx-auto'>
