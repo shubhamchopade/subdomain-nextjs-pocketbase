@@ -31,6 +31,10 @@ export default function handler(
     pb.collection('projects').getOne(projectId).then((project: any) => {
       const { port, framework } = project;
       console.log("port, framework", port, framework)
+      // TODO - use pm2 instead of systemd
+      executeCommandChild(
+        `systemctl`, [`enable`, `$(systemd-escape`, `--template`, `techsapien@.service`, `"${projectId} ${port} ${id} ${framework}")`]
+      )
       executeCommandChild(
         `systemctl`, [`start`, `$(systemd-escape`, `--template`, `techsapien@.service`, `"${projectId} ${port} ${id} ${framework}")`]
       ).then((output: any) => {

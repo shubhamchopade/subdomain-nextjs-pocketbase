@@ -11,40 +11,44 @@ export default function handler(
     req: NextApiRequest,
     res: NextApiResponse<any>
 ) {
-    const { link, id = 1, projectId = 1, port = 3000, subdomain, framework } = req.query;
-    console.log("repoLink: ", link);
+    const { link, id = 1, projectId = 1, subdomain, statusId } = req.query;
 
     const dir = "/home/shubham/Code/monorepo/apps";
 
     const projectPath = `${dir}/${id}/${projectId}`;
 
-    console.log(erB(`DELETING APP at port ${port}`));
 
     const pb = new PocketBase("https://pocketbase.techsapien.dev");
 
-    // delete from pocketbase
-    const deleteProjectPocketbase = pb.collection("projects").delete(projectId);
 
-    // DELETE config file at nginx
-    const deleteNginxConfig = executeCommandChild('rm', ['-f', `/etc/nginx/techsapien.d/${subdomain}.techsapien.dev.conf`])
+    pb.collection('projects').getOne(projectId).then((project: any) => {
+        const { port, framework } = project;
+        console.log(erB(`DELETING APP at port ${port}`));
 
-    // delete the project files from /app 
-    const deleteProjectFiles = executeCommandChild('rm', ['-rf', projectPath])
+        // DELETE config file at nginx
+        executeCommandChild('rm', ['-f', `/etc/nginx/techsapien.d/${subdomain}.techsapien.dev.conf`])
 
-    // disable the project from systemctl
-    const disableProjectSystem = executeCommandChild(`systemctl`, [`disable`, `$(systemd-escape`, `--template`, `techsapien@.service`, `"${projectId} ${port} ${id} ${framework}")`])
+        // delete the project files from /app 
+        executeCommandChild('rm', ['-rf', projectPath])
 
-    // Promise.all() to execute all the commands at once, in parallel
-    Promise.all([
-        deleteNginxConfig,
-        deleteProjectFiles,
-        disableProjectSystem,
-        deleteProjectPocketbase
-    ]).then((output) => {
-        console.log("All commands executed", output);
-        res.status(200).json({ data: "all commands executed" });
+        // disable the project from systemctl
+        executeCommandChild(`systemctl`, [`disable`, `$(systemd-escape`, `--template`, `techsapien@.service`, `"${projectId} ${port} ${id} ${framework}")`])
+
+        // delete from pocketbase
+        pb.collection("projects").delete(projectId);
+
+        // Update status of project
+        pb.collection('projectStatus').update(statusId, {
+            isOnline: false,
+            stopped: true,
+            current: "project inactive",
+        })
+
+        res.status(200).json({ name: "App Deleted" });
+
     }).catch((err) => {
-        console.log("Some commands failed", err);
-        res.status(400).json({ data: "some commands failed" });
+        console.log("Could not delete the app", err);
+        res.status(400).json({ name: "service failed" });
     })
+
 }

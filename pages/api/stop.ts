@@ -21,17 +21,15 @@ export default function handler(
 
 
     // Get the port and 
-    pb.collection("subdomains").getFullList({
-        sort: "-created",
-        projectId: projectId,
-    }).then((portRes: any) => {
+    pb.collection('projects').getOne(projectId).then((portRes: any) => {
         const port = portRes[0].port;
         console.log(`deleting started at port ${port}`);
         // Get the process id by listing the ports
+        // TODO - use pm2 instead of systemd
         executeCommandChild('lsof', [`-t`, `-i:${port}`])
             .then((pid: any) => {
                 log(chalk.red(`PORT > ${port} - PID >`, pid.stdout));
-
+                // TODO - use pm2 instead of systemd
                 // stop the project from systemctl
                 executeCommandChild(
                     `systemctl`, [`stop`, `$(systemd-escape`, `--template`, `techsapien@.service`, `"${projectId} ${port} ${id} ${framework}")`]
@@ -54,7 +52,7 @@ export default function handler(
 
                 console.log(`${projectId} ${port} ${id} ${framework}`)
 
-
+                // TODO - use pm2 instead of systemd
                 // kill the process using process id obtained from lists of ports
                 executeCommandChild('kill', ['-9', `${pid.stdout}`])
                     .then((output: any) => {
