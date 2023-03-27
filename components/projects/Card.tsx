@@ -19,40 +19,9 @@ const Card = (props) => {
     const [isLoading, setIsLoading] = useState(false)
     const [status, setStatus] = useState(null)
     const [framework, setFramework] = useState(props?.project.framework)
-    const [cloneLogs, setcloneLogs] = useState("")
-    const [installLogs, setInstallLogs] = useState("")
-    const [buildLogs, setBuildLogs] = useState("")
-    const [startLogs, setStartLogs] = useState("")
-    const [showLogs, setShowLogs] = useState(false)
 
     const pb = new PocketBase("https://pocketbase.techsapien.dev");
 
-    // get id for this project status collection
-    useEffect(() => {
-        const getStatusId = async () => {
-            try {
-                const statusExists = await pb
-                    .collection("projectStatus")
-                    .getFullList({ projectId: projectId }, { $autoCancel: false })
-                // console.log(statusExists[0])
-                setStatus(statusExists[0])
-                return statusExists[0]
-            } catch (e) {
-                console.error("statusExists error");
-                return null
-            }
-        };
-        getStatusId()
-    }, [])
-
-    // Get the framework
-    const getFramework = async () => {
-        const res = await fetch(
-            `/api/framework?link=${link}&id=${id}&projectId=${projectId}`
-        );
-        const data = await res.json();
-        return data
-    }
 
     return (
         <div className="relative">
@@ -61,7 +30,6 @@ const Card = (props) => {
                 <div className="card-body">
                     <Link href={`${projectId}?framework=${framework}&userId=${id}`} className="card-title">{props.project.title}</Link>
                     <p>{props.project.description}</p>
-                    {status && <Status status={status} />}
                     <div className="h-5">
                         {isLoading && <progress className="progress progress-primary w-56"></progress>}
                     </div>

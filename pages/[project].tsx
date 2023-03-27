@@ -123,6 +123,8 @@ const Project = (props) => {
             console.log(e)
         }
     }
+
+
     return (
         <div>
             <div className={`card bg-base-200 shadow-xl relative m-4 `}>
@@ -137,7 +139,7 @@ const Project = (props) => {
                     {data?.id && <Link href={`${projectId}`} className="card-title">{title}</Link>}
                     <p>{description}</p>
 
-                    <Status status={status} />
+
 
                     <div className="h-5">
 
@@ -148,14 +150,14 @@ const Project = (props) => {
                     <a href={`https://${subdomain}.techsapien.dev`} className="link my-2 ml-auto">{subdomain}.techsapien.dev</a>
 
                     <div className="card-actions">
-                        <button onClick={deploy} className="btn btn-primary text-xs btn-xs">
+                        <button onClick={deploy} className={`btn btn-primary text-xs btn-xs ${status.isOnline && "hidden"} ${isLoading && "loading disabled"}`}>
                             DEPLOY
                         </button>
                     </div>
                 </div>
             </div>
-
-            <Logger projectId={projectId} status={status} />
+            <Status status={status} />
+            {/* <Logger projectId={projectId} status={status} /> */}
         </div>
     )
 }

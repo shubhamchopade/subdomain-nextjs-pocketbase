@@ -26,13 +26,25 @@ const Status = (props) => {
 
 
     return (
-        <div className='flex'>
-            <div>{status.cloned && <p className="badge badge-info">cloned</p>}</div>
-            <div>{status.subdomain && <p className="badge badge-info">subdomain</p>}</div>
-            <div>{status.installed && <p className="badge badge-warning">installed</p>}</div>
-            <div>{status.built && <p className="badge badge-success">built</p>}</div>
-            <div >{status.isOnline && <p className="badge badge-success">isOnline</p>}</div>
-            <div>{status.stopped && <p className="badge badge-error">stopped</p>}</div>
+        <div>
+
+            <div className='flex max-w-xl mx-auto'>
+                <div>{status.cloned && <p className="badge badge-info">cloned</p>}</div>
+                <div>{status.subdomain && <p className="badge badge-info">subdomain</p>}</div>
+                <div>{status.installed && <p className="badge badge-warning">installed</p>}</div>
+                <div>{status.built && <p className="badge badge-success">built</p>}</div>
+                <div >{status.isOnline && <p className="badge badge-success">isOnline</p>}</div>
+                <div>{status.stopped && <p className="badge badge-error">stopped</p>}</div>
+            </div>
+
+            <div className='prose card bg-base-300 p-4 max-w-xl mx-auto shadow text-xs overflow-x-auto'>
+                {status && <>
+                    <pre>{status.logClone}</pre>
+                    <pre >{status.logSubdomain}</pre>
+                    <pre >{status.logInstall && JSON.parse(status.logInstall)}</pre>
+                    <pre >{status.logBuild && JSON.parse(status.logBuild)}</pre>
+                    <pre >{status.logStart}</pre></>}
+            </div>
         </div>
 
     )
