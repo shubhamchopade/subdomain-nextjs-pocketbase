@@ -107,8 +107,8 @@ const Project = (props) => {
 
     console.log(liveStatus)
     return (
-        <div className='mb-16'>
-            <div className={`card bg-base-200 shadow-xl relative m-4 `}>
+        <div className='mb-16 relative'>
+            <div className={`card bg-base-400 shadow-xl relative m-16 ${isLoading && "card-project"}`}>
                 <span
                     onClick={handleDelete}
                     className="absolute top-2 right-2 btn btn-xs btn-square btn-outline btn-error"
