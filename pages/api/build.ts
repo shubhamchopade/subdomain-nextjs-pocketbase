@@ -16,7 +16,7 @@ export default function handler(
   const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
 
   console.log("Build Started");
-  executeCommandChild('cd', [`${dir}/${id}/${projectId}`, `&&`, `yarn build`])
+  executeCommandChild('cd', [`${dir}/${id}/${projectId}`, `&&`, `sudo yarn build`])
     .then((output: any) => {
       pb.collection('projectStatus').update(statusId, {
         built: true,

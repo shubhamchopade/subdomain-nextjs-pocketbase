@@ -16,7 +16,7 @@ export default function handler(
   const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
 
   // Install dependencies using npm
-  executeCommandChild('cd', [`${dir}/${id}/${projectId}`, `&&`, `yarn install`])
+  executeCommandChild('cd', [`${dir}/${id}/${projectId}`, `&&`, `sudo yarn install`])
     .then((output: any) => {
       // log(chalk.bgYellow("install output -", output.stdout, output.stderr));
       pb.collection('projectStatus').update(statusId, {
