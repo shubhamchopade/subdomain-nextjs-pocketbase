@@ -26,60 +26,13 @@ type Post = {
 };
 
 const Dashboard = (
-  props: InferGetServerSidePropsType<typeof getServerSideProps>
+  // props: InferGetServerSidePropsType<typeof getServerSideProps>
 ) => {
-  console.log(props)
   return (
     <div>
-      {/* <GithubRepos /> */}
-      <ProjectsGrid auth={props} />
+      <ProjectsGrid />
     </div>
   );
 };
 
 export default Dashboard;
-
-export const getServerSideProps: GetServerSideProps<any> = async (context) => {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API}/api/collections/blogs/records`
-  );
-
-  const methods = await listAuthMethods();
-  const posts: Posts = await res.json();
-  let session = null;
-
-  const pb = new Pocketbase("https://pocketbase.techsapien.dev");
-
-  const resultList = await pb.collection('blogs').getList(1, 50);
-
-
-
-
-  try {
-    const sessionRes = await getServerSession(
-      context.req,
-      context.res,
-      authOptions
-    );
-    // console.log("GSSR ---------------", sessionRes.user);
-    session = sessionRes;
-  } catch (e) {
-    console.log(e);
-  }
-
-  console.log(resultList)
-
-  if (session) {
-    return {
-      props: {
-        user: session?.user,
-        // token: session?.token,
-        posts,
-      },
-    };
-  }
-
-  return {
-    props: {},
-  };
-};

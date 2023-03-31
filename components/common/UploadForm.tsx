@@ -6,7 +6,7 @@ export default function UploadForm(props) {
   const [createObjectURL, setCreateObjectURL] = useState<string>();
   const [imageRecords, setImageRecords] = useState([]);
 
-  const pb = new PocketBase("https://pocketbase.techsapien.dev");
+  const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
 
   const uploadToClient = async (event) => {
     if (event.target.files && event.target.files[0]) {
@@ -40,9 +40,9 @@ export default function UploadForm(props) {
   return (
     <div>
       <div>
-        {imageRecords.map((record) => {
+        {/* {imageRecords.map((record) => {
           return <img key={record.id} src={record} />;
-        })}
+        })} */}
         <h4>Select Image</h4>
         <input type="file" name="myImage" onChange={uploadToClient} />
       </div>

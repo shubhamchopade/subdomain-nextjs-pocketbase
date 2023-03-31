@@ -40,7 +40,7 @@ const Home = (
   const authUrl = props?.methods?.authProviders[0]?.authUrl;
   const codeVerifier = props?.methods?.authProviders[0]?.codeVerifier;
   const name = props?.methods?.authProviders[0]?.name;
-  const pb = new PocketBase('https://pocketbase.techsapien.dev');
+  const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
   const code = router?.query?.code
 
   useEffect(() => {

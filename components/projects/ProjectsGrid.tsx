@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import PocketBase from 'pocketbase'
 import Card from './Card';
+import Link from 'next/link';
 
 // Fetch all the projects
 
-const ProjectsGrid = (props) => {
-    const pb = new PocketBase('https://pocketbase.techsapien.dev');
+const ProjectsGrid = () => {
+    const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
     const [allProjects, setAllProjects] = React.useState([])
     const [_userId, setUserId] = useState("")
 
@@ -28,9 +29,14 @@ const ProjectsGrid = (props) => {
     // console.log(allProjects)
 
     return (
-        <div className='flex flex-wrap'>{allProjects && allProjects.map(project => (
-            <Card userId={_userId} key={project.id} project={project} />
-        ))}</div>
+        <div className='max-w-4xl mx-auto'>
+            {allProjects.length === 0 && <div className='text-center'><h1>This looks empty! Create your first project.</h1>
+                <Link className='btn btn-primary' href={"/create"}>Create first project</Link>
+            </div>}
+            <div className='flex flex-wrap'>{allProjects && allProjects.map(project => (
+                <Card userId={_userId} key={project.id} project={project} />
+            ))}</div>
+        </div>
     )
 }
 
