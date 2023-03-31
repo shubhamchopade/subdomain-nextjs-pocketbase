@@ -107,7 +107,7 @@ const Project = (props) => {
 
     console.log(liveStatus)
     return (
-        <div className='mb-16 relative'>
+        <div className='mb-32 relative'>
             <div className={`card bg-base-400 shadow-xl relative m-16 ${isLoading && "card-project"}`}>
                 <span
                     onClick={handleDelete}
@@ -185,6 +185,7 @@ export const getServerSideProps: GetServerSideProps<any> = async (context) => {
             id: statusExists[0].id,
             status: statusExists[0].current,
             cloned: statusExists[0].cloned,
+            subdomain: statusExists[0].subdomain,
             installed: statusExists[0].installed,
             built: statusExists[0].built,
             stopped: statusExists[0].stopped,
