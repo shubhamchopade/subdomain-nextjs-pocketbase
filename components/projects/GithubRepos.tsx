@@ -48,7 +48,15 @@ const GithubRepos = () => {
                         }, {
                             "projectId": projectCreated.id
                         });
-                        console.log("projectStatus res", projectStatus)
+                        const projectMetrics = await pb.collection('deployMetrics').create({
+                            "projectId": projectCreated.id,
+                            "timeInstall": 0,
+                            "timeBuild": 0,
+                        }, {
+                            "projectId": projectCreated.id
+                        });
+                        // console.log("projectStatus res", projectStatus)
+                        console.log("projectMetrics res", projectMetrics)
                     }
                     toast.success("Project created")
                     router.push(`${projectCreated.id}`)

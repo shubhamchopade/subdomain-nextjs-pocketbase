@@ -11,7 +11,7 @@ export default function handler(
   req: NextApiRequest,
   res: NextApiResponse<any>
 ) {
-  const { link, id = 1, projectId = 1, port = 3, statusId } = req.query;
+  const { link, id = 1, projectId = 1, port = 3, statusId, metricId } = req.query;
   const dir = process.env.NEXT_PUBLIC_LOCAL_PATH_TO_PROJECTS;
   const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
 
@@ -19,10 +19,15 @@ export default function handler(
   executeCommandChild('cd', [`${dir}/${id}/${projectId}`, `&&`, `sudo yarn install`])
     .then((output: any) => {
       // log(chalk.bgYellow("install output -", output.stdout, output.stderr));
+      const timeInstall = output.stdout.split("Done in ")[1].split("s")[0];
+      log(chalk.bgGreen("install time -", timeInstall));
       pb.collection('projectStatus').update(statusId, {
         installed: true,
         current: "installation complete",
         logInstall: JSON.stringify(output.stdout)
+      })
+      pb.collection('deployMetrics').update(metricId, {
+        timeInstall
       })
       res.status(200).json({ data: "Installation Complete", logs: JSON.stringify(output.stdout) });
     })

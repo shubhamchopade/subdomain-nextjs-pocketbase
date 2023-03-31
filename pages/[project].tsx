@@ -12,6 +12,7 @@ import { useStatusState } from '../store/statusState';
 const Project = (props) => {
     const status = JSON.parse(props.status)
     const data = JSON.parse(props.data)
+    const projectMetrics = JSON.parse(props.projectMetrics)
     const router = useRouter()
 
     const framework = data?.framework
@@ -28,6 +29,8 @@ const Project = (props) => {
     const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
 
 
+    console.log("METRICS", projectMetrics.id)
+
     // Clone repo
     const cloneRepo = async () => {
         const cloneRes = await fetch(
@@ -41,7 +44,7 @@ const Project = (props) => {
     // Install dependencies
     const installDependencies = async () => {
         const res = await fetch(
-            `/api/install?link=${link}&id=${id}&projectId=${projectId}&statusId=${status.id}`
+            `/api/install?link=${link}&id=${id}&projectId=${projectId}&statusId=${status.id}&metricId=${projectMetrics.id}`
         );
         return res
     };
@@ -49,7 +52,7 @@ const Project = (props) => {
     // Build dependencies
     const buildDependencies = async () => {
         const res = await fetch(
-            `/api/build?link=${link}&id=${id}&projectId=${projectId}&statusId=${status.id}`
+            `/api/build?link=${link}&id=${id}&projectId=${projectId}&statusId=${status.id}&metricId=${projectMetrics.id}`
         );
         return res
     };
@@ -151,6 +154,7 @@ export const getServerSideProps: GetServerSideProps<any> = async (context) => {
 
     let session = null;
     let status = null;
+    let projectMetrics = null;
     let data = null;
 
     const projectId = context.params?.project;
@@ -197,6 +201,16 @@ export const getServerSideProps: GetServerSideProps<any> = async (context) => {
             logBuild: statusExists[0].logBuild,
             logStart: statusExists[0].logStart,
         })
+
+        // Get metrics
+        const deployMetrics = await pb
+            .collection("deployMetrics")
+            .getFullList({ projectId: projectId }, { $autoCancel: false })
+        projectMetrics = JSON.stringify({
+            id: deployMetrics[0].id,
+            timeInstall: deployMetrics[0].timeInstall,
+            timeBuild: deployMetrics[0].timeBuild,
+        })
         // console.log("GSSR ---------------", cookies);
         session = sessionRes;
     } catch (e) {
@@ -211,6 +225,7 @@ export const getServerSideProps: GetServerSideProps<any> = async (context) => {
                 user: session?.user,
                 status,
                 data,
+                projectMetrics
             },
         };
     }
