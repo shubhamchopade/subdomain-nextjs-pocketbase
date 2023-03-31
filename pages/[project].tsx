@@ -8,6 +8,7 @@ import Status from '../components/projects/Status';
 import { useRouter } from 'next/router';
 import { toast } from 'react-toastify';
 import { useStatusState } from '../store/statusState';
+import BuildMetrics from '../components/projects/BuildMetrics';
 
 const Project = (props) => {
     const status = JSON.parse(props.status)
@@ -126,10 +127,10 @@ const Project = (props) => {
 
 
                     <div className="h-5">
-
-                        {false && <progress className="progress progress-primary w-56"></progress>}
+                        {isLoading && <progress className="progress progress-primary w-56"></progress>}
                     </div>
 
+                    {!isLoading && <BuildMetrics metrics={projectMetrics} />}
 
                     <a href={`https://${subdomain}.techsapien.dev`} className="link my-2 ml-auto">{subdomain}.techsapien.dev</a>
 
@@ -141,6 +142,7 @@ const Project = (props) => {
                 </div>
             </div>
             {status && <Status status={status} />}
+
             {/* <Logger projectId={projectId} status={status} /> */}
         </div>
     )
@@ -158,6 +160,10 @@ export const getServerSideProps: GetServerSideProps<any> = async (context) => {
     let data = null;
 
     const projectId = context.params?.project;
+
+    const metricId = context.query.metricId
+
+    console.log("METRIC ID", metricId)
 
     try {
         const sessionRes = await getServerSession(

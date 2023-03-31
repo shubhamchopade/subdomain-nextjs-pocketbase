@@ -57,9 +57,9 @@ const GithubRepos = () => {
                         });
                         // console.log("projectStatus res", projectStatus)
                         console.log("projectMetrics res", projectMetrics)
+                        toast.success("Project created")
+                        router.push(`${projectCreated.id}?metricId=${projectMetrics.id}&statusId=${projectStatus.id}`)
                     }
-                    toast.success("Project created")
-                    router.push(`${projectCreated.id}`)
                 } catch (error) {
                     toast.error("Failed to create project, a project with the same name already exists");
                     console.log(error)
