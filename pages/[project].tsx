@@ -101,7 +101,10 @@ const Project = (props) => {
             const build = await buildDependencies()
             const start = await startProject()
             setIsLoading(false)
-            toast.success(`Project deployed successfully`)
+            const isSuccess = clone.status === 200 && subdomain.status === 200 && install.status === 200 && build.status === 200 && start.status === 200
+            if (isSuccess) {
+                toast.success(`Project deployed successfully`)
+            }
         } catch (e) {
             setIsLoading(false)
             toast.error(`Build failed, please check the logs for more info`)

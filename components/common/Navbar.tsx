@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 
 const Navbar = () => {
   const session = useSession();
+  const isLoggedOut = session.data == null || session.data == undefined
   const [userData, setUserData] = useState({})
 
   const handleSignin = async () => {
@@ -25,10 +26,12 @@ const Navbar = () => {
       </div>
       {session.data && (
         <div className="flex">
+          <Link className={`btn btn-primary mx-4 ${isLoggedOut && "hidden"}`} href={"/create"}>
+            Create new project
+          </Link>
           <Link className="link" href={"/dashboard"}>
             Dashboard
           </Link>
-
         </div>
       )}
       <div className="flex-none">
@@ -36,7 +39,7 @@ const Navbar = () => {
         <div className="dropdown dropdown-end">
           <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
             <div className="w-10 rounded-full">
-              <Image width={50} height={50} className='rounded-full' src={userData?.picture} alt="profilepic" />
+              <Image width={50} height={50} className='rounded-full' src={userData?.picture || "https://avatar.vercel.sh/shubham.svg"} alt="profilepic" />
             </div>
           </label>
           <ul tabIndex={0} className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52">

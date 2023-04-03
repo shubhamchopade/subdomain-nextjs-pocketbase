@@ -33,11 +33,13 @@ const Status = (props) => {
                 <div className='flex max-w-xl mx-auto'>
                     <motion.div initial={{ x: -100, opacity: 0 }} animate={{ x: 100, opacity: 1 }} exit={{ opacity: 0 }}>{status.cloned && <p className="badge badge-info">cloned</p>}</motion.div>
                     <motion.div animate={{ x: 100 }} exit={{ opacity: 0 }}>{status.subdomain && <p className="badge badge-info">subdomain</p>}</motion.div>
+                    <motion.div animate={{ x: 100 }} exit={{ opacity: 0 }}>{status.subdomain && !status.installed && <p className="badge badge-warning">installing...</p>}</motion.div>
                     <motion.div animate={{ x: 100 }} exit={{ opacity: 0 }}>{status.installed && <p className="badge badge-warning">installed</p>}</motion.div>
+                    <motion.div animate={{ x: 100 }} exit={{ opacity: 0 }}>{status.installed && !status.built && <p className="badge badge-success">building...</p>}</motion.div>
                     <motion.div animate={{ x: 100 }} exit={{ opacity: 0 }}>{status.built && <p className="badge badge-success">built</p>}</motion.div>
                     <motion.div animate={{ x: 100 }} exit={{ opacity: 0 }}>{status.isOnline && <p className="badge badge-success">isOnline</p>}</motion.div>
                     <motion.div animate={{ x: 100 }} exit={{ opacity: 0 }}>{status.stopped && <p className="badge badge-error">stopped</p>}</motion.div>
-                    <motion.div animate={{ x: 100 }} exit={{ opacity: 0 }}>{status.current && <p className="text-xs">{status.current}</p>}</motion.div>
+                    {/* <motion.div animate={{ x: 100 }} exit={{ opacity: 0 }}>{status.current && <p className="text-xs">{status.current}</p>}</motion.div> */}
 
                 </div>
 

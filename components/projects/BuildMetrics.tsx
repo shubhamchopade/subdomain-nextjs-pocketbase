@@ -21,7 +21,7 @@ const BuildMetrics = (props) => {
     const totalTime = Number(Number(metrics?.timeInstall) + Number(metrics?.timeBuild)).toFixed(2)
     return (
         <div>
-            <p>Build in - {totalTime}s</p>
+            <p>✨ Done in - <span className='font-bold'>{totalTime}s</span></p>
         </div>
     )
 }

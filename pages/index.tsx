@@ -4,6 +4,8 @@ import {
   InferGetServerSidePropsType,
 } from "next";
 import { getServerSession } from "next-auth";
+import { signIn } from "next-auth/react";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import PocketBase from "pocketbase";
 import { useEffect, useState } from "react";
@@ -12,7 +14,6 @@ import {
 } from "../components/utils/pocketbase-api-methods";
 import styles from "../styles/Home.module.css";
 import { authOptions } from "./api/auth/[...nextauth]";
-
 
 type Posts = {
   page: number;
@@ -42,6 +43,10 @@ const Home = (
   const name = props?.methods?.authProviders[0]?.name;
   const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
   const code = router?.query?.code
+
+  const handleSignin = async () => {
+    signIn("github", { redirect: true, callbackUrl: "/" });
+  };
 
   useEffect(() => {
     if (authUrl && !router.query.code && !githubAuth) {
@@ -86,10 +91,16 @@ const Home = (
       <div className="hero min-h-screen bg-base-200">
         <div className="hero-content text-center">
           <div className="max-w-md">
-            <h1 className="text-5xl font-bold">Deploy your Nextjs App in seconds!</h1>
+            <h1 className="text-5xl font-bold">Deploy your React App in seconds!</h1>
             <p className="py-6">
-              We are powered with ultimate build power!
+              {/* Give me a description on my hero page */}
+
             </p>
+            {props.user ? <Link className={`btn btn-primary mx-4`} href={"/create"}>
+              Deploy now
+            </Link> : <button className="btn btn-primary" onClick={handleSignin}>
+              Deploy now
+            </button>}
           </div>
         </div>
       </div>
@@ -116,13 +127,13 @@ export const getServerSideProps: GetServerSideProps<any> = async (context) => {
       context.res,
       authOptions
     );
-    console.log("GSSR ---------------", sessionRes);
+    // console.log("GSSR ---------------", sessionRes);
     session = sessionRes;
   } catch (e) {
     console.log(e);
   }
 
-  console.log("GITHUB", session)
+  // console.log("GITHUB", session)
 
   if (session) {
     return {
