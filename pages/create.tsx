@@ -5,7 +5,7 @@ import { authOptions } from './api/auth/[...nextauth]';
 
 const Create = (props: any) => {
     return (
-        <div>  <GithubRepos /></div>
+        <div className='h-screen'>  <GithubRepos /></div>
     )
 }
 

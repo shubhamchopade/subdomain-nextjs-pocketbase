@@ -38,6 +38,9 @@ export default function handler(
         `systemctl`, [`start`, `$(systemd-escape`, `--template`, `techsapien@.service`, `"${projectId} ${port} ${id} ${framework}")`]
       ).then((output: any) => {
         console.log("Service created - project online", output.stdout, output.stderr)
+        pb.collection('projects').update(projectId, {
+          isOnline: true,
+        })
         pb.collection('projectStatus').update(statusId, {
           isOnline: true,
           stopped: false,
@@ -54,10 +57,10 @@ export default function handler(
           logStart: `👀 Project could not start, please try again later.`
         })
         res.status(400).json({ name: "service failed" });
-      }
-      );
-    }).catch((err) => {
+      });
 
+    }).catch((err) => {
+      console.log("Service create failed", err);
     })
   } catch (err) {
     console.log("Service create failed", err);
