@@ -19,7 +19,7 @@ export default function handler(
   executeCommandChild('cd', [`${dir}/${id}/${projectId}`, `&&`, `sudo yarn build`])
     .then((output: any) => {
       const timeBuild = output.stdout.split("Done in ")[1].split("s")[0];
-      log(chalk.bgGreen("install time -", timeBuild));
+      log(chalk.bgGreen("build time -", timeBuild));
       pb.collection('projectStatus').update(statusId, {
         built: true,
         current: "build complete",

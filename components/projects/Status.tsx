@@ -39,7 +39,7 @@ const Status = (props) => {
                     <motion.div animate={{ x: 100 }} exit={{ opacity: 0 }}>{status.built && <p className="badge badge-success">built</p>}</motion.div>
                     <motion.div animate={{ x: 100 }} exit={{ opacity: 0 }}>{status.isOnline && <p className="badge badge-success">isOnline</p>}</motion.div>
                     <motion.div animate={{ x: 100 }} exit={{ opacity: 0 }}>{status.stopped && <p className="badge badge-error">stopped</p>}</motion.div>
-                    {/* <motion.div animate={{ x: 100 }} exit={{ opacity: 0 }}>{status.current && <p className="text-xs">{status.current}</p>}</motion.div> */}
+                    <motion.div animate={{ x: 100 }} exit={{ opacity: 0 }}>{status.current && <p className="badge text-xs">{status.current}</p>}</motion.div>
 
                 </div>
 

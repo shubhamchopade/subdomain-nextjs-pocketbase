@@ -33,7 +33,6 @@ const ProjectsGrid = () => {
             {allProjects.length === 0 && <div className='text-center flex justify-center items-center'>
                 <div>
                     <h1>This looks empty! Create your first project.</h1>
-                    <Link className='btn btn-primary' href={"/create"}>Create first project</Link>
                 </div>
             </div>}
             <div className='flex flex-wrap'>{allProjects && allProjects.map(project => (
