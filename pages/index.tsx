@@ -75,8 +75,15 @@ const Home = (
               "userId": authData?.record?.id
             };
 
-            const record = await pb.collection('githubUserMeta').create(data);
-            console.log(record)
+            const record = await pb.collection('githubUserMeta').create(data)
+
+            // TODO - update record if it already exists
+            if (record.code === 400) {
+              const record = await pb.collection('githubUserMeta').update(data)
+              console.log(record)
+            }
+
+            // console.log(record)
           }
 
         }

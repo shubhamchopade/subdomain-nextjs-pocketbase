@@ -11,5 +11,12 @@ export const getRepos = async (username: string) => {
     const repos = await res.json();
     return repos;
 };
+export const getUserRepos = async (username: string, token: string) => {
+    const res = await fetch(
+        `https://api.github.com/users/${username}/repos`
+    );
+    const repos = await res.json();
+    return repos;
+};
 
 

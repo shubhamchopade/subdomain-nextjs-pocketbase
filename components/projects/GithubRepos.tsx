@@ -5,6 +5,8 @@ import { toast } from 'react-toastify';
 import { useRouter } from 'next/router';
 import LinkCard from './LinkCard';
 
+
+
 const GithubRepos = () => {
     const [repos, setRepos] = useState([])
     const router = useRouter()
@@ -17,7 +19,6 @@ const GithubRepos = () => {
         if (username) {
             const reposRes = await getRepos(username)
             setRepos(reposRes)
-            console.log(repos)
         }
     }
 
@@ -30,13 +31,13 @@ const GithubRepos = () => {
         const json = JSON.parse(auth)
         const userId = json?.model?.id
         const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
-        const register = async () => {
+        const createProject = async () => {
             if (userId)
                 try {
                     // Create project
                     const projectCreated = await pb.collection("projects").create({ subdomain: name, title: name, description: name, link, userId })
-                    // Create project status
                     if (projectCreated.id) {
+                        // Create project status
                         const projectStatus = await pb.collection('projectStatus').create({
                             "projectId": projectCreated.id,
                             "cloned": false,
@@ -48,6 +49,7 @@ const GithubRepos = () => {
                         }, {
                             "projectId": projectCreated.id
                         });
+                        // Create project metrics
                         const projectMetrics = await pb.collection('deployMetrics').create({
                             "projectId": projectCreated.id,
                             "timeInstall": 0,
@@ -55,10 +57,22 @@ const GithubRepos = () => {
                         }, {
                             "projectId": projectCreated.id
                         });
-                        // console.log("projectStatus res", projectStatus)
-                        console.log("projectMetrics res", projectMetrics)
-                        toast.success("Project created")
-                        router.push(`${projectCreated.id}?metricId=${projectMetrics.id}&statusId=${projectStatus.id}`)
+
+                        // TODO
+                        // 1. DONE - During import process, clone the project first
+                        // 2. DONE - Show the SecretsCard component
+                        // 3. If the secrets are entered, create an .env file at the project location with the secrets
+                        // 4. If successful, redirect to the project page
+
+                        // Clone repo
+                        const cloneRes = await fetch(
+                            `/api/clone?link=${link}&id=${userId}&projectId=${projectCreated.id}&statusId=${projectStatus.id}`
+                        );
+
+                        router.push(`/create/secrets?projectId=${projectCreated.id}&statusId=${projectStatus.id}&name=${name}&id=${userId}`)
+
+                        // toast.success("Project created")
+                        // router.push(`${projectCreated.id}?metricId=${projectMetrics.id}&statusId=${projectStatus.id}`)
                     }
                 } catch (error) {
                     toast.error("Failed to create project, a project with the same name already exists");
@@ -66,8 +80,10 @@ const GithubRepos = () => {
                 }
         };
 
-        register();
+        createProject();
     };
+
+
     return (
         <div className='mx-auto w-96 grid place-items-center prose mt-4 mb-8'>
             <div className='transform scale-50'>
@@ -78,14 +94,15 @@ const GithubRepos = () => {
             </div>
 
             <h1 className='text-center my-2'>These are your github public repositories. Please select the next app you want to import to reactly!</h1>
-            {/* <div className=''>
+            <div className=''>
                 <label className='text-xs' htmlFor='project-search'>Search github repository</label>
                 <input className='input input-bordered bg-base-300 w-full' name="project-search" value={"input"} onChange={() => console.log("clicked")} />
-            </div> */}
+                {/* <button onClick={() => handleCreateProject("add", "")}>Import</button> */}
+            </div>
             <div className="flex flex-col h-96 overflow-y-auto overflow-x-hidden">
                 {
                     repos.map(repo => (
-                        <div key={repo.id} className='cursor-pointer hover:ring card bg-base-300 my-2 mx-auto w-11/12' onClick={() => handleCreateProject(repo.name, repo.html_url)}>
+                        <div key={repo.id} className='cursor-pointer hover:ring card bg-base-300 my-2 mx-auto w-11/12' >
                             <LinkCard name={repo.name} link={repo.html_url} />
                         </div>))
                 }

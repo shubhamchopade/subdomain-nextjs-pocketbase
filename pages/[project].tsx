@@ -95,7 +95,7 @@ const Project = (props) => {
     const deploy = async () => {
         setIsLoading(true)
         try {
-            const clone = await cloneRepo()
+            // const clone = await cloneRepo()
             const subdomain = await createSubdomainEntry()
             const install = await installDependencies()
             const build = await buildDependencies()
@@ -116,7 +116,13 @@ const Project = (props) => {
 
     console.log(liveStatus)
     return (
-        <div className='mb-32 relative'>
+        <div className='mb-32 relative container mx-auto'>
+            <div className='breadcrumbs'>
+                <ul>
+                    <li>projects</li>
+                    <li>{projectId} - {title}</li>
+                </ul>
+            </div>
             <div className={`card bg-base-400 shadow-xl relative m-16 ${isLoading && "card-project"}`}>
                 <span
                     onClick={handleDelete}

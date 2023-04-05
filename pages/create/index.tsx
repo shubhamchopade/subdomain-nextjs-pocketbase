@@ -1,7 +1,7 @@
 import { getServerSession } from 'next-auth';
 import React from 'react'
-import GithubRepos from '../components/projects/GithubRepos';
-import { authOptions } from './api/auth/[...nextauth]';
+import GithubRepos from '../../components/projects/GithubRepos';
+import { authOptions } from '../api/auth/[...nextauth]';
 
 const Create = (props: any) => {
     return (
