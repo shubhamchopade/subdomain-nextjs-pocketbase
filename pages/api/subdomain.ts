@@ -28,7 +28,7 @@ export default function handler(
 
   // Check if this port is already in use by checking database, if yes, generate a new one
 
-  pb.collection("subdomains").getFirstListItem(`port = ${randomPort}`).then((res: any) => {
+  pb.collection("subdomains").getFirstListItem(`port="${randomPort}"`).then((res: any) => {
     pb.collection('projectStatus').update(statusId, {
       subdomain: true,
       current: "subdomain failed",
