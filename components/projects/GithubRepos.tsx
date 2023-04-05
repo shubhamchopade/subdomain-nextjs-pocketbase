@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { getRepos } from '../utils/build-helpers'
+import { getRepos, getUserRepos } from '../utils/build-helpers'
 import PocketBase from "pocketbase";
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/router';
@@ -12,77 +12,30 @@ const GithubRepos = () => {
     const router = useRouter()
 
     const handleRepos = async () => {
+        const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
         const auth = localStorage.getItem("pocketbase_auth")
         const json = JSON.parse(auth)
         const username = json?.model?.username
+        const userId = json?.model?.id
 
         if (username) {
             const reposRes = await getRepos(username)
             setRepos(reposRes)
         }
+
+        // Get github accessToken to get user repos
+        // if (userId) {
+        // const ghub = await pb.collection('githubUserMeta').getFirstListItem(`userId="${userId}"`)
+        // const reposRes = await getUserRepos(username, ghub.accessToken)
+        // console.log(reposRes)
+        // }
+
+        // TODO - get github access token from metadata and call github api to get user repos
     }
 
     useEffect(() => {
         handleRepos()
     }, [])
-
-    const handleCreateProject = (name, link) => {
-        const auth = localStorage.getItem("pocketbase_auth")
-        const json = JSON.parse(auth)
-        const userId = json?.model?.id
-        const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
-        const createProject = async () => {
-            if (userId)
-                try {
-                    // Create project
-                    const projectCreated = await pb.collection("projects").create({ subdomain: name, title: name, description: name, link, userId })
-                    if (projectCreated.id) {
-                        // Create project status
-                        const projectStatus = await pb.collection('projectStatus').create({
-                            "projectId": projectCreated.id,
-                            "cloned": false,
-                            "installed": false,
-                            "built": false,
-                            "isOnline": false,
-                            "stopped": false,
-                            "current": "init"
-                        }, {
-                            "projectId": projectCreated.id
-                        });
-                        // Create project metrics
-                        const projectMetrics = await pb.collection('deployMetrics').create({
-                            "projectId": projectCreated.id,
-                            "timeInstall": 0,
-                            "timeBuild": 0,
-                        }, {
-                            "projectId": projectCreated.id
-                        });
-
-                        // TODO
-                        // 1. DONE - During import process, clone the project first
-                        // 2. DONE - Show the SecretsCard component
-                        // 3. If the secrets are entered, create an .env file at the project location with the secrets
-                        // 4. If successful, redirect to the project page
-
-                        // Clone repo
-                        const cloneRes = await fetch(
-                            `/api/clone?link=${link}&id=${userId}&projectId=${projectCreated.id}&statusId=${projectStatus.id}`
-                        );
-
-                        router.push(`/create/secrets?projectId=${projectCreated.id}&statusId=${projectStatus.id}&name=${name}&id=${userId}`)
-
-                        // toast.success("Project created")
-                        // router.push(`${projectCreated.id}?metricId=${projectMetrics.id}&statusId=${projectStatus.id}`)
-                    }
-                } catch (error) {
-                    toast.error("Failed to create project, a project with the same name already exists");
-                    console.log(error)
-                }
-        };
-
-        createProject();
-    };
-
 
     return (
         <div className='mx-auto w-96 grid place-items-center prose mt-4 mb-8'>
