@@ -75,15 +75,19 @@ const Home = (
               "userId": authData?.record?.id
             };
 
-            const record = await pb.collection('githubUserMeta').create(data)
-
-            // TODO - update record if it already exists
-            if (record.code === 400) {
-              const record = await pb.collection('githubUserMeta').update(data)
-              console.log(record)
+            // Update the access token when the user signs in using Github
+            try {
+              const gmeta = await pb.collection('githubUserMeta').getFirstListItem(`userId="${authData?.record?.id}"`)
+              // update
+              const ghub = await pb.collection('githubUserMeta').update(gmeta.id, data)
+            } catch (e) {
+              // create
+              try {
+                const ghub = await pb.collection('githubUserMeta').create(data)
+              } catch (e) {
+                console.log(e)
+              }
             }
-
-            // console.log(record)
           }
 
         }
