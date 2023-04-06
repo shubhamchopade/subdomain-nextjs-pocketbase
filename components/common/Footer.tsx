@@ -5,8 +5,6 @@ import React from 'react'
 const Footer = () => {
     const session = useSession();
     const isLoggedOut = session.data == null || session.data == undefined
-
-    console.log()
     return (
         <div><footer className="footer items-center p-4 bg-neutral text-neutral-content">
             <div className="items-center grid-flow-col">
