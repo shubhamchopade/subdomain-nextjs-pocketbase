@@ -7,6 +7,7 @@ const SecretsCard = (props) => {
     const { projectId, statusId, name, id } = props
     const [secretText, setSecretText] = React.useState('')
     const router = useRouter()
+    const redirectLink = `/${projectId}?statusId=${statusId}&name=${name}&id=${id}`
 
     // TODO: Call /api/secret api and send the secretText as payload
 
@@ -22,7 +23,7 @@ const SecretsCard = (props) => {
         })
 
         if (res.status == 200) {
-            router.push(`/${projectId}`)
+            router.push(redirectLink)
         } else {
             toast.error('Something went wrong')
         }
@@ -47,7 +48,7 @@ const SecretsCard = (props) => {
                 <textarea name="secrets-card" className='textarea textarea-bordered' value={secretText} onChange={e => setSecretText(e.target.value)} />
 
                 <div className='flex justify-between'>
-                    <Link href={`/${projectId}`} className='btn btn-ghost btn-sm mt-4'>I don't have .env file</Link>
+                    <Link href={redirectLink} className='btn btn-ghost btn-sm mt-4'>I don't have .env file</Link>
                     <button onClick={handleCreateEnv} className='btn btn-primary btn-sm mt-4 w-32'>Save</button>
                 </div>
 
