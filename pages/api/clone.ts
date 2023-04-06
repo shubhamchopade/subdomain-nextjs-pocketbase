@@ -17,7 +17,7 @@ export default function handler(
 ) {
   const { link, id = 1, projectId = 1, port = 3, statusId } = req.query;
   const dir = process.env.NEXT_PUBLIC_LOCAL_PATH_TO_PROJECTS;
-  const scriptLocation = '/home/shubham/Code/nginx-config/get-framework.sh'
+  const scriptLocation = '/home/shubham/Code/system-scripts/get-framework.sh'
   const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
 
 
