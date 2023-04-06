@@ -11,9 +11,9 @@ import { useStatusState } from '../store/statusState';
 import BuildMetrics from '../components/projects/BuildMetrics';
 
 const Project = (props) => {
-    const status = JSON.parse(props.status)
-    const data = JSON.parse(props.data)
-    const projectMetrics = JSON.parse(props.projectMetrics)
+    const status = props.status && JSON.parse(props.status)
+    const data = props.data && JSON.parse(props.data)
+    const projectMetrics = props.projectMetrics && JSON.parse(props.projectMetrics)
     const router = useRouter()
 
     const framework = data?.framework
@@ -30,7 +30,7 @@ const Project = (props) => {
     const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
 
 
-    console.log("METRICS", projectMetrics.id)
+    // console.log("METRICS", projectMetrics.id)
 
     // Clone repo
     const cloneRepo = async () => {
@@ -146,7 +146,7 @@ const Project = (props) => {
                     <a href={`https://${subdomain}.techsapien.dev`} className="link my-2 ml-auto">{subdomain}.techsapien.dev</a>
 
                     <div className="card-actions">
-                        <button onClick={deploy} className={`btn btn-primary text-xs btn-xs ${status.isOnline && "hidden"} ${isLoading && "loading disabled"}`}>
+                        <button onClick={deploy} className={`btn btn-primary text-xs btn-xs ${status?.isOnline && "hidden"} ${isLoading && "loading disabled"}`}>
                             DEPLOY
                         </button>
                     </div>

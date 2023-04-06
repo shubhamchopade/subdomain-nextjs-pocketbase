@@ -13,6 +13,7 @@ export default Secret
 export const getServerSideProps: GetServerSideProps<any> = async (context) => {
     const projectId = context.query.projectId;
     const statusId = context.query.statusId;
+    const metricId = context.query.metricId;
     const name = context.query.name;
     const id = context.query.id;
 
@@ -21,6 +22,7 @@ export const getServerSideProps: GetServerSideProps<any> = async (context) => {
         props: {
             projectId,
             statusId,
+            metricId,
             name,
             id
         }

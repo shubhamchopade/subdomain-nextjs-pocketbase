@@ -41,18 +41,20 @@ const LinkCard = (props) => {
                             "projectId": projectCreated.id
                         });
 
-                        // TODO
-                        // 1. DONE - During import process, clone the project first
-                        // 2. DONE - Show the SecretsCard component
-                        // 3. If the secrets are entered, create an .env file at the project location with the secrets
-                        // 4. If successful, redirect to the project page
-
                         // Clone repo
                         const cloneRes = await fetch(
                             `/api/clone?link=${link}&id=${userId}&projectId=${projectCreated.id}&statusId=${projectStatus.id}`
                         );
 
-                        router.push(`/create/secrets?projectId=${projectCreated.id}&statusId=${projectStatus.id}&name=${name}&id=${userId}`)
+                        if (cloneRes.status == 200) {
+                            router.push(`/create/secrets?projectId=${projectCreated.id}&statusId=${projectStatus.id}&name=${name}&id=${userId}&metricId=${projectMetrics.id}`)
+                        }
+
+                        console.log(cloneRes)
+                        if (cloneRes.status == 400) {
+                            toast.error("Unsupported framework")
+                        }
+
 
                         // toast.success("Project created")
                         // router.push(`${projectCreated.id}?metricId=${projectMetrics.id}&statusId=${projectStatus.id}`)

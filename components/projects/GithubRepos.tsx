@@ -20,7 +20,7 @@ const GithubRepos = () => {
 
         if (username) {
             const reposRes = await getRepos(username)
-            console.log(reposRes)
+            // console.log(reposRes)
             setRepos(reposRes)
         }
 
