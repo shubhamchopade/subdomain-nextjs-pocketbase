@@ -29,16 +29,23 @@ const ProjectsGrid = () => {
     // console.log(allProjects)
 
     return (
-        <div className='max-w-4xl mx-auto h-screen '>
-            {allProjects.length === 0 && <div className='text-center flex justify-center items-center'>
-                <div>
-                    <h1>This looks empty! Create your first project.</h1>
-                </div>
-            </div>}
-            <div className='flex flex-wrap'>{allProjects && allProjects.map(project => (
-                <Card userId={_userId} key={project.id} project={project} />
-            ))}</div>
-        </div>
+        <main className='container mx-auto'>
+            <div className='breadcrumbs'>
+                <ul>
+                    <li><Link href={"/dashboard"}>projects</Link></li>
+                </ul>
+            </div>
+            <div className='max-w-4xl mx-auto '>
+                {allProjects.length === 0 && <div className='text-center flex justify-center items-center'>
+                    <div>
+                        <h1>This looks empty! Create your first project.</h1>
+                    </div>
+                </div>}
+                <div className='flex flex-wrap'>{allProjects && allProjects.map(project => (
+                    <Card userId={_userId} key={project.id} project={project} />
+                ))}</div>
+            </div>
+        </main>
     )
 }
 

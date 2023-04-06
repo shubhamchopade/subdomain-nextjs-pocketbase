@@ -3,8 +3,14 @@ import SecretsCard from '../../../components/projects/SecretsCard'
 import { GetServerSideProps } from 'next'
 
 const Secret = (props) => {
+    const { projectId, name } = props
     return (
-        <div><SecretsCard {...props} /></div>
+        <div className='container mx-auto'>  <div className='breadcrumbs'>
+            <ul>
+                <li>projects</li>
+                <li>{name}</li>
+            </ul>
+        </div><SecretsCard {...props} /></div>
     )
 }
 

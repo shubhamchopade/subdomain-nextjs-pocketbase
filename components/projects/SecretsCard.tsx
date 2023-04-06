@@ -34,24 +34,20 @@ const SecretsCard = (props) => {
 
 
     return (
-        <div className='card rounded shadow-md bg-base-200 max-w-xl mx-auto my-8 p-4'>
-            <div className='breadcrumbs'>
-                <ul>
-                    <li>projects</li>
-                    <li>{projectId}</li>
-                    <li>{name}</li>
-                </ul>
-            </div>
-            <p className='text-'>Please paste the contents of your .env file if you have any and save the secrets.</p>
-            <div className='mt-8 mb-4 flex flex-col'>
-                <label htmlFor="secrets-card">Secrets</label>
-                <textarea name="secrets-card" className='textarea textarea-bordered' value={secretText} onChange={e => setSecretText(e.target.value)} />
+        <div className='card shadow-md bg-base-200 max-w-xl mx-auto mb-2'>
+            <div className='card-body'>
+                <h2 className='card-title'>Environment Variables</h2>
+                <p className='card-subtitle'>Please paste the contents of your env file if you have any and save the secrets.</p>
+                <div className='mt-8 mb-4 flex flex-col'>
+                    <label htmlFor="secrets-card">Secrets</label>
+                    <textarea name="secrets-card" className='textarea textarea-bordered' value={secretText} onChange={e => setSecretText(e.target.value)} />
 
-                <div className='flex justify-between'>
-                    <Link href={redirectLink} className='btn btn-ghost btn-sm mt-4'>I don't have .env file</Link>
-                    <button onClick={handleCreateEnv} className='btn btn-primary btn-sm mt-4 w-32'>Save</button>
+                    <div className='flex justify-between'>
+                        <Link href={redirectLink} className='btn btn-ghost btn-sm mt-4'>skip env file</Link>
+                        <button onClick={handleCreateEnv} className='btn btn-primary btn-sm mt-4 w-32'>Save</button>
+                    </div>
+
                 </div>
-
             </div>
         </div>
     )
