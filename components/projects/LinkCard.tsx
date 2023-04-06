@@ -15,10 +15,11 @@ const LinkCard = (props) => {
         const userId = json?.model?.id
         const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
         const createProject = async () => {
+            const cleanedSubdomainName = name.toLowerCase()
             if (userId)
                 try {
                     // Create project
-                    const projectCreated = await pb.collection("projects").create({ subdomain: name, title: name, description: name, link, userId })
+                    const projectCreated = await pb.collection("projects").create({ subdomain: cleanedSubdomainName, title: name, description: name, link, userId })
                     if (projectCreated.id) {
                         // Create project status
                         const projectStatus = await pb.collection('projectStatus').create({
@@ -47,7 +48,7 @@ const LinkCard = (props) => {
                         );
 
                         if (cloneRes.status == 200) {
-                            router.push(`/create/secrets?projectId=${projectCreated.id}&statusId=${projectStatus.id}&name=${name}&id=${userId}&metricId=${projectMetrics.id}`)
+                            router.push(`/create/secrets?projectId=${projectCreated.id}&statusId=${projectStatus.id}&name=${cleanedSubdomainName}&id=${userId}&metricId=${projectMetrics.id}`)
                         }
 
                         console.log(cloneRes)
