@@ -3,7 +3,7 @@ import Pocketbase from 'pocketbase'
 import { useDebounce } from '../../hooks/useDebounce'
 
 const Subdomain = (props) => {
-    const { name, projectId } = props
+    const { title: name, id: projectId, userId, statusId, framework, port } = props
     const pb = new Pocketbase(process.env.NEXT_PUBLIC_POCKETBASE_URL)
 
 
@@ -12,12 +12,6 @@ const Subdomain = (props) => {
     const [isSearching, setIsSearching] = React.useState(false);
 
     const debouncedSearchTerm = useDebounce(newSubdomainName, 500);
-
-    // TODO-
-    // 1a. Disable the systemctl process
-    // 1b. Remove nginx config file
-    // 2a. Enable the systemctl process with new subdomain name
-    // 2b. Create new nginx config file
 
     useEffect(() => {
         // console.log(debouncedSearchTerm)
@@ -35,12 +29,31 @@ const Subdomain = (props) => {
         try {
             setIsSearching(true)
             const res = await pb.collection('subdomains').getFirstListItem(`name="${name}"`)
-            console.log(name, "already exists")
+            // console.log(name, "already exists")
             setSubdomainAvailable(false)
             setIsSearching(false)
         } catch (e) {
-            console.log(name, "is available")
+            // console.log(name, "is available")
             setSubdomainAvailable(true)
+        }
+    }
+
+    const handleUpdateSubdomain = async () => {
+        // Get current subdomain record
+
+
+        try {
+            const subdomain = await pb.collection('subdomains').getFirstListItem(`projectId="${projectId}"`)
+            console.log(subdomain)
+
+            // subdomain update API call
+            const res = await fetch(
+                `/api/subdomain-update?id=${userId}&projectId=${projectId}&statusId=${statusId}&subdomainId=${subdomain.id}&newSubdomain=${debouncedSearchTerm}&currentSubdomain=${subdomain.name}&framework=${framework}&port=${port}`,
+            );
+
+            // console.log(res)
+        } catch (e) {
+            console.log(e)
         }
     }
 
@@ -63,7 +76,7 @@ const Subdomain = (props) => {
                             <p className='text-2xl ml-4'>.techsapien.dev</p>
                         </div>
                     </div>
-                    <button disabled={debouncedSearchTerm.length === 0} className='btn btn-primary w-full mt-4'>Save</button>
+                    <button disabled={debouncedSearchTerm.length === 0} className='btn btn-primary w-full mt-4' onClick={handleUpdateSubdomain}>Save</button>
                 </div>
             </div>
         </div>
