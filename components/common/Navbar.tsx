@@ -26,11 +26,11 @@ const Navbar = () => {
       </div>
       {session.data && (
         <div className="flex">
-          <Link className={`btn btn-primary mx-4 ${isLoggedOut && "hidden"}`} href={"/create"}>
+          <Link className={`btn btn-primary mx-4 ${isLoggedOut && "hidden"}`} href={"/projects/create"}>
             Create new project
           </Link>
-          <Link className="link" href={"/dashboard"}>
-            Dashboard
+          <Link className="link" href={"/projects"}>
+            Projects
           </Link>
         </div>
       )}

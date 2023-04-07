@@ -48,17 +48,13 @@ const LinkCard = (props) => {
                         );
 
                         if (cloneRes.status == 200) {
-                            router.push(`/create/secrets?projectId=${projectCreated.id}&statusId=${projectStatus.id}&name=${cleanedSubdomainName}&id=${userId}&metricId=${projectMetrics.id}`)
+                            router.push(`/projects/create/secrets?projectId=${projectCreated.id}&statusId=${projectStatus.id}&name=${cleanedSubdomainName}&id=${userId}&metricId=${projectMetrics.id}`)
                         }
 
                         console.log(cloneRes)
                         if (cloneRes.status == 400) {
                             toast.error("Unsupported framework")
                         }
-
-
-                        // toast.success("Project created")
-                        // router.push(`${projectCreated.id}?metricId=${projectMetrics.id}&statusId=${projectStatus.id}`)
                     }
                 } catch (error) {
                     toast.error("Failed to create project, a project with the same name already exists");

@@ -7,7 +7,7 @@ const SecretsCard = (props) => {
     const { projectId, statusId, metricId, name, id } = props
     const [secretText, setSecretText] = React.useState('')
     const router = useRouter()
-    const redirectLink = `/${projectId}?statusId=${statusId}&name=${name}&id=${id}&metricId=${metricId}`
+    const redirectLink = `/projects/${projectId}?statusId=${statusId}&name=${name}&id=${id}&metricId=${metricId}`
 
     // TODO: Call /api/secret api and send the secretText as payload
 

@@ -3,12 +3,12 @@ import Link from 'next/link'
 import React, { useState } from 'react'
 import PocketBase from "pocketbase";
 import { GetServerSideProps } from 'next';
-import { authOptions } from '../api/auth/[...nextauth]';
-import Status from '../../components/projects/Status';
+import { authOptions } from '../../api/auth/[...nextauth]';
+import Status from '../../../components/projects/Status';
 import { useRouter } from 'next/router';
 import { toast } from 'react-toastify';
-import { useStatusState } from '../../store/statusState';
-import BuildMetrics from '../../components/projects/BuildMetrics';
+import { useStatusState } from '../../../store/statusState';
+import BuildMetrics from '../../../components/projects/BuildMetrics';
 
 const Project = (props) => {
     const status = props.status && JSON.parse(props.status)
@@ -75,7 +75,7 @@ const Project = (props) => {
             );
             const data = await res.json();
             if (data) {
-                router.push("/dashboard")
+                router.push("/projects")
             }
         };
         const stoppedProject = await dangerouslyDeleteProject();
@@ -140,7 +140,7 @@ const Project = (props) => {
         <main className='container mx-auto'>
             <div className='breadcrumbs'>
                 <ul>
-                    <li><Link href={"/dashboard"}>projects</Link></li>
+                    <li><Link href={"/projects"}>projects</Link></li>
                     <li>{title}</li>
                 </ul>
             </div>

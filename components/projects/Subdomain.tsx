@@ -4,7 +4,7 @@ import { useDebounce } from '../../hooks/useDebounce'
 import { toast } from 'react-toastify'
 import { useRouter } from 'next/router'
 
-const Subdomain = (props) => {
+const SubdomainEdit = (props) => {
     const { title: name, id: projectId, userId, statusId, framework, port, subdomain: currentSubdomain } = props
     const pb = new Pocketbase(process.env.NEXT_PUBLIC_POCKETBASE_URL)
     const router = useRouter()
@@ -53,7 +53,7 @@ const Subdomain = (props) => {
                 `/api/subdomain-update?id=${userId}&projectId=${projectId}&statusId=${statusId}&subdomainId=${subdomain.id}&newSubdomain=${debouncedSearchTerm}&currentSubdomain=${subdomain.name}&framework=${framework}&port=${port}`,
             );
             toast.success("Subdomain name updated");
-            router.push(`/${projectId}`)
+            router.push(`/projects/${projectId}`)
             setNewSubdomainName('')
             // console.log(res)
         } catch (e) {
@@ -87,4 +87,4 @@ const Subdomain = (props) => {
     )
 }
 
-export default Subdomain
+export default SubdomainEdit

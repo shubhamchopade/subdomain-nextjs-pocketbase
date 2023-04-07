@@ -1,14 +1,9 @@
 import React from 'react'
-import Subdomain from '../../components/projects/Subdomain'
-import SecretsCard from '../../components/projects/SecretsCard'
+import Subdomain from '../../../components/projects/Subdomain'
+import SecretsCard from '../../../components/projects/SecretsCard'
 import Link from 'next/link'
 import { GetServerSideProps } from 'next'
 import PocketBase from "pocketbase";
-
-// TODO
-// Add a form to update the subdomain
-// import SecretCard component
-// Delete the project button
 
 const Settings = (props) => {
     const data = JSON.parse(props.data)
@@ -18,8 +13,8 @@ const Settings = (props) => {
         <main className='container mx-auto'>
             <div className='breadcrumbs'>
                 <ul>
-                    <li><Link href={"/dashboard"}>projects</Link></li>
-                    <li><Link href={`/${projectId}`}>{name}</Link></li>
+                    <li><Link href={"/projects"}>projects</Link></li>
+                    <li><Link href={`/projects/${projectId}`}>{name}</Link></li>
                     <li>settings</li>
                 </ul>
             </div>

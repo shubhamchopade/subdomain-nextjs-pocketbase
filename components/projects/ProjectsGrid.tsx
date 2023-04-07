@@ -32,7 +32,7 @@ const ProjectsGrid = () => {
         <main className='container mx-auto'>
             <div className='breadcrumbs'>
                 <ul>
-                    <li><Link href={"/dashboard"}>projects</Link></li>
+                    <li><Link href={"/projects"}>Projects</Link></li>
                 </ul>
             </div>
             <div className='max-w-4xl mx-auto '>

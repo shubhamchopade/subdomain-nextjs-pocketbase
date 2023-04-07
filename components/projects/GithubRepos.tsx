@@ -21,18 +21,8 @@ const GithubRepos = () => {
 
         if (username) {
             const reposRes = await getRepos(username)
-            // console.log(reposRes)
             setRepos(reposRes)
         }
-
-        // Get github accessToken to get user repos
-        // if (userId) {
-        // const ghub = await pb.collection('githubUserMeta').getFirstListItem(`userId="${userId}"`)
-        // const reposRes = await getUserRepos(username, ghub.accessToken)
-        // console.log(reposRes)
-        // }
-
-        // TODO - get github access token from metadata and call github api to get user repos
     }
 
     useEffect(() => {
@@ -52,12 +42,6 @@ const GithubRepos = () => {
 
                 <h1 className='my-2'>These are your github public repositories. Please select the next app you want to import to reactly!</h1>
                 <p className='my-2'>Please note - repositories greater than 50 MB are not yet supported.</p>
-
-                {/* <div className=''>
-                <label className='text-xs' htmlFor='project-search'>Search github repository</label>
-                <input className='input input-bordered bg-base-300 w-full' name="project-search" value={"input"} onChange={() => console.log("clicked")} />
-            </div> */}
-
 
                 <div className="flex flex-col h-96 overflow-y-auto overflow-x-hidden">
                     {

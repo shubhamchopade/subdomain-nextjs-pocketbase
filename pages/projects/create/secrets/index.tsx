@@ -1,6 +1,7 @@
 import React from 'react'
-import SecretsCard from '../../../components/projects/SecretsCard'
+
 import { GetServerSideProps } from 'next'
+import SecretsCard from '../../../../components/projects/SecretsCard'
 
 const Secret = (props) => {
     const { projectId, name } = props

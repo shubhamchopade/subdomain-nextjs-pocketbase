@@ -64,7 +64,7 @@ const Home = (
             name,
             code,
             codeVerifier,
-            "https://pkfr.techsapien.dev/dashboard",
+            "https://pkfr.techsapien.dev/projects",
           );
 
           if (authData) {
@@ -107,7 +107,7 @@ const Home = (
               {/* Give me a description on my hero page */}
 
             </p>
-            {props.user ? <Link className={`btn btn-primary mx-4`} href={"/create"}>
+            {props.user ? <Link className={`btn btn-primary mx-4`} href={"/projects/create"}>
               Deploy now
             </Link> : <button className="btn btn-primary" onClick={handleSignin}>
               Deploy now

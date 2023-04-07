@@ -81,7 +81,7 @@ const Card = (props) => {
 
 
                 <div className="card-body">
-                    <Link href={`${projectId}?framework=${framework}&userId=${id}`} className="card-title">{props.project.title}</Link>
+                    <Link href={`/projects/${projectId}?framework=${framework}&userId=${id}`} className="card-title">{props.project.title}</Link>
 
                     {isOnline
                         ? <a href={`https://${props.project.subdomain}.techsapien.dev`} className="link my-2 ml-auto">{props.project.subdomain}.techsapien.dev</a>
