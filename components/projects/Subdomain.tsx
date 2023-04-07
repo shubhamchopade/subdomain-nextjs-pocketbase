@@ -1,11 +1,13 @@
 import React, { useEffect } from 'react'
 import Pocketbase from 'pocketbase'
 import { useDebounce } from '../../hooks/useDebounce'
+import { toast } from 'react-toastify'
+import { useRouter } from 'next/router'
 
 const Subdomain = (props) => {
-    const { title: name, id: projectId, userId, statusId, framework, port } = props
+    const { title: name, id: projectId, userId, statusId, framework, port, subdomain: currentSubdomain } = props
     const pb = new Pocketbase(process.env.NEXT_PUBLIC_POCKETBASE_URL)
-
+    const router = useRouter()
 
     const [newSubdomainName, setNewSubdomainName] = React.useState('')
     const [subdomainAvailable, setSubdomainAvailable] = React.useState(false)
@@ -50,7 +52,9 @@ const Subdomain = (props) => {
             const res = await fetch(
                 `/api/subdomain-update?id=${userId}&projectId=${projectId}&statusId=${statusId}&subdomainId=${subdomain.id}&newSubdomain=${debouncedSearchTerm}&currentSubdomain=${subdomain.name}&framework=${framework}&port=${port}`,
             );
-
+            toast.success("Subdomain name updated");
+            router.push(`/${projectId}`)
+            setNewSubdomainName('')
             // console.log(res)
         } catch (e) {
             console.log(e)
@@ -66,17 +70,17 @@ const Subdomain = (props) => {
                     <h2 className='card-title'>Subdomain</h2>
                     <p className='card-subtitle'>You can use a custom subdomain for your project</p>
                     <div className='form-control'>
-                        <label htmlFor='subdomain-editor' className='label w-64'>
+                        <label htmlFor='subdomain-editor' className='label w-52'>
                             <span className='label-text'>Subdomain</span>
-                            <span hidden={debouncedSearchTerm.length === 0} className='label-text-alt'>{subdomainAvailable ? "available" : "not available"}</span>
+                            <span hidden={debouncedSearchTerm.length === 0} className={`label-text-alt ${subdomainAvailable ? "text-green-500" : "text-red-500"}`}>{subdomainAvailable ? "available" : "not available"}</span>
                         </label>
                         <div className='flex items-center'>
-                            <input name="subdomain-editor" type="text" placeholder={name} value={newSubdomainName} onChange={e => setNewSubdomainName(e.target.value.toLowerCase())}
+                            <input name="subdomain-editor" type="text" placeholder={currentSubdomain} value={newSubdomainName} onChange={e => setNewSubdomainName(e.target.value.toLowerCase())}
                                 className={`input input-bordered ${subdomainAvailable && "ring-2 ring-green-500"} ${debouncedSearchTerm.length > 0 && !subdomainAvailable && "ring-2 ring-red-500"}`} />
                             <p className='text-2xl ml-4'>.techsapien.dev</p>
                         </div>
                     </div>
-                    <button disabled={debouncedSearchTerm.length === 0} className='btn btn-primary w-full mt-4' onClick={handleUpdateSubdomain}>Save</button>
+                    <button disabled={debouncedSearchTerm.length === 0} className={`btn btn-primary w-full mt-4 ${!subdomainAvailable && "btn-disabled"}`} onClick={handleUpdateSubdomain}>Save</button>
                 </div>
             </div>
         </div>
