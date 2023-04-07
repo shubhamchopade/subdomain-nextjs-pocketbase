@@ -25,14 +25,14 @@ type Post = {
   collectionName: string;
 };
 
-const Dashboard = (
+const Dashboard = () =>
   // props: InferGetServerSidePropsType<typeof getServerSideProps>
-) => {
-  return (
-    <div>
-      <ProjectsGrid />
-    </div>
-  );
-};
+  {
+    return (
+      <div>
+        <ProjectsGrid />
+      </div>
+    );
+  };
 
 export default Dashboard;
