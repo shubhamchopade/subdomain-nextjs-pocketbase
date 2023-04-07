@@ -38,7 +38,7 @@ export default function handler(
                 })
 
                 // DELETE config file at nginx
-                executeCommandChild('rm', ['-f', `/etc/nginx/techsapien.d/${subdomain}.techsapien.dev.conf`])
+                executeCommandChild('rm', ['-f', `/etc/nginx/techsapien.d/${id}/${subdomain}.techsapien.dev.conf`])
 
                 // delete the project files from /app 
                 executeCommandChild('rm', ['-rf', projectPath])
