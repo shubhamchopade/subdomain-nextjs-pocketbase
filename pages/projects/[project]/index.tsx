@@ -26,9 +26,6 @@ const Project = (props) => {
   const id = data?.userId;
   const link = data?.link;
   const port = data?.port;
-  const liveStatus = useStatusState();
-
-  const [isLoading, setIsLoading] = useState(false);
 
   const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
 
@@ -49,15 +46,12 @@ const Project = (props) => {
 
   // DEPLOY
   const deploy = async () => {
-    setIsLoading(true);
     try {
       const deployRes = await fetch(
         `/api/deploy?link=${link}&id=${id}&projectId=${projectId}&statusId=${status.id}&metricId=${projectMetrics.id}&subdomain=${subdomain}`
       );
-      setIsLoading(false);
       toast.success(`Project deployed successfully`);
     } catch (e) {
-      setIsLoading(false);
       toast.error(`Build failed, please check the logs for more info`);
       console.log(e);
     }
@@ -131,10 +125,10 @@ const Project = (props) => {
               <button
                 onClick={deploy}
                 className={`btn btn-primary text-xs btn-xs ${
-                  status?.isOnline && "hidden"
-                } ${isLoading && "loading disabled"}`}
+                  status?.built && "hidden"
+                } ${status.isLoading && "loading btn-disabled"}`}
               >
-                DEPLOY
+                {status.isLoading ? "DEPLOYING" : "DEPLOY"}
               </button>
             </div>
           </div>
