@@ -230,7 +230,7 @@ const Card = (props) => {
           </Link>
 
           <span className="text-xs">
-            Memory Usage -{" "}
+            Disk Usage -{" "}
             <span className="font-bold text-sky-700">{diskUsage}</span>
           </span>
 
