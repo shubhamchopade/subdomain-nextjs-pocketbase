@@ -11,7 +11,8 @@ import { useStatusState } from "../../../store/statusState";
 import BuildMetrics from "../../../components/projects/BuildMetrics";
 
 const Project = (props) => {
-  const status = props.status && JSON.parse(props.status);
+  const _status = props.status && JSON.parse(props.status);
+  const [status, setStatus] = React.useState(_status);
   const data = props.data && JSON.parse(props.data);
   const projectMetrics =
     props.projectMetrics && JSON.parse(props.projectMetrics);
@@ -31,39 +32,6 @@ const Project = (props) => {
 
   const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
 
-  // console.log("METRICS", projectMetrics.id)
-
-  // Clone repo
-  const cloneRepo = async () => {
-    const cloneRes = await fetch(
-      `/api/clone?link=${link}&id=${id}&projectId=${projectId}&statusId=${status.id}`
-    );
-    return cloneRes;
-  };
-
-  // Install dependencies
-  const installDependencies = async () => {
-    const res = await fetch(
-      `/api/install?link=${link}&id=${id}&projectId=${projectId}&statusId=${status.id}&metricId=${projectMetrics.id}`
-    );
-    return res;
-  };
-
-  // Build dependencies
-  const buildDependencies = async () => {
-    const res = await fetch(
-      `/api/build?link=${link}&id=${id}&projectId=${projectId}&statusId=${status.id}&metricId=${projectMetrics.id}`
-    );
-    return res;
-  };
-
-  // Start project
-  const startProject = async () => {
-    return await fetch(
-      `/api/start?link=${link}&id=${id}&projectId=${projectId}&subdomain=${subdomain}&statusId=${status.id}`
-    );
-  };
-
   // Delete project
   const handleDelete = async () => {
     const dangerouslyDeleteProject = async () => {
@@ -79,30 +47,14 @@ const Project = (props) => {
     console.log("stoppedProject", stoppedProject);
   };
 
-  // Create subdomain entry
-  const createSubdomainEntry = async () => {
-    const res = await fetch(
-      `/api/subdomain?link=${link}&id=${id}&projectId=${projectId}&statusId=${status.id}&subdomain=${subdomain}`
-    );
-
-    return res;
-  };
-
   // DEPLOY
   const deploy = async () => {
     setIsLoading(true);
     try {
-      // const clone = await cloneRepo()
-      const subdomain = await createSubdomainEntry();
-      const install = await installDependencies();
-      const build = await buildDependencies();
+      const deployRes = await fetch(
+        `/api/deploy?link=${link}&id=${id}&projectId=${projectId}&statusId=${status.id}&metricId=${projectMetrics.id}&subdomain=${subdomain}`
+      );
       setIsLoading(false);
-      if (build.status == 400) {
-        toast.error(`Build failed, please check the logs for more info`);
-        return;
-      }
-
-      const start = await startProject();
       toast.success(`Project deployed successfully`);
     } catch (e) {
       setIsLoading(false);
@@ -111,27 +63,6 @@ const Project = (props) => {
     }
   };
 
-  // RE BUILD
-  const rebuild = async () => {
-    setIsLoading(true);
-    try {
-      const build = await buildDependencies();
-      setIsLoading(false);
-
-      if (build.status == 400) {
-        toast.error(`Build failed, please check the logs for more info`);
-        return;
-      }
-
-      toast.success(`Project built successfully`);
-    } catch (e) {
-      setIsLoading(false);
-      toast.error(`Build failed, please check the logs for more info`);
-      console.log(e);
-    }
-  };
-
-  // console.log(liveStatus)
   return (
     <main className="container mx-auto">
       <div className="breadcrumbs">
@@ -146,7 +77,7 @@ const Project = (props) => {
       <div className="mb-32 relative container mx-auto">
         <div
           className={`card bg-base-400 shadow-xl relative m-16 ${
-            isLoading && "card-project"
+            status.isLoading && "card-project"
           }`}
         >
           <div className="absolute top-2 right-2 ">
@@ -182,12 +113,12 @@ const Project = (props) => {
             {data?.id && <p className="card-title">{title}</p>}
             <p>{description}</p>
             <div className="h-5">
-              {isLoading && (
+              {status.isLoading && (
                 <progress className="progress progress-primary w-56"></progress>
               )}
             </div>
 
-            {!isLoading && <BuildMetrics metrics={projectMetrics} />}
+            {status.isOnline && <BuildMetrics metrics={projectMetrics} />}
 
             <a
               href={`https://${subdomain}.techsapien.dev`}
@@ -205,20 +136,10 @@ const Project = (props) => {
               >
                 DEPLOY
               </button>
-              {status?.isOnline && (
-                <button
-                  onClick={rebuild}
-                  className={`btn btn-primary text-xs btn-xs ${
-                    isLoading && "loading disabled"
-                  }`}
-                >
-                  RE-BUILD
-                </button>
-              )}
             </div>
           </div>
         </div>
-        {status && <Status status={status} />}
+        <Status status={status} setStatus={setStatus} />
 
         {/* <Logger projectId={projectId} status={status} /> */}
       </div>
@@ -270,13 +191,14 @@ export const getServerSideProps: GetServerSideProps<any> = async (context) => {
       .getFullList({ projectId: projectId }, { $autoCancel: false });
     status = JSON.stringify({
       id: statusExists[0].id,
-      status: statusExists[0].current,
+      current: statusExists[0].current,
       cloned: statusExists[0].cloned,
       subdomain: statusExists[0].subdomain,
       installed: statusExists[0].installed,
       built: statusExists[0].built,
       stopped: statusExists[0].stopped,
       isOnline: statusExists[0].isOnline,
+      isLoading: statusExists[0].isLoading,
       timeElapsed: statusExists[0].timeElapsed,
       logClone: statusExists[0].logClone,
       logSubdomain: statusExists[0].logSubdomain,
