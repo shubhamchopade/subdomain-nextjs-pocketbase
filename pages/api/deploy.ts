@@ -20,13 +20,16 @@ export default async function handler(
     const buildRes = await buildHelper(req, res);
     console.log("build", buildRes);
 
-    const startRes = await startHelper(req, res);
-    console.log("start", startRes);
+    if (buildRes === "build failed") {
+      res.status(400).json({ data: "error building project" });
+    }
 
-    res.status(200).json({
-      data: "Installation Complete",
-      logs: JSON.stringify(installRes),
-    });
+    if (buildRes === "build success") {
+      const startRes = await startHelper(req, res);
+      res.status(200).json({
+        data: "Installation Complete",
+      });
+    }
   } catch (err) {
     res.status(400).json({ data: "error building project" });
   }
