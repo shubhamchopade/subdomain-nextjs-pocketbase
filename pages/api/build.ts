@@ -30,6 +30,21 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     .then((output: any) => {
       const timeBuild = output.stdout.split("Done in ")[1].split("s")[0];
       log(chalk.bgGreen("build time -", timeBuild));
+
+      // TODO - get the disk usage of the project folder
+      executeCommandChild("du", ["-sh", `${dir}/${id}/${projectId}`])
+        .then((data) => {
+          const diskUsage = data.stdout.split("\t")[0];
+          console.log("DISK USAGE", diskUsage);
+          // TODO - update value in diskUsage in projects collection
+          pb.collection("projects").update(projectId, {
+            diskUsage,
+          });
+        })
+        .catch((e) => {
+          console.log("error", e);
+        });
+
       pb.collection("projectStatus").update(statusId, {
         built: true,
         current: "build complete",
