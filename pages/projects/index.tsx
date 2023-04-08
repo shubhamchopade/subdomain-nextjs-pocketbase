@@ -1,10 +1,10 @@
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { getServerSession } from "next-auth";
 import React from "react";
-import GithubRepos from "../components/projects/GithubRepos";
-import ProjectsGrid from "../components/projects/ProjectsGrid";
-import { listAuthMethods } from "../components/utils/pocketbase-api-methods";
-import { authOptions } from "./api/auth/[...nextauth]";
+import GithubRepos from "../../components/projects/GithubRepos";
+import ProjectsGrid from "../../components/projects/ProjectsGrid";
+import { listAuthMethods } from "../../components/utils/pocketbase-api-methods";
+import { authOptions } from "../api/auth/[...nextauth]";
 import Pocketbase from "pocketbase";
 
 type Posts = {
@@ -25,14 +25,14 @@ type Post = {
   collectionName: string;
 };
 
-const Dashboard = (
+const Dashboard = () =>
   // props: InferGetServerSidePropsType<typeof getServerSideProps>
-) => {
-  return (
-    <div>
-      <ProjectsGrid />
-    </div>
-  );
-};
+  {
+    return (
+      <div>
+        <ProjectsGrid />
+      </div>
+    );
+  };
 
 export default Dashboard;
