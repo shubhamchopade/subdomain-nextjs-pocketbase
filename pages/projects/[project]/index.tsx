@@ -9,6 +9,10 @@ import { useRouter } from "next/router";
 import { toast } from "react-toastify";
 import { useStatusState } from "../../../store/statusState";
 import BuildMetrics from "../../../components/projects/BuildMetrics";
+import Image from "next/image";
+import { useStore } from "../../../store/store";
+
+// TODO - handle all the loading state based on Zustand state
 
 const Project = (props) => {
   const _status = props.status && JSON.parse(props.status);
@@ -17,6 +21,10 @@ const Project = (props) => {
   const projectMetrics =
     props.projectMetrics && JSON.parse(props.projectMetrics);
   const router = useRouter();
+  const [loading, setLoading] = useStore((state) => [
+    state.loading,
+    state.setLoading,
+  ]);
 
   const framework = data?.framework;
   const projectId = data?.id;
@@ -29,14 +37,18 @@ const Project = (props) => {
 
   const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
 
+  console.log(`/screenshots/${id}/${projectId}.png`);
+
   // Delete project
   const handleDelete = async () => {
+    setLoading(true, 50);
     const dangerouslyDeleteProject = async () => {
       const res = await fetch(
         `/api/delete?link=${link}&id=${id}&projectId=${projectId}&subdomain=${subdomain}&framework=${framework}&statusId=${status.id}`
       );
       const data = await res.json();
       if (data) {
+        setLoading(false, 100);
         router.push("/projects");
       }
     };
@@ -46,13 +58,18 @@ const Project = (props) => {
 
   // DEPLOY
   const deploy = async () => {
+    setLoading(true, 30);
     try {
       const deployRes = await fetch(
         `/api/deploy?link=${link}&id=${id}&projectId=${projectId}&statusId=${status.id}&metricId=${projectMetrics.id}&subdomain=${subdomain}`
       );
+      setLoading(false, 100);
       toast.success(`Project deployed successfully`);
+      // router.reload();
     } catch (e) {
+      setLoading(false, 100);
       toast.error(`Build failed, please check the logs for more info`);
+      // router.reload();
       console.log(e);
     }
   };
@@ -104,22 +121,30 @@ const Project = (props) => {
 
           <span className="uppercase text-xs font-bold">{framework}</span>
           <div className="card-body">
-            {data?.id && <p className="card-title">{title}</p>}
-            <p>{description}</p>
-            <div className="h-5">
-              {status.isLoading && (
-                <progress className="progress progress-primary w-56"></progress>
-              )}
+            {status.isOnline && !loading && (
+              <Image
+                alt="asds"
+                width={2000}
+                height={300}
+                src={`/screenshots/${id}/${projectId}.png`}
+              />
+            )}
+
+            <div className="">
+              <p className="card-title">{title}</p>
+              {status.isOnline && <BuildMetrics metrics={projectMetrics} />}
             </div>
 
-            {status.isOnline && <BuildMetrics metrics={projectMetrics} />}
-
-            <a
-              href={`https://${subdomain}.techsapien.dev`}
-              className="link my-2 ml-auto"
-            >
-              {subdomain}.techsapien.dev
-            </a>
+            {/* LINK */}
+            {status.isOnline && !loading && (
+              <a
+                href={`https://${subdomain}.techsapien.dev`}
+                className="link my-2 ml-auto"
+              >
+                <span className="text-blue-300 font-medium">{subdomain}</span>
+                .techsapien.dev
+              </a>
+            )}
 
             <div className="card-actions">
               <button
