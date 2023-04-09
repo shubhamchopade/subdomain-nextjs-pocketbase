@@ -11,8 +11,6 @@ const SecretsCard = (props) => {
   const router = useRouter();
   const redirectLink = `/projects/${projectId}?statusId=${statusId}&name=${name}&id=${id}&metricId=${metricId}`;
 
-  // TODO: Call /api/secret api and send the secretText as payload
-
   const handleCreateEnv = async () => {
     setLoading(true, 80);
     const res = await fetch(

@@ -8,9 +8,6 @@ const BuildMetrics = (props) => {
   const [metrics, setMetrics] = React.useState(props?.metrics);
   const metricId = metrics?.id;
 
-  // TODO: Get build metrics here
-
-  // console.log(props)
   useEffect(() => {
     pb.collection("deployMetrics")
       .getOne(metricId)
