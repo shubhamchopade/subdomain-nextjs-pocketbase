@@ -27,7 +27,7 @@ const BuildMetrics = (props) => {
   ).toFixed(2);
   return (
     <div>
-      <p>
+      <p className="text-base mt-3">
         ✨ Done in - <span className="font-bold">{totalTime}s</span>
       </p>
     </div>
