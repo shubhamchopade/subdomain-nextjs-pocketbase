@@ -4,8 +4,8 @@ import {
   installHelper,
   startHelper,
   subdomainHelper,
+  screenshotHelper,
 } from "../../backend/helpers/deploy";
-import { screenshotHelper } from "../../backend/helpers/screenshot";
 
 export default async function handler(
   req: NextApiRequest,

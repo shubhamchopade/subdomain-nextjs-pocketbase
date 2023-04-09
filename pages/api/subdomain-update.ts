@@ -3,9 +3,8 @@ import chalk from "chalk";
 import { executeCommandChild } from "../../backend/node-multithreading";
 import PocketBase from "pocketbase";
 
-const log = console.log;
-const erB = chalk.bold.redBright;
-const blu = chalk.bold.blue;
+const path = process.env.NEXT_PUBLIC_LOCAL_PATH_TO_PROJECTS;
+const scriptLocation = `${path}/scripts/get-subdomain.sh`;
 
 /**
  * Assigns a subdomain to the project according to the project name and also assigns a port if not already in use
@@ -27,7 +26,7 @@ export default function handler(
     framework,
     port,
   } = req.query;
-  const scriptLocation = "/home/shubham/Code/system-scripts/get-subdomain.sh";
+
   // console.log("subdomain", statusId)
   const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
 
@@ -60,7 +59,9 @@ export default function handler(
     `${id}`,
   ])
     .then((output: any) => {
-      log(chalk.blue("Nginx entry created ", output.stdout, output.stderr));
+      console.log(
+        chalk.blue("Nginx entry created ", output.stdout, output.stderr)
+      );
 
       // Remove nginx entry
       executeCommandChild("rm", [
@@ -74,7 +75,9 @@ export default function handler(
       res.status(200).json({ data: "created nginx entry.." });
     })
     .catch((e) => {
-      log(chalk.redBright("Error creating nginx entry, please try again", e));
+      console.log(
+        chalk.redBright("Error creating nginx entry, please try again", e)
+      );
       res.status(400).json({ data: "" });
     });
 }

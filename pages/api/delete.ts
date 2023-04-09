@@ -11,9 +11,11 @@ export default function handler(
   res: NextApiResponse<any>
 ) {
   const { link, id = 1, projectId = 1, subdomain, statusId } = req.query;
-  const dir = process.env.NEXT_PUBLIC_LOCAL_PATH_TO_PROJECTS;
+  const path = process.env.NEXT_PUBLIC_LOCAL_PATH_TO_PROJECTS;
+  const dir = `${path}/data/apps`;
 
   const projectPath = `${dir}/${id}/${projectId}`;
+  const nginxConfigPath = `/etc/nginx/techsapien.d/${id}/${subdomain}.techsapien.dev.conf`;
 
   const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
 
@@ -40,10 +42,7 @@ export default function handler(
           });
 
           // DELETE config file at nginx
-          executeCommandChild("rm", [
-            "-f",
-            `/etc/nginx/techsapien.d/${id}/${subdomain}.techsapien.dev.conf`,
-          ]);
+          executeCommandChild("rm", ["-f", `${nginxConfigPath}`]);
 
           // delete the project files from /app
           executeCommandChild("rm", ["-rf", projectPath]);

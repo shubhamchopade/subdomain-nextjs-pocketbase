@@ -37,8 +37,6 @@ const Project = (props) => {
 
   const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
 
-  console.log(`/screenshots/${id}/${projectId}.png`);
-
   // Delete project
   const handleDelete = async () => {
     setLoading(true, 50);
