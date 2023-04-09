@@ -5,6 +5,7 @@ import {
   startHelper,
   subdomainHelper,
 } from "../../backend/helpers/deploy";
+import { screenshotHelper } from "../../backend/helpers/screenshot";
 
 export default async function handler(
   req: NextApiRequest,
@@ -26,6 +27,10 @@ export default async function handler(
 
     if (buildRes === "build success") {
       const startRes = await startHelper(req, res);
+
+      const screenshotRes = await screenshotHelper(req, res);
+
+      console.log("screenshot", screenshotRes);
       res.status(200).json({
         data: "Installation Complete",
       });
