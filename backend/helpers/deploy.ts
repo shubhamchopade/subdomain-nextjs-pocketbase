@@ -14,8 +14,7 @@ export async function subdomainHelper(
     statusId,
     subdomain = "test",
   } = req.query;
-  const scriptLocation =
-    "/home/shubham/Code/system-scripts/nginx-techsapien.sh";
+  const scriptLocation = "/home/shubham/Code/system-scripts/get-subdomain.sh";
   // console.log("subdomain", statusId)
   const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
 
