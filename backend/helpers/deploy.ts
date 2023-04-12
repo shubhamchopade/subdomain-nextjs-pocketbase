@@ -28,7 +28,11 @@ export async function subdomainHelper(
   });
 
   // generate a random numbers between 1000 and 9999
-  const randomPort = Math.floor(Math.random() * 8999 + 1000);
+  const reservedPorts = [6379, 8000, 3005, 3006];
+  let randomPort = 1000;
+  do {
+    randomPort = Math.floor(Math.random() * 8999 + 1000);
+  } while (reservedPorts.includes(randomPort));
 
   // Check if this port is already in use by checking database, if yes, generate a new one
   pb.collection("subdomains")
