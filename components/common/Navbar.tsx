@@ -27,6 +27,7 @@ const Navbar = () => {
 
   return (
     <>
+      {loadingProgressBar(loading, progress)}
       <div className="navbar bg-base-100">
         <div className="flex-1">
           <a className="btn btn-ghost normal-case text-xl">TechSapien</a>
@@ -83,7 +84,6 @@ const Navbar = () => {
           </div>
         </div>
       </div>
-      {loadingProgressBar(loading, progress)}
     </>
   );
 };
@@ -95,11 +95,11 @@ function loadingProgressBar(loading: boolean, progress: number) {
     <AnimatePresence>
       {loading && (
         <motion.div
-          initial={{ width: 0, height: 2 }}
+          initial={{ width: 0, height: 5 }}
           animate={{ width: progress + "%" }}
           transition={{ duration: 0.5 }}
           exit={{ opacity: 0, height: 0 }}
-          className="bg-secondary animate-pulse"
+          className="bg-secondary animate-pulse fixed top-0"
         />
       )}
     </AnimatePresence>
