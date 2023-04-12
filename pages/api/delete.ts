@@ -34,18 +34,18 @@ export default function handler(
         `"${projectId} ${port} ${id} ${framework}")`,
       ])
         .then(() => {
+          // DELETE config file at nginx
+          executeCommandChild("rm", ["-f", `${nginxConfigPath}`]);
+
+          // delete the project files from /app
+          executeCommandChild("rm", ["-rf", projectPath]);
+
           // Update status of project
           pb.collection("projectStatus").update(statusId, {
             isOnline: false,
             stopped: true,
             current: "project inactive",
           });
-
-          // DELETE config file at nginx
-          executeCommandChild("rm", ["-f", `${nginxConfigPath}`]);
-
-          // delete the project files from /app
-          executeCommandChild("rm", ["-rf", projectPath]);
 
           // delete from pocketbase
           pb.collection("projects").delete(projectId);
