@@ -4,11 +4,41 @@ import SecretsCard from "../../../components/projects/SecretsCard";
 import Link from "next/link";
 import { GetServerSideProps } from "next";
 import PocketBase from "pocketbase";
+import { useStore } from "../../../store/store";
+import { useRouter } from "next/router";
 
 const Settings = (props) => {
+  const statusId = props.statusId;
   const data = JSON.parse(props.data);
+  const router = useRouter();
   const { title: name, id: projectId } = data;
-  // console.log(projectData)
+  const [loading, setLoading] = useStore((state) => [
+    state.loading,
+    state.setLoading,
+  ]);
+
+  const framework = data?.framework;
+  const subdomain = data?.subdomain;
+  const userId = data?.userId;
+  const link = data?.link;
+  const port = data?.port;
+
+  // Delete project
+  const handleDelete = async () => {
+    setLoading(true, 70);
+    const dangerouslyDeleteProject = async () => {
+      const res = await fetch(
+        `/api/delete?link=${link}&id=${userId}&projectId=${projectId}&subdomain=${subdomain}&framework=${framework}&statusId=${statusId}`
+      );
+      const data = await res.json();
+      if (data) {
+        setLoading(false, 100);
+        router.push("/projects");
+      }
+    };
+    const stoppedProject = await dangerouslyDeleteProject();
+    console.log("stoppedProject", stoppedProject);
+  };
   return (
     <main className="container mx-auto">
       <div className="breadcrumbs">
@@ -25,7 +55,10 @@ const Settings = (props) => {
       <div className="max-w-xl mx-auto">
         <Subdomain {...data} />
         <SecretsCard {...data} />
-        <button className="btn btn-outline btn-error w-full">
+        <button
+          onClick={handleDelete}
+          className="btn btn-outline btn-error w-full"
+        >
           Delete this project
         </button>
       </div>
@@ -67,6 +100,7 @@ export const getServerSideProps: GetServerSideProps<any> = async (context) => {
   return {
     props: {
       data,
+      statusId,
     },
   };
 };

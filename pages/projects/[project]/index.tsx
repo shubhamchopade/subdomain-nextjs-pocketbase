@@ -29,7 +29,6 @@ const Project = (props) => {
   const framework = data?.framework;
   const projectId = data?.id;
   const title = data?.title;
-  const description = data?.description;
   const subdomain = data?.subdomain;
   const id = data?.userId;
   const link = data?.link;
@@ -37,32 +36,25 @@ const Project = (props) => {
 
   const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
 
-  // Delete project
-  const handleDelete = async () => {
-    setLoading(true, 50);
-    const dangerouslyDeleteProject = async () => {
-      const res = await fetch(
-        `/api/delete?link=${link}&id=${id}&projectId=${projectId}&subdomain=${subdomain}&framework=${framework}&statusId=${status.id}`
-      );
-      const data = await res.json();
-      if (data) {
-        setLoading(false, 100);
-        router.push("/projects");
-      }
-    };
-    const stoppedProject = await dangerouslyDeleteProject();
-    console.log("stoppedProject", stoppedProject);
-  };
-
   // DEPLOY
   const deploy = async () => {
     setLoading(true, 30);
     try {
+      // TODO - update the projectStatus => queued = true
+      await pb.collection("projectStatus").update(status.id, {
+        queued: true,
+        current: "project online",
+        isLoading: true,
+      });
+      // API call to schedule the build request on jobs.techsapien.dev
       const deployRes = await fetch(
-        `/api/deploy?link=${link}&id=${id}&projectId=${projectId}&statusId=${status.id}&metricId=${projectMetrics.id}&subdomain=${subdomain}`
+        `https://jobs.techsapien.dev/deploy?link=${link}&id=${id}&projectId=${projectId}&statusId=${status.id}&metricId=${projectMetrics.id}&subdomain=${subdomain}`
       );
+      // const deployRes = await fetch(
+      //   `/api/deploy?link=${link}&id=${id}&projectId=${projectId}&statusId=${status.id}&metricId=${projectMetrics.id}&subdomain=${subdomain}`
+      // );
       setLoading(false, 100);
-      toast.success(`Project deployed successfully`);
+      // toast.success(`Project deployed successfully`);
       // router.reload();
     } catch (e) {
       setLoading(false, 100);
@@ -84,15 +76,66 @@ const Project = (props) => {
       </div>
 
       <div className="mb-32 relative container mx-auto">
+        <div className="max-w-md mx-auto">
+          <ul className="steps transform scale-95">
+            <li
+              data-content={`${status.cloned ? "✓" : "1"}`}
+              className={`step ${status.cloned && "step-primary"}`}
+            >
+              Clone
+            </li>
+            {status.queued && (
+              <li
+                data-content={`${status.queued ? "✓" : "2"}`}
+                className={`step ${status.queued && "step-primary"}`}
+              >
+                Queued
+              </li>
+            )}
+            <li
+              data-content={`${status.subdomain ? "✓" : "2"}`}
+              className={`step ${status.subdomain && "step-primary"}`}
+            >
+              Subdomain
+            </li>
+            <li
+              data-content={`${
+                status.installed ? "✓" : status.subdomain ? "●" : "3"
+              }`}
+              className={`step ${status.installed && "step-primary"}`}
+            >
+              Install
+            </li>
+            <li
+              data-content={`${
+                status.built ? "✓" : status.installed ? "●" : "4"
+              }`}
+              className={`step ${status.built && "step-primary"}`}
+            >
+              Build
+            </li>
+            <li
+              data-content={`${
+                status.isOnline ? "✓" : status.stopped ? "!" : "5"
+              }`}
+              className={`step ${
+                status.isOnline
+                  ? "step-primary"
+                  : status.stopped
+                  ? "step-error"
+                  : ""
+              }`}
+            >
+              Online
+            </li>
+          </ul>
+        </div>
         <div
           className={`card bg-base-400 shadow-xl relative m-16 ${
             status.isLoading && "card-project"
-          }`}
+          } ${status.queued && "card-project-queued"}`}
         >
           <div className="absolute top-2 right-2 ">
-            <span className="btn btn-xs btn-error" onClick={handleDelete}>
-              -
-            </span>
             <label
               tabIndex={0}
               className="btn btn-square btn-ghost"
@@ -119,9 +162,9 @@ const Project = (props) => {
 
           <span className="uppercase text-xs font-bold">{framework}</span>
           <div className="card-body">
-            {status.isOnline && !loading && (
+            {status.isOnline && (
               <Image
-                alt="asds"
+                alt="preview"
                 width={2000}
                 height={300}
                 src={`/screenshots/${id}/${projectId}.png`}
@@ -208,6 +251,7 @@ export const getServerSideProps: GetServerSideProps<any> = async (context) => {
       .getFullList({ projectId: projectId }, { $autoCancel: false });
     status = JSON.stringify({
       id: statusExists[0].id,
+      queued: statusExists[0].queued,
       current: statusExists[0].current,
       cloned: statusExists[0].cloned,
       subdomain: statusExists[0].subdomain,

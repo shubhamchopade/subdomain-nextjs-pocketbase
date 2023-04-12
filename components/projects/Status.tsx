@@ -21,7 +21,7 @@ const Status = (props) => {
   return (
     <div>
       <div className="flex items-start justify-center">
-        <div className="max-w-md mx-auto">
+        {/* <div className="max-w-md mx-auto">
           <ul className="steps steps-vertical">
             <li
               data-content={`${status.cloned ? "✓" : "1"}`}
@@ -29,6 +29,14 @@ const Status = (props) => {
             >
               Clone
             </li>
+            {status.queued && (
+              <li
+                data-content={`${status.queued ? "✓" : "2"}`}
+                className={`step ${status.queued && "step-primary"}`}
+              >
+                queued
+              </li>
+            )}
             <li
               data-content={`${status.subdomain ? "✓" : "2"}`}
               className={`step ${status.subdomain && "step-primary"}`}
@@ -66,7 +74,7 @@ const Status = (props) => {
               Online
             </li>
           </ul>
-        </div>
+        </div> */}
 
         <div className="prose card bg-base-300 p-4 max-w-xl mx-auto shadow text-xs overflow-x-auto w-full">
           <pre>{status.logClone}</pre>
