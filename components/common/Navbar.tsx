@@ -99,7 +99,7 @@ function loadingProgressBar(loading: boolean, progress: number) {
           animate={{ width: progress + "%" }}
           transition={{ duration: 0.5 }}
           exit={{ opacity: 0, height: 0 }}
-          className="bg-secondary"
+          className="bg-secondary animate-pulse"
         />
       )}
     </AnimatePresence>

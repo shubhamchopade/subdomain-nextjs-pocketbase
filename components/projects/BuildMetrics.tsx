@@ -8,9 +8,6 @@ const BuildMetrics = (props) => {
   const [metrics, setMetrics] = React.useState(props?.metrics);
   const metricId = metrics?.id;
 
-  // TODO: Get build metrics here
-
-  // console.log(props)
   useEffect(() => {
     pb.collection("deployMetrics")
       .getOne(metricId)
@@ -27,7 +24,7 @@ const BuildMetrics = (props) => {
   ).toFixed(2);
   return (
     <div>
-      <p>
+      <p className="text-base mt-3">
         ✨ Done in - <span className="font-bold">{totalTime}s</span>
       </p>
     </div>

@@ -5,9 +5,10 @@ import PocketBase from "pocketbase";
 
 export function cloneHelper(req: NextApiRequest, res: NextApiResponse<any>) {
   const { link, id = 1, projectId = 1, port = 3, statusId } = req.query;
-  const dir = process.env.NEXT_PUBLIC_LOCAL_PATH_TO_PROJECTS;
+  const path = process.env.NEXT_PUBLIC_LOCAL_PATH_TO_PROJECTS;
+  const scriptLocation = `${path}/scripts/get-framework.sh`;
+  const dir = `${path}/data/apps`;
   const projectPath = `${dir}/${id}/${projectId}`;
-  const scriptLocation = "/home/shubham/Code/system-scripts/get-framework.sh";
   const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
 
   try {

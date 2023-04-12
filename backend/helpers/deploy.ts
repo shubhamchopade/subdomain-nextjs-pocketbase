@@ -3,6 +3,9 @@ import chalk from "chalk";
 import { executeCommandChild } from "../../backend/node-multithreading";
 import PocketBase from "pocketbase";
 
+const path = process.env.NEXT_PUBLIC_LOCAL_PATH_TO_PROJECTS;
+const dir = `${path}/data/apps`;
+
 export async function subdomainHelper(
   req: NextApiRequest,
   res: NextApiResponse<any>
@@ -14,8 +17,8 @@ export async function subdomainHelper(
     statusId,
     subdomain = "test",
   } = req.query;
-  const scriptLocation =
-    "/home/shubham/Code/system-scripts/nginx-techsapien.sh";
+
+  const scriptLocation = `${path}/scripts/get-subdomain.sh`;
   // console.log("subdomain", statusId)
   const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
 
@@ -105,7 +108,7 @@ export async function installHelper(
     statusId,
     metricId,
   } = req.query;
-  const dir = process.env.NEXT_PUBLIC_LOCAL_PATH_TO_PROJECTS;
+
   const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
 
   try {
@@ -152,7 +155,6 @@ export async function buildHelper(req: NextApiRequest, res: NextApiResponse) {
     metricId,
   } = req.query;
 
-  const dir = process.env.NEXT_PUBLIC_LOCAL_PATH_TO_PROJECTS;
   const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
 
   console.log("Build Started");
@@ -259,4 +261,39 @@ export async function startHelper(
       isLoading: false,
     });
   }
+}
+
+// Get the screenshot of the project and save it to the location /home/shubham/Code/reactly/screenshots
+// firefox --screenshot --window-size=1920,1080 <PATH_TO_SAVE_IMAGE> <URL>
+export async function screenshotHelper(
+  req: NextApiRequest,
+  res: NextApiResponse<any>
+) {
+  const { link, id = 1, projectId = 1, subdomain } = req.query;
+
+  const scriptLocation = `${path}/scripts/screenshot.sh`;
+  const screenshotsLocation = `${path}/data/screenshots`;
+
+  // Create a directory for the project
+  try {
+    await executeCommandChild(`sudo -u shubham`, [
+      "mkdir",
+      `${screenshotsLocation}/${id}`,
+    ]);
+  } catch (err) {
+    console.log("directory already exists");
+  }
+
+  // Timeout for the server to process the image
+  await executeCommandChild(`sleep`, ["2"]);
+
+  // Take the screenshot
+  await executeCommandChild(`sudo -u shubham`, [
+    `sh ${scriptLocation}`,
+    `${id}`,
+    `${projectId}`,
+    `https://${subdomain}.techsapien.dev`,
+  ]);
+
+  return "screenshot taken";
 }
