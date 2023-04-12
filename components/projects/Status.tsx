@@ -29,6 +29,14 @@ const Status = (props) => {
             >
               Clone
             </li>
+            {status.queued && (
+              <li
+                data-content={`${status.queued ? "✓" : "2"}`}
+                className={`step ${status.queued && "step-primary"}`}
+              >
+                queued
+              </li>
+            )}
             <li
               data-content={`${status.subdomain ? "✓" : "2"}`}
               className={`step ${status.subdomain && "step-primary"}`}

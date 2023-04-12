@@ -22,6 +22,11 @@ export async function subdomainHelper(
   // console.log("subdomain", statusId)
   const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
 
+  // Change the status queued = false in the database
+  await pb.collection("projectStatus").update(statusId, {
+    queued: false,
+  });
+
   // generate a random numbers between 1000 and 9999
   const randomPort = Math.floor(Math.random() * 8999 + 1000);
 
@@ -245,20 +250,16 @@ export async function startHelper(
       isOnline: true,
     });
     await pb.collection("projectStatus").update(statusId, {
-      isOnline: true,
       stopped: false,
       current: "project online",
       logStart: `🎉 Project is ONLINE - ${subdomain}.techsapien.dev`,
-      isLoading: false,
     });
   } catch (err) {
     console.log("Service create failed", err);
     await pb.collection("projectStatus").update(statusId, {
-      isOnline: false,
       stopped: true,
       current: "project stopped",
       logStart: `👀 Project could not start, please try again later.`,
-      isLoading: false,
     });
   }
 }
@@ -269,7 +270,8 @@ export async function screenshotHelper(
   req: NextApiRequest,
   res: NextApiResponse<any>
 ) {
-  const { link, id = 1, projectId = 1, subdomain } = req.query;
+  const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
+  const { link, id = 1, projectId = 1, subdomain, statusId } = req.query;
 
   const scriptLocation = `${path}/scripts/screenshot.sh`;
   const screenshotsLocation = `${path}/data/screenshots`;
@@ -294,6 +296,14 @@ export async function screenshotHelper(
     `${projectId}`,
     `https://${subdomain}.techsapien.dev`,
   ]);
+
+  await pb.collection("projects").update(projectId, {
+    isOnline: true,
+  });
+  await pb.collection("projectStatus").update(statusId, {
+    isOnline: true,
+    isLoading: false,
+  });
 
   return "screenshot taken";
 }
