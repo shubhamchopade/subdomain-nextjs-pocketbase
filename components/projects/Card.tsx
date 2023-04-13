@@ -10,9 +10,6 @@ const Card = (props) => {
   const subdomain = project.subdomain;
   const isOnline = project.isOnline;
   const diskUsage = project.diskUsage;
-  // const [isLoading, setIsLoading] = useState(false)
-  const [isLoading, setIsLoading] = useState(false);
-  const [status, setStatus] = useState(null);
   const [framework, setFramework] = useState(props?.project.framework);
 
   return (
@@ -243,7 +240,7 @@ const Card = (props) => {
             </a>
           ) : (
             <Link
-              href={`${projectId}?framework=${framework}&userId=${id}`}
+              href={`/projects/${projectId}?framework=${framework}&userId=${id}`}
               className="link my-2 ml-auto"
             >
               Build now

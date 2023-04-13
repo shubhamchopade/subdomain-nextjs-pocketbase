@@ -76,7 +76,7 @@ const Project = (props) => {
       </div>
 
       <div className="mb-32 relative container mx-auto">
-        <div className="max-w-md mx-auto">
+        <div className={`max-w-md mx-auto ${status.isOnline && "hidden"}`}>
           <ul className="steps transform scale-95">
             <li
               data-content={`${status.cloned ? "✓" : "1"}`}
@@ -86,7 +86,7 @@ const Project = (props) => {
             </li>
             {status.queued && (
               <li
-                data-content={`${status.queued ? "✓" : "2"}`}
+                data-content={`●`}
                 className={`step ${status.queued && "step-primary"}`}
               >
                 Queued
@@ -191,7 +191,7 @@ const Project = (props) => {
               <button
                 onClick={deploy}
                 className={`btn btn-primary text-xs btn-xs ${
-                  status?.built && "hidden"
+                  status?.isOnline && "hidden"
                 } ${status.isLoading && "loading btn-disabled"}`}
               >
                 {status.isLoading ? "DEPLOYING" : "DEPLOY"}
