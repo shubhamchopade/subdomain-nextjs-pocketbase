@@ -72,7 +72,7 @@ export async function subdomainHelper(
               pb.collection("projectStatus").update(statusId, {
                 subdomain: true,
                 current: "subdomain created",
-                logSubdomain: `🔥 Subdomain assigned successfully - ${subdomain}.techsapien.dev`,
+                logSubdomain: `🔥 Subdomain assigned successfully - ${subdomain}.reactly.app`,
                 isLoading: true,
               });
               // res.status(200).json({ data: "created nginx entry.." });
@@ -256,7 +256,7 @@ export async function startHelper(
     await pb.collection("projectStatus").update(statusId, {
       stopped: false,
       current: "project online",
-      logStart: `🎉 Project is ONLINE - ${subdomain}.techsapien.dev`,
+      logStart: `🎉 Project is ONLINE - ${subdomain}.reactly.app`,
     });
   } catch (err) {
     console.log("Service create failed", err);
@@ -298,7 +298,7 @@ export async function screenshotHelper(
     `sh ${scriptLocation}`,
     `${id}`,
     `${projectId}`,
-    `https://${subdomain}.techsapien.dev`,
+    `https://${subdomain}.reactly.app`,
   ]);
 
   await pb.collection("projects").update(projectId, {

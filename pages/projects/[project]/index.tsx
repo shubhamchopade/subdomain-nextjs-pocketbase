@@ -179,11 +179,11 @@ const Project = (props) => {
             {/* LINK */}
             {status.isOnline && !loading && (
               <a
-                href={`https://${subdomain}.techsapien.dev`}
+                href={`https://${subdomain}.reactly.app`}
                 className="link my-2 ml-auto"
               >
                 <span className="text-blue-300 font-medium">{subdomain}</span>
-                .techsapien.dev
+                .reactly.app
               </a>
             )}
 

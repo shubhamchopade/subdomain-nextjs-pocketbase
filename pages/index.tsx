@@ -37,33 +37,27 @@ const Home = (
   const codeVerifier = props?.methods?.authProviders[0]?.codeVerifier;
   const name = props?.methods?.authProviders[0]?.name;
   const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
-  const code = router?.query?.code;
+  const code = router?.query?.code?.toString();
 
+  console.log(code);
   const handleSignin = async () => {
     signIn("github", { redirect: true, callbackUrl: "/" });
   };
 
   useEffect(() => {
-    if (authUrl && !router.query.code && !githubAuth) {
+    if (authUrl && !code) {
       router.replace(authUrl);
-      localStorage.removeItem("userGithub");
     } else {
       signIn();
     }
 
     async function signIn() {
-      const code = router?.query?.code?.toString();
       try {
-        if (router.query.code && authUrl && !githubAuth) {
+        if (router.query.code && authUrl) {
           const authData = await pb
             .collection("users")
-            .authWithOAuth2(
-              name,
-              code,
-              codeVerifier,
-              "https://pkfr.techsapien.dev/projects"
-            );
-
+            .authWithOAuth2(name, code, codeVerifier);
+          console.log(authData);
           if (authData) {
             const data = {
               accessToken: authData?.meta?.accessToken,
@@ -77,6 +71,7 @@ const Home = (
               const gmeta = await pb
                 .collection("githubUserMeta")
                 .getFirstListItem(`userId="${authData?.record?.id}"`);
+
               // update
               const ghub = await pb
                 .collection("githubUserMeta")
@@ -130,12 +125,7 @@ const Home = (
 export default Home;
 
 export const getServerSideProps: GetServerSideProps<any> = async (context) => {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API}/api/collections/blogs/records`
-  );
-
   const methods = await listAuthMethods();
-  const posts: Posts = await res.json();
   let session = null;
 
   try {
