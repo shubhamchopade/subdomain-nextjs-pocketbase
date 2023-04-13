@@ -13,7 +13,7 @@ export type listAuthMethodsResponse = {
 
 export async function listAuthMethods(): Promise<listAuthMethodsResponse> {
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API}/api/collections/users/auth-methods`,
+    `${process.env.NEXT_PUBLIC_POCKETBASE_URL}/api/collections/users/auth-methods`,
     {
       headers: {
         "Content-Type": "application/json",
@@ -33,7 +33,7 @@ type authWithOauth2 = {
 
 export async function authWithOauth2(props: authWithOauth2): Promise<any> {
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API}/api/collections/users/auth-with-oauth2`,
+    `${process.env.NEXT_PUBLIC_POCKETBASE_URL}/api/collections/users/auth-with-oauth2`,
     {
       method: "POST",
       headers: {
@@ -59,7 +59,7 @@ export async function authWithOauth2(props: authWithOauth2): Promise<any> {
     }
   );
   const login = await res.json();
-  console.log("LOGGING in", login)
+  console.log("LOGGING in", login);
   return login;
 }
 
@@ -68,7 +68,7 @@ export async function authWithPassword(props: {
   password: string;
 }): Promise<any> {
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API}/api/collections/users/auth-with-password`,
+    `${process.env.NEXT_PUBLIC_POCKETBASE_URL}/api/collections/users/auth-with-password`,
     {
       method: "POST",
       headers: {
@@ -91,7 +91,7 @@ export async function createUser(props: {
   passwordConfirm: string;
 }): Promise<any> {
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API}/api/collections/users/records`,
+    `${process.env.NEXT_PUBLIC_POCKETBASE_URL}/api/collections/users/records`,
     {
       method: "POST",
       headers: {

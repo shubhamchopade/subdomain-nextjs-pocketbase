@@ -15,7 +15,7 @@ export default function handler(
   const dir = `${path}/data/apps`;
 
   const projectPath = `${dir}/${id}/${projectId}`;
-  const nginxConfigPath = `/etc/nginx/techsapien.d/${id}/${subdomain}.techsapien.dev.conf`;
+  const nginxConfigPath = `/etc/nginx/reactly.d/${id}/${subdomain}.reactly.app.conf`;
 
   const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
 

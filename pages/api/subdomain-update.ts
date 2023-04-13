@@ -66,7 +66,7 @@ export default function handler(
       // Remove nginx entry
       executeCommandChild("rm", [
         "-f",
-        `/etc/nginx/techsapien.d/${id}/${currentSubdomain}.techsapien.dev.conf`,
+        `/etc/nginx/reactly.d/${id}/${currentSubdomain}.reactly.app.conf`,
       ]);
 
       // Reload nginx

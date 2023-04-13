@@ -236,10 +236,10 @@ const Card = (props) => {
 
           {isOnline ? (
             <a
-              href={`https://${props.project.subdomain}.techsapien.dev`}
+              href={`https://${props.project.subdomain}.reactly.app`}
               className="link my-2 ml-auto"
             >
-              {props.project.subdomain}.techsapien.dev
+              {props.project.subdomain}.reactly.app
             </a>
           ) : (
             <Link
