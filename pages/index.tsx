@@ -38,6 +38,7 @@ const Home = (
   const name = props?.methods?.authProviders[0]?.name;
   const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
   const code = router?.query?.code?.toString();
+  const redirectUrl = process.env.NEXTAUTH_URL;
 
   console.log(code);
   const handleSignin = async () => {
@@ -56,7 +57,12 @@ const Home = (
         if (router.query.code && authUrl) {
           const authData = await pb
             .collection("users")
-            .authWithOAuth2(name, code, codeVerifier);
+            .authWithOAuth2(
+              name,
+              code,
+              codeVerifier,
+              "https://www.reactly.app"
+            );
           console.log(authData);
           if (authData) {
             const data = {
