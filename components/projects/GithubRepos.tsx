@@ -7,11 +7,12 @@ import LinkCard from "./LinkCard";
 import Link from "next/link";
 
 const GithubRepos = () => {
+  const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
   const [repos, setRepos] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const router = useRouter();
 
   const handleRepos = async () => {
-    const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
     const auth = localStorage.getItem("pocketbase_auth");
     const json = JSON.parse(auth);
     const username = json?.model?.username;
@@ -19,13 +20,47 @@ const GithubRepos = () => {
     // console.log(username);
     if (username) {
       const reposRes = await getRepos(username);
-      setRepos(reposRes);
+      console.log(reposRes);
+      const records = await pb.collection("projects").getFullList(
+        {
+          userId,
+        },
+        { $autoCancel: false }
+      );
+      // if html_url is in records, then remove it from reposRes
+      const filteredRepos = reposRes.filter((repo: any) => {
+        return !records.find((record: any) => record.link === repo.html_url);
+      });
+      setRepos(filteredRepos);
+
+      // const filteredRepos = reposRes;
+      // only include repos that whose title consists of keywords like "react", "next", "remix"
+      // const filteredRepos2 = filteredRepos.filter((repo: any) => {
+      //   return (
+      //     repo.name.toLowerCase().includes("react") ||
+      //     repo.name.toLowerCase().includes("next") ||
+      //     repo.name.toLowerCase().includes("remix")
+      //   );
+      // });
+
+      // setRepos(filteredRepos2);
     }
   };
 
   useEffect(() => {
     handleRepos();
   }, []);
+
+  const handleSearchRepo = async (e: any) => {
+    setSearchQuery(e.target.value);
+    const filteredResults = repos.filter((repo: any) => {
+      return repo.name.toLowerCase().includes(e.target.value.toLowerCase());
+    });
+    if (e.target.value === "") {
+      handleRepos();
+    }
+    setRepos(filteredResults);
+  };
 
   return (
     <main className="container mx-auto">
@@ -52,6 +87,12 @@ const GithubRepos = () => {
         <p className="my-2">
           Please note - repositories greater than 50 MB are not yet supported.
         </p>
+
+        <input
+          className="input input-bordered w-full"
+          value={searchQuery}
+          onChange={handleSearchRepo}
+        />
 
         <div className="flex flex-col h-96 overflow-y-auto overflow-x-hidden">
           {repos.map((repo) => (
