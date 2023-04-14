@@ -11,7 +11,8 @@ import { useStatusState } from "../../../store/statusState";
 import BuildMetrics from "../../../components/projects/BuildMetrics";
 import Image from "next/image";
 import { useStore } from "../../../store/store";
-
+import useSWR from "swr";
+import { getFetcher } from "../../../utils/swr-helpers";
 // TODO - handle all the loading state based on Zustand state
 
 const Project = (props) => {
@@ -25,6 +26,13 @@ const Project = (props) => {
     state.loading,
     state.setLoading,
   ]);
+  const { data: queueStatus } = useSWR(
+    ["https://jobs.techsapien.dev/getJobCounts"],
+    getFetcher
+  );
+
+  // const waitingJobs = queueStatus?.waiting;
+  console.log(queueStatus);
 
   const framework = data?.framework;
   const projectId = data?.id;
@@ -74,6 +82,21 @@ const Project = (props) => {
           <li>{title}</li>
         </ul>
       </div>
+
+      {/* <div>
+        {status.queued && waitingJobs > 0 && (
+          <div
+            className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4"
+            role="alert"
+          >
+            <p className="font-bold">Build in queue</p>
+            <p className="text-sm">
+              Your project is in the queue to be built. There are currently{" "}
+              {waitingJobs} jobs in the queue.
+            </p>
+          </div>
+        )}
+      </div> */}
 
       <div className="mb-32 relative container mx-auto">
         <div className={`max-w-md mx-auto ${status.isOnline && "hidden"}`}>
