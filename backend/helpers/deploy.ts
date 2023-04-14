@@ -28,7 +28,7 @@ export async function subdomainHelper(
   });
 
   // generate a random numbers between 1000 and 9999
-  const reservedPorts = [6379, 8000, 3005, 3006];
+  const reservedPorts = [6379, 8000, 3005, 3006, 8090, 5432];
   let randomPort = 1000;
   do {
     randomPort = Math.floor(Math.random() * 8999 + 1000);
