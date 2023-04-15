@@ -19,8 +19,9 @@ export default function App({
         async
         defer
         data-website-id="eb622eb5-bccb-45f4-b6e9-f8275c0c4e8c"
-        src="https://tracking.techsapien.dev/umami.js"
+        src="https://u.techsapien.dev/umami.js"
       ></script>
+
       <StoreProvider {...pageProps.initialZustandState}>
         <Navbar />
         <ToastContainer />
