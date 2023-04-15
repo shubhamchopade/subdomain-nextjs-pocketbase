@@ -25,6 +25,24 @@ export default function handler(
       const { port, framework } = project;
       console.log(erB(`DELETING APP at port ${port}`));
 
+      // remove the symlink from /etc/systemd/system/multi-user.target.wants
+      executeCommandChild(`rm`, [
+        "/etc/systemd/system/multi-user.target.wants",
+        `$(systemd-escape`,
+        `--template`,
+        `techsapien@.service`,
+        `"${projectId} ${port} ${id} ${framework}")`,
+      ]);
+
+      // disable the project from systemctl
+      executeCommandChild(`systemctl`, [
+        `stop`,
+        `$(systemd-escape`,
+        `--template`,
+        `techsapien@.service`,
+        `"${projectId} ${port} ${id} ${framework}")`,
+      ]);
+
       // disable the project from systemctl
       executeCommandChild(`systemctl`, [
         `disable`,
@@ -34,6 +52,8 @@ export default function handler(
         `"${projectId} ${port} ${id} ${framework}")`,
       ])
         .then(() => {
+          // reload systemctl daemon to reflect changes
+          executeCommandChild("systemctl", ["daemon-reload"]);
           // DELETE config file at nginx
           executeCommandChild("rm", ["-f", `${nginxConfigPath}`]);
 
