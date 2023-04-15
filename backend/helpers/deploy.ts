@@ -28,7 +28,7 @@ export async function subdomainHelper(
   });
 
   // generate a random numbers between 1000 and 9999
-  const reservedPorts = [6379, 8000, 3005, 3006, 8090, 5432];
+  const reservedPorts = [6379, 8000, 3005, 3006, 3007, 8090, 5432];
   let randomPort = 1000;
   do {
     randomPort = Math.floor(Math.random() * 8999 + 1000);
@@ -230,15 +230,16 @@ export async function startHelper(
     const { port, framework } = project;
     console.log("port, framework", port, framework);
 
-    await executeCommandChild(`systemctl`, [
-      `enable`,
+    const output = await executeCommandChild(`systemctl`, [
+      `start`,
       `$(systemd-escape`,
       `--template`,
       `techsapien@.service`,
       `"${projectId} ${port} ${id} ${framework}")`,
     ]);
-    const output = await executeCommandChild(`systemctl`, [
-      `start`,
+
+    await executeCommandChild(`systemctl`, [
+      `enable`,
       `$(systemd-escape`,
       `--template`,
       `techsapien@.service`,
