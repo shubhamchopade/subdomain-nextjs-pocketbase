@@ -7,32 +7,18 @@ import { listAuthMethods } from "../../components/utils/pocketbase-api-methods";
 import { authOptions } from "../api/auth/[...nextauth]";
 import Pocketbase from "pocketbase";
 
-type Posts = {
-  page: number;
-  perPage: number;
-  totalItems: number;
-  totalPages: number;
-  items: Post[];
-};
-
-type Post = {
-  id: string;
-  name: string;
-  created: string;
-  updated: string;
-  isPublished: boolean;
-  collectionId: string;
-  collectionName: string;
-};
-
-const Dashboard = () =>
-  // props: InferGetServerSidePropsType<typeof getServerSideProps>
-  {
-    return (
-      <div>
-        <ProjectsGrid />
-      </div>
-    );
+const Dashboard = () => {
+  const handleLogin = async () => {
+    const data = await fetch("/api/tracking");
+    const data2 = await data.json();
+    console.log(data2);
   };
+  return (
+    <div>
+      {/* <button onClick={handleLogin}>Login Umami</button> */}
+      <ProjectsGrid />
+    </div>
+  );
+};
 
 export default Dashboard;
