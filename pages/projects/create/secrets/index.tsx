@@ -11,6 +11,7 @@ const Secret = (props) => {
         <ul>
           <li>projects</li>
           <li>{name}</li>
+          <li>secrets</li>
         </ul>
       </div>
       <SecretsCard {...props} />
