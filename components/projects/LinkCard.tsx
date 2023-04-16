@@ -47,6 +47,7 @@ const LinkCard = (props) => {
               }
             );
             setLoading(true, 70);
+
             // Create project metrics
             const projectMetrics = await pb.collection("deployMetrics").create(
               {
@@ -58,6 +59,12 @@ const LinkCard = (props) => {
                 projectId: projectCreated.id,
               }
             );
+
+            // Update project with status and metric id
+            await pb.collection("projects").update(projectCreated.id, {
+              metricId: projectMetrics.id,
+              statusId: projectStatus.id,
+            });
             setLoading(true, 80);
 
             // Clone repo
