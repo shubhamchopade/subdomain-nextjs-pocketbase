@@ -9,7 +9,7 @@ const SecretsCard = (props) => {
   const [secretText, setSecretText] = React.useState("");
   const setLoading = useStore((state) => state.setLoading);
   const router = useRouter();
-  const redirectLink = `/projects/${projectId}?statusId=${statusId}&name=${name}&id=${id}&metricId=${metricId}`;
+  const redirectLink = `/projects/${projectId}`;
 
   const handleCreateEnv = async () => {
     setLoading(true, 80);
@@ -28,6 +28,7 @@ const SecretsCard = (props) => {
 
     if (res.status == 200) {
       setLoading(true, 100);
+
       router.push(redirectLink);
     } else {
       setLoading(false, 99);
