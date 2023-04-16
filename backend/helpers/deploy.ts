@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import chalk from "chalk";
 import { executeCommandChild } from "../../backend/node-multithreading";
 import PocketBase from "pocketbase";
+import { injectTrackingCode } from "./tracking";
 
 const path = process.env.NEXT_PUBLIC_LOCAL_PATH_TO_PROJECTS;
 const dir = `${path}/data/apps`;
@@ -162,12 +163,19 @@ export async function buildHelper(req: NextApiRequest, res: NextApiResponse) {
     port = 3,
     statusId,
     metricId,
+    subdomain,
   } = req.query;
 
   const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
-
+  // Get framework
+  const project = await pb.collection("projects").getOne(projectId);
+  const { framework } = project;
+  console.log("Injecting Tracking Code", framework);
+  // if framework is vite-react/n, inject the tracking code
+  if (framework === "vite-react\n") {
+    await injectTrackingCode(id, projectId, subdomain, framework);
+  }
   console.log("Build Started");
-
   try {
     const output = await executeCommandChild("cd", [
       `${dir}/${id}/${projectId}`,

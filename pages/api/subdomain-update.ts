@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import chalk from "chalk";
 import { executeCommandChild } from "../../backend/node-multithreading";
 import PocketBase from "pocketbase";
+import { updateWebsiteUmami } from "../../backend/helpers/tracking";
 
 const path = process.env.NEXT_PUBLIC_LOCAL_PATH_TO_PROJECTS;
 const scriptLocation = `${path}/scripts/get-subdomain.sh`;
@@ -25,6 +26,7 @@ export default function handler(
     subdomainId,
     framework,
     port,
+    trackingId,
   } = req.query;
 
   // console.log("subdomain", statusId)
@@ -71,6 +73,11 @@ export default function handler(
 
       // Reload nginx
       executeCommandChild("nginx", ["-s", `reload`]);
+
+      if (trackingId) {
+        // Update the subdomain for Umami tracking
+        updateWebsiteUmami(trackingId, newSubdomain);
+      }
 
       res.status(200).json({ data: "created nginx entry.." });
     })

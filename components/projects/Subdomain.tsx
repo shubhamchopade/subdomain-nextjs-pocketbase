@@ -13,6 +13,7 @@ const SubdomainEdit = (props) => {
     framework,
     port,
     subdomain: currentSubdomain,
+    trackingId,
   } = props;
   const pb = new Pocketbase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
   const router = useRouter();
@@ -61,10 +62,11 @@ const SubdomainEdit = (props) => {
 
       // subdomain update API call
       const res = await fetch(
-        `/api/subdomain-update?id=${userId}&projectId=${projectId}&statusId=${statusId}&subdomainId=${subdomain.id}&newSubdomain=${debouncedSearchTerm}&currentSubdomain=${subdomain.name}&framework=${framework}&port=${port}`
+        `/api/subdomain-update?id=${userId}&projectId=${projectId}&statusId=${statusId}&subdomainId=${subdomain.id}&newSubdomain=${debouncedSearchTerm}&currentSubdomain=${subdomain.name}&framework=${framework}&port=${port}&trackingId=${trackingId}`
       );
       toast.success("Subdomain name updated");
-      router.push(`/projects/${projectId}`);
+      // router.replace(`/projects/${projectId}`);
+      router.back();
       setNewSubdomainName("");
       // console.log(res)
     } catch (e) {

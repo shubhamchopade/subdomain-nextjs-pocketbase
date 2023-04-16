@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import chalk from "chalk";
 import { executeCommandChild } from "../../backend/node-multithreading";
 import PocketBase from "pocketbase";
+import { deleteWebsiteUmami, loginUmami } from "../../backend/helpers/tracking";
 
 const log = console.log;
 const erB = chalk.bold.redBright;
@@ -10,7 +11,14 @@ export default function handler(
   req: NextApiRequest,
   res: NextApiResponse<any>
 ) {
-  const { link, id = 1, projectId = 1, subdomain, statusId } = req.query;
+  const {
+    link,
+    id = 1,
+    projectId = 1,
+    subdomain,
+    statusId,
+    trackingId,
+  } = req.query;
   const path = process.env.NEXT_PUBLIC_LOCAL_PATH_TO_PROJECTS;
   const dir = `${path}/data/apps`;
 
@@ -66,6 +74,11 @@ export default function handler(
             stopped: true,
             current: "project inactive",
           });
+
+          if (trackingId) {
+            // delete tracking from Umami
+            deleteWebsiteUmami(trackingId);
+          }
 
           // delete from pocketbase
           pb.collection("projects").delete(projectId);
