@@ -8,27 +8,32 @@ import { useStore } from "../../../store/store";
 import { useRouter } from "next/router";
 
 const Settings = (props) => {
-  const statusId = props.statusId;
+  const projectId = props.projectId;
   const data = JSON.parse(props.data);
   const router = useRouter();
-  const { title: name, id: projectId } = data;
   const [loading, setLoading] = useStore((state) => [
     state.loading,
     state.setLoading,
   ]);
 
-  const framework = data?.framework;
-  const subdomain = data?.subdomain;
-  const userId = data?.userId;
-  const link = data?.link;
-  const port = data?.port;
+  const {
+    subdomain,
+    link,
+    port,
+    id,
+    framework,
+    trackingId,
+    title: name,
+    statusId,
+    metricId,
+  } = data;
 
   // Delete project
   const handleDelete = async () => {
     setLoading(true, 70);
     const dangerouslyDeleteProject = async () => {
       const res = await fetch(
-        `/api/delete?link=${link}&id=${userId}&projectId=${projectId}&subdomain=${subdomain}&framework=${framework}&statusId=${statusId}`
+        `/api/delete?link=${link}&id=${id}&projectId=${projectId}&subdomain=${subdomain}&framework=${framework}&statusId=${statusId}&trackingId=${trackingId}`
       );
       const data = await res.json();
       if (data) {
@@ -71,36 +76,23 @@ export default Settings;
 export const getServerSideProps: GetServerSideProps<any> = async (context) => {
   const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
   const projectId = context.params?.project;
-  const name = context.query.name;
-  const id = context.query.id;
-  const statusId = context.query.statusId;
-  const framework = context.query.framework;
-  const port = context.query.port;
-  let data = null;
 
   try {
     // Get project data
-    const records = await pb.collection("projects").getOne(projectId);
-    data = JSON.stringify({
-      id: records.id,
-      title: records.title,
-      description: records.description,
-      link: records.link,
-      framework: records.framework,
-      userId: records.userId,
-      createdAt: records.createdAt,
-      updatedAt: records.updatedAt,
-      subdomain: records.subdomain,
-      port: records.port,
+    const records = await pb.collection("projects").getOne(projectId, {
+      expand: "statusId,metricId",
     });
+    const data = JSON.stringify(records);
+    return {
+      props: {
+        data,
+        projectId,
+      },
+    };
   } catch (e) {
     console.log(e);
+    return {
+      props: null,
+    };
   }
-
-  return {
-    props: {
-      data,
-      statusId,
-    },
-  };
 };

@@ -13,61 +13,65 @@ import Image from "next/image";
 import { useStore } from "../../../store/store";
 import useSWR from "swr";
 import { getFetcher } from "../../../utils/swr-helpers";
-// TODO - handle all the loading state based on Zustand state
 
 const Project = (props) => {
-  const _status = props.status && JSON.parse(props.status);
+  const data = JSON.parse(props.data);
+  const _status = data.expand.statusId;
   const [status, setStatus] = React.useState(_status);
-  const data = props.data && JSON.parse(props.data);
-  const projectMetrics =
-    props.projectMetrics && JSON.parse(props.projectMetrics);
-  const router = useRouter();
+  const projectMetrics = data.expand.metricId;
   const [loading, setLoading] = useStore((state) => [
     state.loading,
     state.setLoading,
   ]);
-  const { data: queueStatus } = useSWR(
-    ["https://jobs.techsapien.dev/getJobCounts"],
-    getFetcher
-  );
+  const router = useRouter();
+  const projectId = data.id;
 
-  // const waitingJobs = queueStatus?.waiting;
-  console.log(queueStatus);
+  const {
+    subdomain,
+    link,
+    port,
+    userId,
+    framework,
+    trackingShareId,
+    trackingId,
+    title: name,
+    statusId,
+    metricId,
+  } = data;
 
-  const framework = data?.framework;
-  const projectId = data?.id;
-  const title = data?.title;
-  const subdomain = data?.subdomain;
-  const id = data?.userId;
-  const link = data?.link;
-  const port = data?.port;
+  const trackingUrl =
+    trackingShareId &&
+    `https://u.techsapien.dev/share/${trackingShareId}/${subdomain}`;
 
   const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
 
-  // DEPLOY
+  const expand = async () => {
+    const records = await pb.collection("projects").getOne(projectId, {
+      expand: "statusId,metricId",
+    });
+    console.log(records);
+  };
+
+  /**
+   * Add the project to the queue and trigger the build
+   */
   const deploy = async () => {
     setLoading(true, 30);
     try {
-      // TODO - update the projectStatus => queued = true
+      // update the projectStatus => queued = true
       await pb.collection("projectStatus").update(status.id, {
         queued: true,
-        current: "project online",
+        current: "project queued",
         isLoading: true,
       });
       // API call to schedule the build request on jobs.techsapien.dev
       const deployRes = await fetch(
-        `https://jobs.techsapien.dev/deploy?link=${link}&id=${id}&projectId=${projectId}&statusId=${status.id}&metricId=${projectMetrics.id}&subdomain=${subdomain}`
+        `https://jobs.techsapien.dev/deploy?link=${link}&id=${userId}&projectId=${projectId}&statusId=${status.id}&metricId=${projectMetrics.id}&subdomain=${subdomain}&framework=${framework}`
       );
-      // const deployRes = await fetch(
-      //   `/api/deploy?link=${link}&id=${id}&projectId=${projectId}&statusId=${status.id}&metricId=${projectMetrics.id}&subdomain=${subdomain}`
-      // );
       setLoading(false, 100);
-      // toast.success(`Project deployed successfully`);
-      // router.reload();
     } catch (e) {
       setLoading(false, 100);
       toast.error(`Build failed, please check the logs for more info`);
-      // router.reload();
       console.log(e);
     }
   };
@@ -79,24 +83,11 @@ const Project = (props) => {
           <li>
             <Link href={"/projects"}>projects</Link>
           </li>
-          <li>{title}</li>
+          <li>{name}</li>
         </ul>
       </div>
 
-      {/* <div>
-        {status.queued && waitingJobs > 0 && (
-          <div
-            className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4"
-            role="alert"
-          >
-            <p className="font-bold">Build in queue</p>
-            <p className="text-sm">
-              Your project is in the queue to be built. There are currently{" "}
-              {waitingJobs} jobs in the queue.
-            </p>
-          </div>
-        )}
-      </div> */}
+      <button onClick={expand}>expand</button>
 
       <div className="mb-32 relative container mx-auto">
         <div className={`max-w-md mx-auto ${status.isOnline && "hidden"}`}>
@@ -162,11 +153,7 @@ const Project = (props) => {
             <label
               tabIndex={0}
               className="btn btn-square btn-ghost"
-              onClick={() =>
-                router.push(
-                  `${projectId}/settings?name=${title}&id=${id}&statusId=${status.id}&framework=${framework}&port=${port}`
-                )
-              }
+              onClick={() => router.push(`${projectId}/settings`)}
             >
               <svg
                 width="24"
@@ -190,24 +177,31 @@ const Project = (props) => {
                 alt="preview"
                 width={2000}
                 height={300}
-                src={`/screenshots/${id}/${projectId}.png`}
+                src={`/screenshots/${userId}/${projectId}.png`}
               />
             )}
 
             <div className="">
-              <p className="card-title">{title}</p>
+              <p className="card-title">{name}</p>
               {status.isOnline && <BuildMetrics metrics={projectMetrics} />}
             </div>
 
             {/* LINK */}
             {status.isOnline && !loading && (
-              <a
-                href={`https://${subdomain}.reactly.app`}
-                className="link my-2 ml-auto"
-              >
-                <span className="text-blue-300 font-medium">{subdomain}</span>
-                .reactly.app
-              </a>
+              <>
+                <a
+                  href={`https://${subdomain}.reactly.app`}
+                  className="link my-2 ml-auto"
+                >
+                  <span className="text-blue-300 font-medium">{subdomain}</span>
+                  .reactly.app
+                </a>
+                {trackingUrl && (
+                  <a className="link" href={trackingUrl} target="_blank">
+                    track
+                  </a>
+                )}
+              </>
             )}
 
             <div className="card-actions">
@@ -223,8 +217,6 @@ const Project = (props) => {
           </div>
         </div>
         <Status status={status} setStatus={setStatus} />
-
-        {/* <Logger projectId={projectId} status={status} /> */}
       </div>
     </main>
   );
@@ -235,91 +227,25 @@ export default Project;
 export const getServerSideProps: GetServerSideProps<any> = async (context) => {
   const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
 
-  let session = null;
-  let status = null;
-  let projectMetrics = null;
-  let data = null;
-
   const projectId = context.params?.project;
 
-  const metricId = context.query.metricId;
-
-  console.log("METRIC ID", metricId);
-
   try {
-    const sessionRes = await getServerSession(
-      context.req,
-      context.res,
-      authOptions
-    );
-
     // Get project data
-    const records = await pb.collection("projects").getOne(projectId);
-    data = JSON.stringify({
-      id: records.id,
-      title: records.title,
-      description: records.description,
-      link: records.link,
-      framework: records.framework,
-      userId: records.userId,
-      createdAt: records.createdAt,
-      updatedAt: records.updatedAt,
-      subdomain: records.subdomain,
-      port: records.port,
+    const records = await pb.collection("projects").getOne(projectId, {
+      expand: "statusId,metricId",
     });
+    const data = JSON.stringify(records);
 
-    // Get status
-    const statusExists = await pb
-      .collection("projectStatus")
-      .getFullList({ projectId: projectId }, { $autoCancel: false });
-    status = JSON.stringify({
-      id: statusExists[0].id,
-      queued: statusExists[0].queued,
-      current: statusExists[0].current,
-      cloned: statusExists[0].cloned,
-      subdomain: statusExists[0].subdomain,
-      installed: statusExists[0].installed,
-      built: statusExists[0].built,
-      stopped: statusExists[0].stopped,
-      isOnline: statusExists[0].isOnline,
-      isLoading: statusExists[0].isLoading,
-      timeElapsed: statusExists[0].timeElapsed,
-      logClone: statusExists[0].logClone,
-      logSubdomain: statusExists[0].logSubdomain,
-      logInstall: statusExists[0].logInstall,
-      logBuild: statusExists[0].logBuild,
-      logStart: statusExists[0].logStart,
-    });
-
-    // Get metrics
-    const deployMetrics = await pb
-      .collection("deployMetrics")
-      .getFullList({ projectId: projectId }, { $autoCancel: false });
-    projectMetrics = JSON.stringify({
-      id: deployMetrics[0].id,
-      timeInstall: deployMetrics[0].timeInstall,
-      timeBuild: deployMetrics[0].timeBuild,
-    });
-    // console.log("GSSR ---------------", cookies);
-    session = sessionRes;
-  } catch (e) {
-    console.log(e);
-  }
-
-  // console.log(resultList)
-
-  if (session) {
     return {
       props: {
-        user: session?.user,
-        status,
         data,
-        projectMetrics,
       },
     };
-  }
+  } catch (e) {
+    console.log(e);
 
-  return {
-    props: {},
-  };
+    return {
+      props: {},
+    };
+  }
 };
