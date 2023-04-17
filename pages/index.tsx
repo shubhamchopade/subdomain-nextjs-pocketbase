@@ -10,29 +10,10 @@ import { listAuthMethods } from "../components/utils/pocketbase-api-methods";
 import styles from "../styles/Home.module.css";
 import { authOptions } from "./api/auth/[...nextauth]";
 
-type Posts = {
-  page: number;
-  perPage: number;
-  totalItems: number;
-  totalPages: number;
-  items: Post[];
-};
-
-type Post = {
-  id: string;
-  name: string;
-  created: string;
-  updated: string;
-  isPublished: boolean;
-  collectionId: string;
-  collectionName: string;
-};
-
 const Home = (
   props: InferGetServerSidePropsType<typeof getServerSideProps>
 ) => {
   const router = useRouter();
-  const [githubAuth, setGithubAuth] = useState(null);
   const authUrl = props?.methods?.authProviders[0]?.authUrl;
   const codeVerifier = props?.methods?.authProviders[0]?.codeVerifier;
   const name = props?.methods?.authProviders[0]?.name;
@@ -57,12 +38,7 @@ const Home = (
         if (router.query.code && authUrl) {
           const authData = await pb
             .collection("users")
-            .authWithOAuth2(
-              name,
-              code,
-              codeVerifier,
-              "https://www.reactly.app"
-            );
+            .authWithOAuth2(name, code, codeVerifier, "https://reactly.app");
           console.log(authData);
           if (authData) {
             const data = {

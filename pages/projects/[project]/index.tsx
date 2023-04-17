@@ -45,13 +45,6 @@ const Project = (props) => {
 
   const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
 
-  const expand = async () => {
-    const records = await pb.collection("projects").getOne(projectId, {
-      expand: "statusId,metricId",
-    });
-    console.log(records);
-  };
-
   /**
    * Add the project to the queue and trigger the build
    */
@@ -86,8 +79,6 @@ const Project = (props) => {
           <li>{name}</li>
         </ul>
       </div>
-
-      <button onClick={expand}>expand</button>
 
       <div className="mb-32 relative container mx-auto">
         <div className={`max-w-md mx-auto ${status.isOnline && "hidden"}`}>
