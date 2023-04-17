@@ -1,5 +1,5 @@
 import Link from "next/link";
-import React from "react";
+import React, { useEffect } from "react";
 import PocketBase from "pocketbase";
 import { GetServerSideProps } from "next";
 import Status from "../../../components/projects/Status";
@@ -34,9 +34,9 @@ const Project = (props) => {
     : Date.now() - projectStatus?.timestamp;
   const queuedLocale = queuedFor / 1000;
 
-  const projectBuiltIn =
-    projectStatus?.finishedOn &&
-    projectStatus?.finishedOn - projectStatus?.processedOn;
+  const projectBuiltIn = projectStatus?.finishedOn
+    ? projectStatus?.finishedOn - projectStatus?.processedOn
+    : Date.now() - projectStatus?.processedOn;
 
   const builtLocale = projectBuiltIn / 1000;
 
