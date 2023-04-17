@@ -219,10 +219,7 @@ const Card = (props) => {
         )}
 
         <div className="card-body">
-          <Link
-            href={`/projects/${projectId}?framework=${framework}&userId=${id}`}
-            className="card-title"
-          >
+          <Link href={`/projects/${projectId}`} className="card-title">
             {props.project.title}
           </Link>
 
@@ -239,10 +236,7 @@ const Card = (props) => {
               {props.project.subdomain}.reactly.app
             </a>
           ) : (
-            <Link
-              href={`/projects/${projectId}?framework=${framework}&userId=${id}`}
-              className="link my-2 ml-auto"
-            >
+            <Link href={`/projects/${projectId}`} className="link my-2 ml-auto">
               Build now
             </Link>
           )}

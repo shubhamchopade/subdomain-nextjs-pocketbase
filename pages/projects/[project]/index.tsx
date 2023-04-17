@@ -1,18 +1,16 @@
-import { getServerSession } from "next-auth";
 import Link from "next/link";
-import React, { useState } from "react";
+import React from "react";
 import PocketBase from "pocketbase";
 import { GetServerSideProps } from "next";
-import { authOptions } from "../../api/auth/[...nextauth]";
 import Status from "../../../components/projects/Status";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
-import { useStatusState } from "../../../store/statusState";
 import BuildMetrics from "../../../components/projects/BuildMetrics";
 import Image from "next/image";
 import { useStore } from "../../../store/store";
 import useSWR from "swr";
 import { getFetcher } from "../../../utils/swr-helpers";
+import CountUp from "../../../components/common/CountUp";
 
 const Project = (props) => {
   const data = JSON.parse(props.data);
@@ -25,6 +23,22 @@ const Project = (props) => {
   ]);
   const router = useRouter();
   const projectId = data.id;
+
+  const { data: projectStatus } = useSWR(
+    [`https://jobs.techsapien.dev/getJob?id=${status.jobId}`],
+    getFetcher
+  );
+
+  const queuedFor = projectStatus?.processedOn
+    ? projectStatus?.processedOn - projectStatus?.timestamp
+    : Date.now() - projectStatus?.timestamp;
+  const queuedLocale = queuedFor / 1000;
+
+  const projectBuiltIn =
+    projectStatus?.finishedOn &&
+    projectStatus?.finishedOn - projectStatus?.processedOn;
+
+  const builtLocale = projectBuiltIn / 1000;
 
   const {
     subdomain,
@@ -61,6 +75,8 @@ const Project = (props) => {
       const deployRes = await fetch(
         `https://jobs.techsapien.dev/deploy?link=${link}&id=${userId}&projectId=${projectId}&statusId=${status.id}&metricId=${projectMetrics.id}&subdomain=${subdomain}&framework=${framework}`
       );
+      const deployResJson = await deployRes.json();
+      console.log("DEPLOYYYY", deployResJson);
       setLoading(false, 100);
     } catch (e) {
       setLoading(false, 100);
@@ -78,6 +94,11 @@ const Project = (props) => {
           </li>
           <li>{name}</li>
         </ul>
+      </div>
+
+      <div>
+        <p>Queued for: {queuedLocale}s</p>
+        <p>Built in: {builtLocale}s</p>
       </div>
 
       <div className="mb-32 relative container mx-auto">
