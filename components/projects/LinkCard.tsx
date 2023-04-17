@@ -4,6 +4,7 @@ import PocketBase from "pocketbase";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 import { useStore } from "../../store/store";
+import generateRandomHash from "../utils/random-hashcode";
 
 const LinkCard = (props) => {
   const [repos, setRepos] = useState([]);
@@ -17,82 +18,86 @@ const LinkCard = (props) => {
     const userId = json?.model?.id;
     const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
     const createProject = async () => {
-      const cleanedSubdomainName = name.toLowerCase();
+      const subdomain = name.toLowerCase();
       if (userId)
         try {
-          setLoading(true, 20);
-          // Create project
-          const projectCreated = await pb.collection("projects").create({
-            subdomain: cleanedSubdomainName,
-            title: name,
-            description: name,
-            link,
-            userId,
-          });
-          setLoading(true, 60);
-          if (projectCreated.id) {
-            // Create project status
-            const projectStatus = await pb.collection("projectStatus").create(
-              {
-                projectId: projectCreated.id,
-                cloned: false,
-                installed: false,
-                built: false,
-                isOnline: false,
-                stopped: false,
-                current: "init",
-              },
-              {
-                projectId: projectCreated.id,
-              }
-            );
-            setLoading(true, 70);
-
-            // Create project metrics
-            const projectMetrics = await pb.collection("deployMetrics").create(
-              {
-                projectId: projectCreated.id,
-                timeInstall: 0,
-                timeBuild: 0,
-              },
-              {
-                projectId: projectCreated.id,
-              }
-            );
-
-            // Update project with status and metric id
-            await pb.collection("projects").update(projectCreated.id, {
-              metricId: projectMetrics.id,
-              statusId: projectStatus.id,
-            });
-            setLoading(true, 80);
-
-            // Clone repo
-            const cloneRes = await fetch(
-              `/api/clone?link=${link}&id=${userId}&projectId=${projectCreated.id}&statusId=${projectStatus.id}`
-            );
-            setLoading(true, 99);
-
-            if (cloneRes.status == 200) {
-              router.push(
-                `/projects/create/secrets?projectId=${projectCreated.id}&statusId=${projectStatus.id}&name=${cleanedSubdomainName}&id=${userId}&metricId=${projectMetrics.id}`
-              );
-              setLoading(false, 99);
-            }
-
-            console.log(cloneRes);
-            if (cloneRes.status == 400) {
-              toast.error("Unsupported framework");
-              setLoading(false, 99);
-            }
-          }
+          await createProject(subdomain);
         } catch (error) {
-          toast.error(
-            "Failed to create project, a project with the same name already exists"
-          );
+          const randomHash = generateRandomHash(5);
+          const cleanedSubdomainName = `${subdomain}-${randomHash}`;
+          await createProject(cleanedSubdomainName);
           console.log(error);
           setLoading(false, 99);
         }
+
+      async function createProject(subdomain: string) {
+        setLoading(true, 20);
+        // Create project
+        const projectCreated = await pb.collection("projects").create({
+          subdomain,
+          title: name,
+          description: name,
+          link,
+          userId,
+        });
+        setLoading(true, 60);
+        if (projectCreated.id) {
+          // Create project status
+          const projectStatus = await pb.collection("projectStatus").create(
+            {
+              projectId: projectCreated.id,
+              cloned: false,
+              installed: false,
+              built: false,
+              isOnline: false,
+              stopped: false,
+              current: "init",
+            },
+            {
+              projectId: projectCreated.id,
+            }
+          );
+          setLoading(true, 70);
+
+          // Create project metrics
+          const projectMetrics = await pb.collection("deployMetrics").create(
+            {
+              projectId: projectCreated.id,
+              timeInstall: 0,
+              timeBuild: 0,
+            },
+            {
+              projectId: projectCreated.id,
+            }
+          );
+
+          // Update project with status and metric id
+          await pb.collection("projects").update(projectCreated.id, {
+            metricId: projectMetrics.id,
+            statusId: projectStatus.id,
+          });
+          setLoading(true, 80);
+
+          // Clone repo
+          const cloneRes = await fetch(
+            `/api/clone?link=${link}&id=${userId}&projectId=${projectCreated.id}&statusId=${projectStatus.id}`
+          );
+          setLoading(true, 99);
+
+          if (cloneRes.status == 200) {
+            router.push(
+              `/projects/create/secrets?projectId=${projectCreated.id}&statusId=${projectStatus.id}&name=${subdomain}&id=${userId}&metricId=${projectMetrics.id}`
+            );
+            setLoading(false, 99);
+          }
+
+          console.log(cloneRes);
+          if (cloneRes.status == 400) {
+            toast.error("Unsupported framework");
+            setLoading(false, 99);
+          }
+        }
+      }
     };
 
     createProject();
