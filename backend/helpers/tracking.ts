@@ -59,7 +59,7 @@ export const createWebsiteUmami = async (
   const pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
 
   await pb.collection("projects").update(projectId, {
-    trackingUrl,
+    trackingId: websiteUuid,
     trackingShareId: shareId,
   });
 
@@ -110,6 +110,7 @@ export const updateWebsiteUmami = async (
     body: JSON.stringify({
       domain,
       name: subdomain,
+      enableShareUrl: true,
     }),
   });
   const data = await createRes.json();
