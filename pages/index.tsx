@@ -38,7 +38,12 @@ const Home = (
         if (router.query.code && authUrl) {
           const authData = await pb
             .collection("users")
-            .authWithOAuth2(name, code, codeVerifier, "https://reactly.app");
+            .authWithOAuth2(
+              name,
+              code,
+              codeVerifier,
+              "https://www.reactly.app"
+            );
           console.log(authData);
           if (authData) {
             const data = {
